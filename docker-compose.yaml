@@ -1,0 +1,10 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: checkman
+      POSTGRES_USER: checkman
+      POSTGRES_PASSWORD: checkman
+    ports:
+      - 5432:5432

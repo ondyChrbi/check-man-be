@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/checkman
+    username: checkman
+    password: checkman
+  liquibase:
+    change-log: classpath:db/changelog/changelog.sql
+logging:
+  level:
+    liquibase : info
+server:
+  port: 9001
