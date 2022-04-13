@@ -4,7 +4,9 @@ spring:
     username: checkman
     password: checkman
   liquibase:
-    change-log: classpath:db/changelog/changelog.sql
+    change-log: classpath:db/changelog/changelog-master.yaml
+  rdbc2:
+    url: r2dbc:postgresql://postgres@localhost:5432/checkman
 logging:
   level:
     liquibase : info
