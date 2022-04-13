@@ -10,4 +10,4 @@ The application depends on relational database (PostreSQL is recommended). You c
 1. Download and install docker desktop on your Windows/Mac device. Linux user can use their distro package manager.
 2. Run docker compose using command line in the root folder.
 3. Wait for the initialization of the conteiners.
-4. Run gradle bootRun --args='--spring.profiles.active=docker (profile is already part of the project).
+4. Run gradle bootRun --args='--spring.profiles.active=docker' (profile is already part of the project).
