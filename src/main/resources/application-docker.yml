@@ -1,12 +1,13 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/checkman
-    username: checkman
-    password: checkman
   liquibase:
     change-log: classpath:db/changelog/changelog-master.yaml
-  rdbc2:
-    url: r2dbc:postgresql://postgres@localhost:5432/checkman
+    url: jdbc:postgresql://localhost:5432/checkman
+    user: checkman
+    password: checkman
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/checkman
+    username: checkman
+    password: checkman
 logging:
   level:
     liquibase : info
