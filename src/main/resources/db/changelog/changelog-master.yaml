@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: user
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name : stag_id
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name : registration_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name : last_access_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: disabled
+                  type: bool
+                  constraints:
+                    nullable: false
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: user_id_seq
