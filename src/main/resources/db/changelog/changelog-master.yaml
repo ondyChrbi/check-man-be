@@ -4,7 +4,7 @@ databaseChangeLog:
       author: ondrej.chrbolka
       changes:
         - createTable:
-            tableName: user
+            tableName: app_user
             columns:
               - column:
                   name: id
@@ -37,4 +37,60 @@ databaseChangeLog:
             incrementBy: 1
             startValue: 0
             minValue: 0
-            sequenceName: user_id_seq
+            sequenceName: app_user_id_seq
+
+  - changeSet:
+      id: 2
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: access_token
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: value
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: creation_date
+                  type: timestamp
+                  constraints:
+                    defaultValue: now()
+                    nullable: false
+              - column:
+                  name: valid_to
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: disabled
+                  type: bool
+                  constraints:
+                    defaultValue: false
+                    nullable: false
+              - column:
+                  name: app_user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: app_user_id
+            baseTableName: access_token
+            constraintName: app_user_id_fk
+            referencedColumnNames: id
+            referencedTableName: app_user
+            validate: true
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: access_token_id_seq
