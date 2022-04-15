@@ -261,3 +261,29 @@ databaseChangeLog:
             startValue: 0
             minValue: 0
             sequenceName: app_user_team_id_seq
+
+  - changeSet:
+      id: 7
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: course_semester_role
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: course_semester_role_id_seq
