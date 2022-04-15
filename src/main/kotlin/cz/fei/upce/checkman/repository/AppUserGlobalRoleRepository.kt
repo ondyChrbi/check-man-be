@@ -1,8 +1,8 @@
 package cz.fei.upce.checkman.repository
 
-import cz.fei.upce.checkman.domain.GlobalRole
+import cz.fei.upce.checkman.domain.AppUserGlobalRole
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface GlobalRoleRepository : ReactiveCrudRepository<GlobalRole, Long>
+interface AppUserGlobalRoleRepository : ReactiveCrudRepository<AppUserGlobalRole, Long>

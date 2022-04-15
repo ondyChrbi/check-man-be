@@ -120,3 +120,50 @@ databaseChangeLog:
             startValue: 0
             minValue: 0
             sequenceName: global_role_id_seq
+
+  - changeSet:
+      id: 4
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: app_user_global_role
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: app_user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: global_role_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: app_user_id
+            baseTableName: app_user_global_role
+            constraintName: app_user_id_fk
+            referencedColumnNames: id
+            referencedTableName: app_user
+            validate: true
+
+        - addForeignKeyConstraint:
+            baseColumnNames: global_role_id
+            baseTableName: app_user_global_role
+            constraintName: global_role_id_fk
+            referencedColumnNames: id
+            referencedTableName: global_role
+            validate: true
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: app_global_role_id_seq
