@@ -1,6 +1,6 @@
-package cz.fei.upce.checkman.repository
+package cz.fei.upce.checkman.repository.course
 
-import cz.fei.upce.checkman.domain.Course
+import cz.fei.upce.checkman.domain.course.Course
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 
 interface CourseRepository : ReactiveCrudRepository<Course, Long>

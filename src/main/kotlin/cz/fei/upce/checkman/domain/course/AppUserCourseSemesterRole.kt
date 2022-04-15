@@ -1,5 +1,6 @@
-package cz.fei.upce.checkman.domain
+package cz.fei.upce.checkman.domain.course
 
+import cz.fei.upce.checkman.domain.user.AppUser
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 
