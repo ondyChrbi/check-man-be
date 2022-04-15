@@ -173,7 +173,7 @@ databaseChangeLog:
       author: ondrej.chrbolka
       changes:
         - createTable:
-            tableName: app_user_team
+            tableName: team
             columns:
               - column:
                   name: id
@@ -213,4 +213,4 @@ databaseChangeLog:
             incrementBy: 1
             startValue: 0
             minValue: 0
-            sequenceName: app_user_team_id_seq
+            sequenceName: team_id_seq
