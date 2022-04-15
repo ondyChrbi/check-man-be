@@ -214,3 +214,50 @@ databaseChangeLog:
             startValue: 0
             minValue: 0
             sequenceName: team_id_seq
+
+  - changeSet:
+      id: 6
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: app_user_team
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: app_user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: team_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: app_user_id
+            baseTableName: app_user_team
+            constraintName: app_user_id_fk
+            referencedColumnNames: id
+            referencedTableName: app_user
+            validate: true
+
+        - addForeignKeyConstraint:
+            baseColumnNames: team_id
+            baseTableName: app_user_team
+            constraintName: team_id_fk
+            referencedColumnNames: id
+            referencedTableName: team
+            validate: true
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: app_user_team_id_seq
