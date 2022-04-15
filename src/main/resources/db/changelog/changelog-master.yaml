@@ -94,3 +94,29 @@ databaseChangeLog:
             startValue: 0
             minValue: 0
             sequenceName: access_token_id_seq
+
+  - changeSet:
+      id: 3
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: global_role
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: global_role_id_seq
