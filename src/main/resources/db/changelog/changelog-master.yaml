@@ -167,3 +167,50 @@ databaseChangeLog:
             startValue: 0
             minValue: 0
             sequenceName: app_global_role_id_seq
+
+  - changeSet:
+      id: 5
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: app_user_team
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: creation_date
+                  type: timestamp
+                  constraints:
+                    defaultValue: now()
+                    nullable: false
+              - column:
+                  name: private
+                  type: bool
+                  constraints:
+                    defaultValue: false
+                    nullable: false
+              - column:
+                  name: min_members
+                  type: smallint
+                  constraints:
+                    defaultValue: 0
+                    nullable: false
+              - column:
+                  name: max_members
+                  type: smallint
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: app_user_team_id_seq
