@@ -287,3 +287,146 @@ databaseChangeLog:
             startValue: 0
             minValue: 0
             sequenceName: course_semester_role_id_seq
+
+  - changeSet:
+      id: 8
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: course
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: stagId
+                  type: varchar(128)
+              - column:
+                  name: name
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_creation
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: icon
+                  type: varchar(1024)
+              - column:
+                  name: template
+                  type: varchar(256)
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: course_id_seq
+
+  - changeSet:
+      id: 9
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: course_semester
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: note
+                  type: text
+              - column:
+                  name: date_start
+                  type: timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_end
+                  type: timestamp
+              - column:
+                  name: course_id
+                  type: bigint
+
+        - addForeignKeyConstraint:
+            baseColumnNames: course_id
+            baseTableName: course_semester
+            constraintName: course_id_fk
+            referencedColumnNames: id
+            referencedTableName: course
+            validate: true
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: course_semester_id_seq
+
+  - changeSet:
+      id: 10
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: app_user_course_semester_role
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: app_user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: course_semester_role_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: course_semester_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: app_user_id
+            baseTableName: app_user_course_semester_role
+            constraintName: app_user_id_fk
+            referencedColumnNames: id
+            referencedTableName: app_user
+            validate: true
+
+        - addForeignKeyConstraint:
+            baseColumnNames: course_semester_role_id
+            baseTableName: app_user_course_semester_role
+            constraintName: course_semester_role_id_fk
+            referencedColumnNames: id
+            referencedTableName: course_semester_role
+            validate: true
+
+        - addForeignKeyConstraint:
+            baseColumnNames: course_semester_id
+            baseTableName: app_user_course_semester_role
+            constraintName: course_semester_id_fk
+            referencedColumnNames: id
+            referencedTableName: course_semester
+            validate: true
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: app_user_course_semester_role_id_seq
