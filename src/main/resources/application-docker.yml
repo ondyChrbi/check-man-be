@@ -11,5 +11,8 @@ spring:
 logging:
   level:
     liquibase : info
+    org:
+      springframework:
+        r2dbc: debug
 server:
   port: 9001
