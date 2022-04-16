@@ -541,3 +541,107 @@ databaseChangeLog:
             startValue: 0
             minValue: 0
             sequenceName: challenge_id_seq
+
+  - changeSet:
+      id: 13
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: file_attachment
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: path
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: available
+                  type: bool
+                  constraints:
+                    nullable: false
+                    defaultValue: true
+              - column:
+                  name: creation_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+                    defaultValue: now()
+              - column:
+                  name: author_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: author_id
+            baseTableName: file_attachment
+            constraintName: author_id_fk
+            referencedColumnNames: id
+            referencedTableName: app_user
+            validate: true
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: file_attachment_id_seq
+
+  - changeSet:
+      id: 14
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: challenge_file_attachment
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: challenge_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file_attachment_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: challenge_id
+            baseTableName: challenge_file_attachment
+            constraintName: challenge_id_fk
+            referencedColumnNames: id
+            referencedTableName: app_user
+            validate: true
+
+        - addForeignKeyConstraint:
+            baseColumnNames: file_attachment_id
+            baseTableName: challenge_file_attachment
+            constraintName: file_attachment_id_fk
+            referencedColumnNames: id
+            referencedTableName: file_attachment
+            validate: true
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: challenge_file_attachment_id_seq
