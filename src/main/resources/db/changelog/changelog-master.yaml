@@ -628,7 +628,7 @@ databaseChangeLog:
             baseTableName: challenge_file_attachment
             constraintName: challenge_id_fk
             referencedColumnNames: id
-            referencedTableName: app_user
+            referencedTableName: challenge
             validate: true
 
         - addForeignKeyConstraint:
@@ -914,3 +914,104 @@ databaseChangeLog:
             startValue: 0
             minValue: 0
             sequenceName: review_id_seq
+
+  - changeSet:
+      id: 21
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: requirement
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(1024)
+              - column:
+                  name: min_point
+                  type: int2
+              - column:
+                  name: max_point
+                  type: int2
+              - column:
+                  name: challenge_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: challenge_id
+            baseTableName: requirement
+            constraintName: challenge_id_fk
+            referencedColumnNames: id
+            referencedTableName: challenge
+            validate: true
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: requirement_id_seq
+
+  - changeSet:
+      id: 22
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: requirement_review
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: point
+                  type: int2
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: requirement_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: review_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: requirement_id
+            baseTableName: requirement_review
+            constraintName: requirement_id_fk
+            referencedColumnNames: id
+            referencedTableName: requirement
+            validate: true
+
+        - addForeignKeyConstraint:
+            baseColumnNames: review_id
+            baseTableName: requirement_review
+            constraintName: review_id_fk
+            referencedColumnNames: id
+            referencedTableName: review
+            validate: true
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: requirement_review_id_seq
