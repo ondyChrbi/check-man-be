@@ -6,9 +6,9 @@ import java.time.LocalDateTime
 
 @Table("app_user")
 data class AppUser(
-    @Id var id : Long? = null,
-    var stagId : String? = null,
-    var registrationDate : LocalDateTime? = null,
-    var lastAccessDate : LocalDateTime? = null,
-    var disabled : Boolean? = null
+    @Id var id: Long? = null,
+    var stagId: String? = null,
+    var registrationDate: LocalDateTime? = null,
+    var lastAccessDate: LocalDateTime? = null,
+    var disabled: Boolean? = null
 )

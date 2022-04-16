@@ -7,11 +7,11 @@ import org.springframework.data.relational.core.mapping.Table
 
 @Table("review")
 data class Review(
-    @Id var id : Long? = null,
-    var description : String? = null,
-    var solution : Solution? = null,
-    var author : AppUser? = null,
-    var feedback : Feedback? = null,
+    @Id var id: Long? = null,
+    var description: String? = null,
+    var solution: Solution? = null,
+    var author: AppUser? = null,
+    var feedback: Feedback? = null,
     var reviewTemplate: ReviewTemplate? = null,
 ) {
     enum class Feedback {

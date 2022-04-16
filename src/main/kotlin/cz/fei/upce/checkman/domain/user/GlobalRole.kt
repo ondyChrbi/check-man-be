@@ -5,6 +5,6 @@ import org.springframework.data.relational.core.mapping.Table
 
 @Table("global_role")
 data class GlobalRole(
-    @Id var id : Long? = null,
-    var name : String? = null
+    @Id var id: Long? = null,
+    var name: String? = null
 )

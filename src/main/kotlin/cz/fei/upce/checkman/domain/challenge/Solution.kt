@@ -7,13 +7,13 @@ import java.time.LocalDateTime
 
 @Table("solution")
 data class Solution(
-    @Id var id : Long? = null,
-    var uploadDate : LocalDateTime? = null,
-    var team : Team? = null,
-    var status : Status? = null,
+    @Id var id: Long? = null,
+    var uploadDate: LocalDateTime? = null,
+    var team: Team? = null,
+    var status: Status? = null,
     var challenge: Challenge? = null
 ) {
-    enum class Status(approve : Boolean) {
+    enum class Status(approve: Boolean) {
         APPROVED(true),
         RETURN_TO_EDIT(false),
         DENIED(false)
