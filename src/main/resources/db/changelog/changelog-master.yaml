@@ -430,3 +430,114 @@ databaseChangeLog:
             startValue: 0
             minValue: 0
             sequenceName: app_user_course_semester_role_id_seq
+
+  - changeSet:
+      id: 11
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: challenge_kind
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: private
+                  type: bool
+                  constraints:
+                    nullable: false
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: challenge_kind_id_seq
+
+  - changeSet:
+      id: 12
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: challenge
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: deadline_date
+                  type: timestamp
+              - column:
+                  name: start_date
+                  type: timestamp
+              - column:
+                  name: obligatory
+                  type: bool
+                  constraints:
+                    nullable: false
+                    defaultValue: false
+              - column:
+                  name: author_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: course_semester_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: challenge_kind_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: author_id
+            baseTableName: challenge
+            constraintName: author_id_fk
+            referencedColumnNames: id
+            referencedTableName: app_user
+            validate: true
+
+        - addForeignKeyConstraint:
+            baseColumnNames: course_semester_id
+            baseTableName: challenge
+            constraintName: course_semester_id_fk
+            referencedColumnNames: id
+            referencedTableName: course_semester
+            validate: true
+
+        - addForeignKeyConstraint:
+            baseColumnNames: challenge_kind_id
+            baseTableName: challenge
+            constraintName: challenge_kind_id_fk
+            referencedColumnNames: id
+            referencedTableName: challenge_kind
+            validate: true
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: challenge_id_seq
