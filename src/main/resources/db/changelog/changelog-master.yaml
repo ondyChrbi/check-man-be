@@ -645,3 +645,53 @@ databaseChangeLog:
             startValue: 0
             minValue: 0
             sequenceName: challenge_file_attachment_id_seq
+
+  - changeSet:
+      id: 15
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: permitted_app_user_challenge
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: access_to
+                  type: timestamp
+              - column:
+                  name: app_user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: challenge_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: app_user_id
+            baseTableName: permitted_app_user_challenge
+            constraintName: app_user_id_fk
+            referencedColumnNames: id
+            referencedTableName: app_user
+            validate: true
+
+        - addForeignKeyConstraint:
+            baseColumnNames: challenge_id
+            baseTableName: permitted_app_user_challenge
+            constraintName: challenge_id_fk
+            referencedColumnNames: id
+            referencedTableName: challenge
+            validate: true
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: permitted_app_user_challenge_id_seq
