@@ -1,0 +1,6 @@
+jwt:
+  secret: MIICXgIBAAKBgQCUMQwvELcqmvcsCfOVEGjqBFX8ckLYuNDq2PrbEw32XnXAnuQE
+  expiration: 28800000
+spring:
+  security:
+    permitPaths: /login

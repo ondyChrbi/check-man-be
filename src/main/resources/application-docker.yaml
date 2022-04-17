@@ -8,6 +8,8 @@ spring:
     url: r2dbc:postgresql://localhost:5432/checkman
     username: checkman
     password: checkman
+  security:
+    permitPaths: /login, /v3/api-docs/**, /swagger-ui.html
 logging:
   level:
     liquibase : info
