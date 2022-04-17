@@ -83,7 +83,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: app_user_id
             baseTableName: access_token
-            constraintName: app_user_id_fk
+            constraintName: access_token_app_user_id_fk
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
@@ -148,7 +148,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: app_user_id
             baseTableName: app_user_global_role
-            constraintName: app_user_id_fk
+            constraintName: app_user_global_role_app_user_id_fk
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
@@ -156,7 +156,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: global_role_id
             baseTableName: app_user_global_role
-            constraintName: global_role_id_fk
+            constraintName: app_user_global_role_global_role_id_fk
             referencedColumnNames: id
             referencedTableName: global_role
             validate: true
@@ -242,7 +242,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: app_user_id
             baseTableName: app_user_team
-            constraintName: app_user_id_fk
+            constraintName: app_user_team_app_user_id_fk
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
@@ -250,7 +250,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: team_id
             baseTableName: app_user_team
-            constraintName: team_id_fk
+            constraintName: app_user_team_team_id_fk
             referencedColumnNames: id
             referencedTableName: team
             validate: true
@@ -359,7 +359,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: course_id
             baseTableName: course_semester
-            constraintName: course_id_fk
+            constraintName: course_semester_course_id_fk
             referencedColumnNames: id
             referencedTableName: course
             validate: true
@@ -403,7 +403,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: app_user_id
             baseTableName: app_user_course_semester_role
-            constraintName: app_user_id_fk
+            constraintName: app_user_course_semester_role_app_user_id_fk
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
@@ -411,7 +411,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: course_semester_role_id
             baseTableName: app_user_course_semester_role
-            constraintName: course_semester_role_id_fk
+            constraintName: app_user_course_semester_role_course_semester_role_id_fk
             referencedColumnNames: id
             referencedTableName: course_semester_role
             validate: true
@@ -419,7 +419,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: course_semester_id
             baseTableName: app_user_course_semester_role
-            constraintName: course_semester_id_fk
+            constraintName: app_user_course_semester_role_course_semester_id_fk
             referencedColumnNames: id
             referencedTableName: course_semester
             validate: true
@@ -514,7 +514,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: author_id
             baseTableName: challenge
-            constraintName: author_id_fk
+            constraintName: challenge_author_id_fk
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
@@ -522,7 +522,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: course_semester_id
             baseTableName: challenge
-            constraintName: course_semester_id_fk
+            constraintName: challenge_course_semester_id_fk
             referencedColumnNames: id
             referencedTableName: course_semester
             validate: true
@@ -530,7 +530,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: challenge_kind_id
             baseTableName: challenge
-            constraintName: challenge_kind_id_fk
+            constraintName: challenge_challenge_kind_id_fk
             referencedColumnNames: id
             referencedTableName: challenge_kind
             validate: true
@@ -587,7 +587,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: author_id
             baseTableName: file_attachment
-            constraintName: author_id_fk
+            constraintName: file_attachment_author_id_fk
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
@@ -626,7 +626,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: challenge_id
             baseTableName: challenge_file_attachment
-            constraintName: challenge_id_fk
+            constraintName: challenge_file_attachment_challenge_id_fk
             referencedColumnNames: id
             referencedTableName: challenge
             validate: true
@@ -634,7 +634,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: file_attachment_id
             baseTableName: challenge_file_attachment
-            constraintName: file_attachment_id_fk
+            constraintName: challenge_file_attachment_file_attachment_id_fk
             referencedColumnNames: id
             referencedTableName: file_attachment
             validate: true
@@ -676,7 +676,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: app_user_id
             baseTableName: permitted_app_user_challenge
-            constraintName: app_user_id_fk
+            constraintName: permitted_app_user_challenge_app_user_id_fk
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
@@ -684,7 +684,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: challenge_id
             baseTableName: permitted_app_user_challenge
-            constraintName: challenge_id_fk
+            constraintName: permitted_app_user_challenge_challenge_id_fk
             referencedColumnNames: id
             referencedTableName: challenge
             validate: true
@@ -811,7 +811,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: team_id
             baseTableName: solution
-            constraintName: team_id_fk
+            constraintName: solution_team_id_fk
             referencedColumnNames: id
             referencedTableName: team
             validate: true
@@ -819,7 +819,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: status_id
             baseTableName: solution
-            constraintName: status_id_fk
+            constraintName: solution_status_id_fk
             referencedColumnNames: id
             referencedTableName: status
             validate: true
@@ -827,7 +827,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: challenge_id
             baseTableName: solution
-            constraintName: challenge_id_fk
+            constraintName: solution_challenge_id_fk
             referencedColumnNames: id
             referencedTableName: challenge
             validate: true
@@ -879,7 +879,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: solution_id
             baseTableName: review
-            constraintName: solution_id_fk
+            constraintName: review_solution_id_fk
             referencedColumnNames: id
             referencedTableName: solution
             validate: true
@@ -887,7 +887,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: app_user_id
             baseTableName: review
-            constraintName: app_user_id_fk
+            constraintName: review_app_user_id_fk
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
@@ -895,7 +895,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: feedback_id
             baseTableName: review
-            constraintName: feedback_id_fk
+            constraintName: review_feedback_id_fk
             referencedColumnNames: id
             referencedTableName: feedback
             validate: true
@@ -903,7 +903,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: review_template_id
             baseTableName: review
-            constraintName: review_template_id_fk
+            constraintName: review_review_template_id_fk
             referencedColumnNames: id
             referencedTableName: review_template
             validate: true
@@ -951,7 +951,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: challenge_id
             baseTableName: requirement
-            constraintName: challenge_id_fk
+            constraintName: requirement_challenge_id_fk
             referencedColumnNames: id
             referencedTableName: challenge
             validate: true
@@ -996,7 +996,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: requirement_id
             baseTableName: requirement_review
-            constraintName: requirement_id_fk
+            constraintName: requirement_review_requirement_id_fk
             referencedColumnNames: id
             referencedTableName: requirement
             validate: true
@@ -1004,7 +1004,7 @@ databaseChangeLog:
         - addForeignKeyConstraint:
             baseColumnNames: review_id
             baseTableName: requirement_review
-            constraintName: review_id_fk
+            constraintName: requirement_review_review_id_fk
             referencedColumnNames: id
             referencedTableName: review
             validate: true
