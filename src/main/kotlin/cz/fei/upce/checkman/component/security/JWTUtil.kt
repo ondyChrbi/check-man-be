@@ -3,7 +3,6 @@ package cz.fei.upce.checkman.component.security
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.security.core.userdetails.User
 import org.springframework.stereotype.Component
 import java.util.Date
 import javax.annotation.PostConstruct
@@ -17,7 +16,7 @@ class JWTUtil() {
     @Value("\${jwt.expiration}")
     private val expiration: String = ""
 
-    private var key: SecretKey = Keys.hmacShaKeyFor(byteArrayOf())
+    private lateinit var key: SecretKey
 
     @PostConstruct
     fun init() = run { key = Keys.hmacShaKeyFor(secret.toByteArray()) }
@@ -40,9 +39,9 @@ class JWTUtil() {
     fun isValid(token : String) =
         isNotExpired(token)
 
-    fun generateToken(user: User) = Jwts.builder()
+    fun generateToken(username : String) = Jwts.builder()
         .setClaims(mapOf<String, Any>())
-        .setSubject(user.username)
+        .setSubject(username)
         .setIssuedAt(Date())
         .setExpiration(Date(Date().time + expiration.toLong()))
         .signWith(key)

@@ -9,12 +9,13 @@ spring:
     username: checkman
     password: checkman
   security:
-    permitPaths: /login, /v3/api-docs/**, /swagger-ui.html
+    permitPaths: /v1/authentication/login, /v3/api-docs/**, /swagger-ui.html
 logging:
   level:
     liquibase : info
     org:
       springframework:
         r2dbc: debug
+
 server:
   port: 9001

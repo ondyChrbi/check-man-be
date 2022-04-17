@@ -3,4 +3,4 @@ jwt:
   expiration: 28800000
 spring:
   security:
-    permitPaths: /login
+    permitPaths: /v1/authentication/login
