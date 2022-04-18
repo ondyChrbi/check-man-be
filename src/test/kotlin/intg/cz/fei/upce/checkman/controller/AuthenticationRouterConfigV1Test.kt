@@ -19,7 +19,7 @@ import java.time.LocalDateTime
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @AutoConfigureWebTestClient
-internal class AuthenticationControllerV1Test {
+internal class AuthenticationRouterConfigV1Test {
     @Autowired
     private lateinit var webTestClient : WebTestClient
 

@@ -1,4 +1,4 @@
-package cz.fei.upce.checkman.controller
+package cz.fei.upce.checkman.conf.controller
 
 import cz.fei.upce.checkman.handler.AuthenticationHandlerV1
 import org.springframework.context.annotation.Bean
@@ -8,10 +8,10 @@ import org.springframework.web.reactive.function.server.RequestPredicates
 import org.springframework.web.reactive.function.server.RouterFunctions
 
 @Configuration
-class AuthenticationControllerV1 {
+class AuthenticationRouterConfigV1 {
     @Bean
     fun authenticationRoute(handler : AuthenticationHandlerV1) = RouterFunctions.route()
-        .POST("${ROOT_PATH}/login", RequestPredicates.contentType(MediaType.APPLICATION_JSON), handler::login)
+        .POST("$ROOT_PATH/login", RequestPredicates.contentType(MediaType.APPLICATION_JSON), handler::login)
         .build()
 
     private companion object{

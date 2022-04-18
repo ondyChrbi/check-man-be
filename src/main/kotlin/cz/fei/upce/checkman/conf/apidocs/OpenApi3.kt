@@ -1,4 +1,4 @@
-package cz.fei.upce.checkman.conf
+package cz.fei.upce.checkman.conf.apidocs
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.info.Contact
