@@ -47,7 +47,7 @@ dependencies {
 	runtimeOnly("org.springdoc:springdoc-openapi-kotlin:1.6.7")
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.2")
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.2")
-	testImplementation("io.r2dbc:r2dbc-h2:0.9.1.RELEASE")
+	testImplementation("io.r2dbc:r2dbc-h2")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.7")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

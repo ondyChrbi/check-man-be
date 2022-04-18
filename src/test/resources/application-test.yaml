@@ -1,6 +1,9 @@
 spring:
+  test:
+    database:
+      replace: none
   liquibase:
     change-log: classpath:db/changelog/changelog-master.yaml
-    url: jdbc:h2:mem:////testdb
+    url: jdbc:h2:mem:~/db/testdb;DB_CLOSE_DELAY=-1
   r2dbc:
-    url: r2dbc:h2:mem:////testdb
+    url: r2dbc:h2:mem:///~/db/testdb
