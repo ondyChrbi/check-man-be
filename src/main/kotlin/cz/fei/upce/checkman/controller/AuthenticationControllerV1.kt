@@ -1,24 +1,20 @@
 package cz.fei.upce.checkman.controller
 
-import cz.fei.upce.checkman.dto.security.AuthenticationRequestDtoV1
-import cz.fei.upce.checkman.service.AuthenticationServiceV1
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.switchIfEmpty
+import cz.fei.upce.checkman.handler.AuthenticationHandlerV1
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.server.RequestPredicates
+import org.springframework.web.reactive.function.server.RouterFunctions
 
-@RestController
-@RequestMapping("/v1/authentication")
-class AuthenticationControllerV1(private val authenticationService : AuthenticationServiceV1) {
-    @PostMapping("/login")
-    fun login(@Validated @RequestBody authRequest: AuthenticationRequestDtoV1) =
-        authenticationService.authenticate(authRequest)
-            .map { ResponseEntity.ok(it) }
-            .switchIfEmpty { Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()) }
-            .log()
+@Configuration
+class AuthenticationControllerV1 {
+    @Bean
+    fun authenticationRoute(handler : AuthenticationHandlerV1) = RouterFunctions.route()
+        .POST("${ROOT_PATH}/login", RequestPredicates.contentType(MediaType.APPLICATION_JSON), handler::login)
+        .build()
+
+    private companion object{
+        const val ROOT_PATH = "/v1/authentication"
+    }
 }
