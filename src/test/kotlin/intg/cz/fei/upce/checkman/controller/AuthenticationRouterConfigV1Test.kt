@@ -2,8 +2,8 @@ package cz.fei.upce.checkman.controller
 
 import cz.fei.upce.checkman.component.security.JWTUtil
 import cz.fei.upce.checkman.domain.user.AppUser
-import cz.fei.upce.checkman.dto.security.AuthenticationRequestDtoV1
-import cz.fei.upce.checkman.dto.security.AuthenticationResponseDtoV1
+import cz.fei.upce.checkman.dto.security.authentication.AuthenticationRequestDtoV1
+import cz.fei.upce.checkman.dto.security.authentication.AuthenticationResponseDtoV1
 import cz.fei.upce.checkman.repository.user.AppUserRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*

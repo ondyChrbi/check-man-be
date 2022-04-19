@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.handler
 
-import cz.fei.upce.checkman.dto.security.AuthenticationRequestDtoV1
+import cz.fei.upce.checkman.dto.security.authentication.AuthenticationRequestDtoV1
 import cz.fei.upce.checkman.service.AuthenticationServiceV1
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType

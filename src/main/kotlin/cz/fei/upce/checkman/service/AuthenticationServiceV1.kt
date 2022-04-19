@@ -1,8 +1,8 @@
 package cz.fei.upce.checkman.service
 
 import cz.fei.upce.checkman.component.security.JWTUtil
-import cz.fei.upce.checkman.dto.security.AuthenticationRequestDtoV1
-import cz.fei.upce.checkman.dto.security.AuthenticationResponseDtoV1
+import cz.fei.upce.checkman.dto.security.authentication.AuthenticationRequestDtoV1
+import cz.fei.upce.checkman.dto.security.authentication.AuthenticationResponseDtoV1
 import org.springframework.stereotype.Service
 
 @Service

@@ -1,4 +1,4 @@
-package cz.fei.upce.checkman.dto.security
+package cz.fei.upce.checkman.dto.security.authentication
 
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull

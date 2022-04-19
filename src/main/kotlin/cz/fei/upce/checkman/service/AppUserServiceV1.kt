@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.service
 
-import cz.fei.upce.checkman.dto.security.AuthenticationRequestDtoV1
+import cz.fei.upce.checkman.dto.security.authentication.AuthenticationRequestDtoV1
 import cz.fei.upce.checkman.repository.user.AppUserRepository
 import org.springframework.stereotype.Service
 
