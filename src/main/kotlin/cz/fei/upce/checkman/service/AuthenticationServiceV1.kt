@@ -1,6 +1,7 @@
 package cz.fei.upce.checkman.service
 
 import cz.fei.upce.checkman.component.security.JWTUtil
+import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.security.authentication.AuthenticationRequestDtoV1
 import cz.fei.upce.checkman.dto.security.authentication.AuthenticationResponseDtoV1
 import org.springframework.stereotype.Service
@@ -11,4 +12,7 @@ class AuthenticationServiceV1(private val userService : AppUserServiceV1, privat
         userService.findUser(authenticationRequest)
             .map { AuthenticationResponseDtoV1(jwtUtil.generateToken(authenticationRequest.stagId)) }
             .log()
+
+    fun register(appUser: AppUser) =
+        userService.save(appUser)
 }

@@ -10,11 +10,12 @@ import org.springframework.web.reactive.function.server.RouterFunctions
 @Configuration
 class AuthenticationRouterConfigV1 {
     @Bean
-    fun authenticationRoute(handler : AuthenticationHandlerV1) = RouterFunctions.route()
+    fun authentication(handler : AuthenticationHandlerV1) = RouterFunctions.route()
         .POST("$ROOT_PATH/login", RequestPredicates.contentType(MediaType.APPLICATION_JSON), handler::login)
+        .POST("$ROOT_PATH/register", RequestPredicates.contentType(MediaType.APPLICATION_JSON), handler::register)
         .build()
 
-    private companion object{
+    companion object{
         const val ROOT_PATH = "/v1/authentication"
     }
 }

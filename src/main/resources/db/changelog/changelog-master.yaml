@@ -16,6 +16,7 @@ databaseChangeLog:
                   type: varchar(256)
                   constraints:
                     nullable: false
+                    unique: true
               - column:
                   name : registration_date
                   type: timestamp

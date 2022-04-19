@@ -1,9 +1,10 @@
-package cz.fei.upce.checkman.controller
+package cz.fei.upce.checkman.conf.controller
 
 import cz.fei.upce.checkman.component.security.JWTUtil
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.security.authentication.AuthenticationRequestDtoV1
 import cz.fei.upce.checkman.dto.security.authentication.AuthenticationResponseDtoV1
+import cz.fei.upce.checkman.dto.security.registration.RegistrationRequestDtoV1
 import cz.fei.upce.checkman.repository.user.AppUserRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
@@ -115,10 +116,22 @@ internal class AuthenticationRouterConfigV1Test {
             .expectBody(String::class.java)
     }
 
+    @Test
+    fun registerWithNonExistingUserWillProvide200SuccessBodyWithId() {
+        databaseTemplate.insert(APP_USER).block()
 
+        webTestClient.post()
+            .uri(REGISTER_URI)
+            .bodyValue(RegistrationRequestDtoV1("st00002"))
+            .header("Authorization" , "Bearer ${jwtUtil.generateToken(APP_USER.stagId!!)}")
+            .exchange()
+            .expectStatus()
+            .isOk
+    }
 
     private companion object {
-        const val LOGIN_URI : String = "/v1/authentication/login"
+        const val LOGIN_URI : String = "${AuthenticationRouterConfigV1.ROOT_PATH}/login"
+        const val REGISTER_URI : String = "${AuthenticationRouterConfigV1.ROOT_PATH}/register"
         val APP_USER = AppUser(null, "st00001", LocalDateTime.now(), LocalDateTime.now(), false)
     }
 }
