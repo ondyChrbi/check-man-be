@@ -11,7 +11,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name : stag_id
                   type: varchar(256)
@@ -107,7 +106,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: name
                   type: varchar(64)
@@ -133,7 +131,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: app_user_id
                   type: bigint
@@ -180,7 +177,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: name
                   type: varchar(64)
@@ -227,7 +223,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: app_user_id
                   type: bigint
@@ -274,7 +269,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: name
                   type: varchar(32)
@@ -300,7 +294,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: stagId
                   type: varchar(128)
@@ -340,7 +333,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: note
                   type: text
@@ -383,7 +375,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: app_user_id
                   type: bigint
@@ -443,7 +434,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: name
                   type: varchar(128)
@@ -474,7 +464,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: name
                   type: varchar(128)
@@ -554,7 +543,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: name
                   type: varchar(128)
@@ -611,7 +599,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: challenge_id
                   type: bigint
@@ -658,7 +645,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: access_to
                   type: timestamp
@@ -708,7 +694,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: template
                   type: text
@@ -727,7 +712,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: name
                   type: varchar(32)
@@ -753,7 +737,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: name
                   type: varchar(32)
@@ -785,7 +768,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: upload_date
                   type: timestamp
@@ -851,7 +833,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: description
                   type: text
@@ -927,7 +908,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: name
                   type: varchar(256)
@@ -975,7 +955,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
                   name: point
                   type: int2
@@ -1015,3 +994,192 @@ databaseChangeLog:
             startValue: 0
             minValue: 0
             sequenceName: requirement_review_id_seq
+
+  - changeSet:
+      id: 23
+      author: ondrej.chrbolka
+      changes:
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: app_user
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: access_token
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: global_role
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: app_user_global_role
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: app_user_global_role
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: team
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: team
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: app_user_team
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: course_semester_role
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: course
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: course_semester
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: app_user_course_semester_role
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: challenge_kind
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: challenge
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: file_attachment
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: challenge_file_attachment
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: permitted_app_user_challenge
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: review_template
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: status
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: solution
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: review
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: requirement
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: requirement_review
+
