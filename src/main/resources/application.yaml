@@ -4,3 +4,8 @@ jwt:
 spring:
   security:
     permitPaths: /v1/authentication/login
+
+check-man:
+  team:
+    private:
+      post-fix: private

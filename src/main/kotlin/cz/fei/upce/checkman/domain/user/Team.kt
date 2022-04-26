@@ -10,6 +10,7 @@ data class Team(
     var name: String? = null,
     var creationDate: LocalDateTime? = null,
     var private: Boolean? = null,
+    var maxMembers : Int? = null,
     var minMembers: Int? = null,
     var user: AppUser? = null
 )
