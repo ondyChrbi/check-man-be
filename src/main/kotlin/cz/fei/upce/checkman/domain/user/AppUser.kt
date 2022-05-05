@@ -8,7 +8,9 @@ import java.time.LocalDateTime
 data class AppUser(
     @Id var id: Long? = null,
     var stagId: String? = null,
+    var mail: String? = null,
+    var displayName: String? = null,
     var registrationDate: LocalDateTime? = null,
     var lastAccessDate: LocalDateTime? = null,
-    var disabled: Boolean? = null
+    var disabled: Boolean? = false
 )

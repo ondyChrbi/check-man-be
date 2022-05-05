@@ -17,7 +17,7 @@ class WebSecurityConfig(
     private val authenticationManager: AuthenticationManager,
     private val securityContextRepository: SecurityContextRepository) {
 
-    @Value("\${spring.security.permitPaths}")
+    @Value("\${spring.security.permit_paths}")
     private var permitPaths : Array<String> = arrayOf()
 
     @Bean

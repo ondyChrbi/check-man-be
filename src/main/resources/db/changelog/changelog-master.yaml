@@ -18,6 +18,17 @@ databaseChangeLog:
                     nullable: false
                     unique: true
               - column:
+                  name : mail
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name : display_name
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
                   name : registration_date
                   type: timestamp
                   constraints:

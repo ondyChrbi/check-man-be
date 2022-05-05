@@ -132,6 +132,6 @@ internal class AuthenticationRouterConfigV1Test {
     private companion object {
         const val LOGIN_URI : String = "${AuthenticationRouterConfigV1.ROOT_PATH}/login"
         const val REGISTER_URI : String = "${AuthenticationRouterConfigV1.ROOT_PATH}/register"
-        val APP_USER = AppUser(null, "st00001", LocalDateTime.now(), LocalDateTime.now(), false)
+        val APP_USER = AppUser(null, "st00001", "", "" ,LocalDateTime.now(), LocalDateTime.now(), false)
     }
 }

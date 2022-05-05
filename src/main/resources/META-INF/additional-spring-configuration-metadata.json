@@ -6,7 +6,7 @@
       "description": "The postfix of private team names (team for specific user)."
     },
     {
-      "name": "spring.security.permitPaths",
+      "name": "spring.security.permit_paths",
       "type": "java.lang.String[]",
       "description": "URLs not requiring user authentication process or authorities."
     },

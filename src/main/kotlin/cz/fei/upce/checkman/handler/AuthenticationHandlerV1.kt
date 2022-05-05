@@ -3,7 +3,7 @@ package cz.fei.upce.checkman.handler
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.security.authentication.AuthenticationRequestDtoV1
 import cz.fei.upce.checkman.dto.security.registration.RegistrationRequestDtoV1
-import cz.fei.upce.checkman.service.AuthenticationServiceV1
+import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component

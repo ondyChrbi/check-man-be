@@ -9,13 +9,26 @@ spring:
     username: checkman
     password: checkman
   security:
-    permitPaths: /v1/authentication/login, /v3/api-docs/**, /swagger-ui.html
+    permitPaths: /v1/authentication/**, /v3/api-docs/**, /swagger-ui.html
+
+login:
+  provider:
+    oauth2:
+      microsoft:
+        client_id: f57c8ea6-a11a-4a26-9ca3-924b7cedab17
+        client_secret: xkp8Q~5K2zbwFYSPk0V6unz1p10kC~C9q6Vc2ca.
+
 logging:
   level:
     liquibase : info
     org:
       springframework:
         r2dbc: debug
+    reactor:
+      netty:
+        http:
+          client:
+            HttpClient: debug
 
 server:
   port: 9001
