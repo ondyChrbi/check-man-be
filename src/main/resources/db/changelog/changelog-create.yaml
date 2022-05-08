@@ -131,6 +131,16 @@ databaseChangeLog:
             minValue: 0
             sequenceName: global_role_id_seq
 
+        - createIndex:
+            clustered: true
+            columns:
+              - column:
+                  descending: true
+                  name: name
+            indexName: idx_global_role_name
+            tableName: global_role
+            unique: true
+
   - changeSet:
       id: create-4
       author: ondrej.chrbolka
