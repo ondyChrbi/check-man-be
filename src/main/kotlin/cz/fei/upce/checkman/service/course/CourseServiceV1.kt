@@ -1,6 +1,5 @@
 package cz.fei.upce.checkman.service.course
 
-import cz.fei.upce.checkman.domain.course.CourseSemester
 import cz.fei.upce.checkman.dto.course.CourseDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterDtoV1
 import cz.fei.upce.checkman.repository.course.CourseRepository
@@ -14,23 +13,11 @@ class CourseServiceV1(
 ) {
     fun add(courseDto: CourseDtoV1) = courseRepository.save(courseDto.toEntity())
         .map { courseDto.withId(it.id) }
-        .flatMap(this::saveSemesters)
+        .flatMap { saveSemesters(it) }
         .map { courseDto.withSemesters(it) }
 
     private fun saveSemesters(courseDto: CourseDtoV1) =
-        courseSemesterRepository.saveAll(courseDto.semesters.map {
-            CourseSemester(
-                note = it.note,
-                dateStart = it.startDate,
-                dateEnd = it.endDate,
-                courseId = courseDto.id
-            )
-        }).map {
-            CourseSemesterDtoV1(
-                id = it.id,
-                note = it.note,
-                startDate = it.dateStart,
-                endDate = it.dateEnd
-            )
-        }.collectList()
+        courseSemesterRepository.saveAll(
+            courseDto.semesters.map { it.toEntity(courseDto) }
+        ).map { CourseSemesterDtoV1.fromEntity(it) }.collectList()
 }
