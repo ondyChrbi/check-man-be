@@ -9,7 +9,7 @@ spring:
     username: checkman
     password: checkman
   security:
-    permitPaths: /v1/authentication/**, /v3/api-docs/**, /swagger-ui.html
+    permit_paths: /v1/authentication/**, /v3/api-docs/**, /swagger-ui.html
 
 login:
   provider:

@@ -23,8 +23,8 @@ class WebSecurityConfig(
     @Bean
     fun securityWebFilterChain(http : ServerHttpSecurity) =
         http.exceptionHandling()
-            .authenticationEntryPoint { swe, ex -> Mono.fromRunnable { swe.response.statusCode = HttpStatus.UNAUTHORIZED } }
-            .accessDeniedHandler { swe, denied -> Mono.fromRunnable { swe.response.statusCode = HttpStatus.FORBIDDEN } }
+            .authenticationEntryPoint { swe, _ -> Mono.fromRunnable { swe.response.statusCode = HttpStatus.UNAUTHORIZED } }
+            .accessDeniedHandler { swe, _ -> Mono.fromRunnable { swe.response.statusCode = HttpStatus.FORBIDDEN } }
             .and()
             .csrf().disable()
             .formLogin().disable()

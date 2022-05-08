@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 data class CourseSemester(
     @Id var id: Long? = null,
     var note: String? = null,
-    var startDate: LocalDateTime? = null,
-    var endDate: LocalDateTime? = null,
-    var course: Course? = null
+    var dateStart: LocalDateTime? = null,
+    var dateEnd: LocalDateTime? = null,
+    var courseId: Long? = null
 )

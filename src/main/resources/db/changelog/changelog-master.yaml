@@ -307,7 +307,7 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
               - column:
-                  name: stagId
+                  name: stag_id
                   type: varchar(128)
               - column:
                   name: name
