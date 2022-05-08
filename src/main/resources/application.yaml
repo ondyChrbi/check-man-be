@@ -1,7 +1,17 @@
 jwt:
   secret: MIICXgIBAAKBgQCUMQwvELcqmvcsCfOVEGjqBFX8ckLYuNDq2PrbEw32XnXAnuQE
   expiration: 28800000
+
 spring:
+  liquibase:
+    change-log: classpath:db/changelog/changelog-master.yaml
+    url: jdbc:postgresql://localhost:5432/checkman
+    user: checkman
+    password: checkman
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/checkman
+    username: checkman
+    password: checkman
   security:
     permit_paths: /v1/authentication/**
 

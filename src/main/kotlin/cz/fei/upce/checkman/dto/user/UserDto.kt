@@ -1,4 +1,4 @@
-package cz.fei.upce.checkman.dto
+package cz.fei.upce.checkman.dto.user
 
 import java.util.*
 
