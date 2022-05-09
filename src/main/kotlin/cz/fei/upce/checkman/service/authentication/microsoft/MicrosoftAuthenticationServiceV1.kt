@@ -77,14 +77,12 @@ class MicrosoftAuthenticationServiceV1(
 
     fun finish(code: String) = retrieveAuthToken(code)
         .flatMap(this::retrievePersonalInfo)
-        .flatMap(this::checkValidStagMail)
+        .flatMap(this::checkValidStagCredentials)
         .flatMap(this::authenticate)
         .log()
 
     private fun retrieveAuthToken(code: String): Mono<MicrosoftAuthTokenResponseDtoV1> {
         log.info("Contacting authentication API with code: $code")
-
-
 
         return webClient.post()
             .uri(tokenEndpoint)
@@ -114,12 +112,12 @@ class MicrosoftAuthenticationServiceV1(
             .bodyToMono(MicrosoftMeResponseDtoV1::class.java)
     }
 
-    private fun checkValidStagMail(meResponse: MicrosoftMeResponseDtoV1): Mono<MicrosoftMeResponseDtoV1> {
-        if (meResponse.userPrincipalName == null || meResponse.mail == null || !meResponse.userPrincipalName.contains(MAIL_DELIMITER)) {
+    private fun checkValidStagCredentials(meResponse: MicrosoftMeResponseDtoV1): Mono<MicrosoftMeResponseDtoV1> {
+        if (isNotValidCredentials(meResponse)) {
             return Mono.error(MicrosoftNotValidUserCredentialsException("userPrincipalName"))
         }
 
-        val domain = meResponse.userPrincipalName.substringAfter(MAIL_DELIMITER)
+        val domain = meResponse.userPrincipalName!!.substringAfter(MAIL_DELIMITER)
         if (!permitEmails.contains(domain)) {
             return Mono.error(NotUniversityMicrosoftAccountException(domain))
         }
@@ -142,5 +140,14 @@ class MicrosoftAuthenticationServiceV1(
         const val SCOPES_SEPARATOR = " "
 
         val log: Logger = LoggerFactory.getLogger(this::class.java)
+
+        fun isNotValidCredentials(meResponse: MicrosoftMeResponseDtoV1) = !isValidCredentials(meResponse)
+
+        fun isValidCredentials(meResponse: MicrosoftMeResponseDtoV1) =
+            meResponse.userPrincipalName != null && meResponse.userPrincipalName.isNotBlank()
+                    && meResponse.userPrincipalName.contains(MAIL_DELIMITER)
+                    && meResponse.displayName != null && meResponse.displayName.isNotBlank()
+                    && meResponse.mail != null && meResponse.mail.isNotBlank()
+
     }
 }

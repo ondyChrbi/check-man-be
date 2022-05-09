@@ -4,6 +4,8 @@ import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.repository.user.AppUserTeamRepository
 import cz.fei.upce.checkman.repository.user.TeamRepository
+import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
+import cz.fei.upce.checkman.service.appuser.TeamServiceV1
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -33,12 +35,16 @@ internal class AppUserServiceV1Test {
     @Autowired
     private lateinit var appUserTeamRepository: AppUserTeamRepository
 
-    private lateinit var testAppUser : AppUser
+    private lateinit var testAppUser: AppUser
 
     @BeforeEach
     internal fun setUp() {
         testAppUser = AppUser(
-            stagId = "st55551", registrationDate = LocalDateTime.now(), lastAccessDate = LocalDateTime.now(),
+            stagId = "st55551",
+            mail = "test@test.com",
+            displayName = "test",
+            registrationDate = LocalDateTime.now(),
+            lastAccessDate = LocalDateTime.now(),
             disabled = false
         )
     }
@@ -71,7 +77,12 @@ internal class AppUserServiceV1Test {
         val user = appUserService.save(testAppUser).block()
 
         StepVerifier.create(teamRepository.findPersonalTeam(user!!.id!!))
-            .expectNextMatches { it.name == TeamServiceV1.createPrivateTeamName(testAppUser.stagId!!, privateTeamPostFix) }
+            .expectNextMatches {
+                it.name == TeamServiceV1.createPrivateTeamName(
+                    testAppUser.stagId!!,
+                    privateTeamPostFix
+                )
+            }
             .verifyComplete()
     }
 }

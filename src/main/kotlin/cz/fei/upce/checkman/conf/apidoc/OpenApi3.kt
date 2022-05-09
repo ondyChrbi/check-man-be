@@ -1,4 +1,4 @@
-package cz.fei.upce.checkman.conf.apidocs
+package cz.fei.upce.checkman.conf.apidoc
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType

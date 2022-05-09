@@ -1,8 +1,8 @@
 package cz.fei.upce.checkman.controller
 
-import cz.fei.upce.checkman.doc.CreateCourseEndpointV1
-import cz.fei.upce.checkman.doc.DeleteCourseEndpointV1
-import cz.fei.upce.checkman.doc.UpdateCourseEndpointV1
+import cz.fei.upce.checkman.doc.course.CreateCourseEndpointV1
+import cz.fei.upce.checkman.doc.course.DeleteCourseEndpointV1
+import cz.fei.upce.checkman.doc.course.UpdateCourseEndpointV1
 import cz.fei.upce.checkman.dto.course.CourseDtoV1
 import cz.fei.upce.checkman.service.course.CourseServiceV1
 import io.swagger.v3.oas.annotations.tags.Tag

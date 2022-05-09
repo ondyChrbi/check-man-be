@@ -4,7 +4,7 @@ import cz.fei.upce.checkman.component.security.JWTUtil
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.security.authentication.AuthenticationRequestDtoV1
 import cz.fei.upce.checkman.dto.security.authentication.AuthenticationResponseDtoV1
-import cz.fei.upce.checkman.service.AppUserServiceV1
+import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

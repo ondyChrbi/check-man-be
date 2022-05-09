@@ -261,7 +261,7 @@ internal class MicrosoftAuthenticationControllerV1Test {
         const val MICROSOFT_ME_URI = "/v1.0/me"
 
         const val DISPLAY_NAME = "test"
-        const val MAIL = "$DISPLAY_NAME@test.cz"
+        const val MAIL = "$DISPLAY_NAME@test.com"
         const val USER_PRINCIPAL_NAME = MAIL
 
         val AUTH_RESPONSE = MicrosoftAuthTokenResponseDtoV1(accessToken = UUID.randomUUID().toString())

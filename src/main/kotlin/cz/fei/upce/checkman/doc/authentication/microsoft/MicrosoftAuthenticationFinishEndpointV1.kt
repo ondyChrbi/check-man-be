@@ -1,6 +1,6 @@
-package cz.fei.upce.checkman.doc
+package cz.fei.upce.checkman.doc.authentication.microsoft
 
-import cz.fei.upce.checkman.dto.course.CourseDtoV1
+import cz.fei.upce.checkman.dto.security.authentication.AuthenticationResponseDtoV1
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -12,29 +12,30 @@ import java.lang.annotation.Inherited
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
-@Operation(summary = "Update existing course based on id.")
+@Operation(summary = "Start user authentication using Microsoft services.")
 @ApiResponses(
     ApiResponse(
         responseCode = "200",
-        description = "Updated entity.",
+        description = "JWT token.",
         content = [Content(
             mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = Schema(implementation = CourseDtoV1::class))]
+            schema = Schema(implementation = AuthenticationResponseDtoV1::class)
+        )]
     ),
     ApiResponse(
-        responseCode = "401",
-        description = "Not authorized.",
-        content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
-    ),
-    ApiResponse(
-        responseCode = "403",
-        description = "Missing permissions.",
+        responseCode = "406",
+        description = "Email or user principals provided by Microsoft services is not part of university domain or there are corrupted. ",
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     ),
     ApiResponse(
         responseCode = "500",
-        description = "Error occur on server side. Plase try it again later or contact technical support.",
+        description = "Error occur on server side. Please try it again later or contact technical support.",
+        content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
+    ),
+    ApiResponse(
+        responseCode = "503",
+        description = "Third party service is not available. Please try it again later or contact technical support.",
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     )
 )
-annotation class UpdateCourseEndpointV1
+annotation class MicrosoftAuthenticationFinishEndpointV1

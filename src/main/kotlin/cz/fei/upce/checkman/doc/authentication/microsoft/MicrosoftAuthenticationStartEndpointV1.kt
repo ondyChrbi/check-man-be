@@ -1,4 +1,4 @@
-package cz.fei.upce.checkman.doc
+package cz.fei.upce.checkman.doc.authentication.microsoft
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.headers.Header
@@ -25,7 +25,7 @@ import java.lang.annotation.Inherited
     ),
     ApiResponse(
         responseCode = "500",
-        description = "Error occur on server side. Plase try it again later or contact technical support.",
+        description = "Error occur on server side. Please try it again later or contact technical support.",
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     )
 )

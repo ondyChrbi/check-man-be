@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.component.security
 
-import cz.fei.upce.checkman.service.AppUserServiceV1
+import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
 import cz.fei.upce.checkman.service.role.GlobalRoleServiceV1
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken

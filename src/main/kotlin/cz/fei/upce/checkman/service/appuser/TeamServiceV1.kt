@@ -1,4 +1,4 @@
-package cz.fei.upce.checkman.service
+package cz.fei.upce.checkman.service.appuser
 
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.domain.user.AppUserTeam
