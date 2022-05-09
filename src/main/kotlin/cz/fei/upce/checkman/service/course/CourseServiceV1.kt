@@ -16,6 +16,13 @@ class CourseServiceV1(
         .flatMap { saveSemesters(it) }
         .map { courseDto.withSemesters(it) }
 
+    fun update(courseId: Long, courseDto: CourseDtoV1) = courseRepository.findById(courseId)
+        .map { courseDto.toEntity(it) }
+        .flatMap { courseRepository.save(it) }
+        .map { courseDto.withId(it.id) }
+
+    fun delete(courseId: Long) = courseRepository.deleteById(courseId)
+
     private fun saveSemesters(courseDto: CourseDtoV1) =
         courseSemesterRepository.saveAll(
             courseDto.semesters.map { it.toEntity(courseDto) }

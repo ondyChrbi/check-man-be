@@ -1,6 +1,6 @@
 spring:
   security:
-    permit_paths: /v1/authentication/**, /v3/api-docs/**, /swagger-ui.html
+    permit_paths: /v1/authentication/**, /v3/api-docs/**, /swagger-ui.html, /webjars/swagger-ui/**, /webjars/**
 
 login:
   provider:

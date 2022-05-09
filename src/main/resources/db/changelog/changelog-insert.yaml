@@ -12,3 +12,17 @@ databaseChangeLog:
                   name: name
                   value: ROLE_ASSIGN_ROLE
             tableName: global_role
+
+  - changeSet:
+      id: insert-2
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: ROLE_CREATE_COURSE
+            tableName: global_role

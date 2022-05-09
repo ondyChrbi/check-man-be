@@ -7,17 +7,17 @@ import java.time.LocalDateTime
 data class CourseSemesterDtoV1(
     var id: Long? = null,
     var note: String? = null,
-    var startDate: LocalDateTime? = null,
-    var endDate: LocalDateTime? = null,
+    var dateStart: LocalDateTime? = null,
+    var dateEnd: LocalDateTime? = null,
 ) : BaseDto<CourseSemester, CourseSemesterDtoV1> {
     override fun withId(id: Long?): CourseSemesterDtoV1 {
         this.id = id
         return this
     }
 
-    override fun toEntity() = CourseSemester(id, note, startDate, endDate)
+    override fun toEntity() = CourseSemester(id, note, dateStart, dateEnd)
 
-    fun toEntity(courseDto: CourseDtoV1) = CourseSemester(id, note, startDate, endDate, courseDto.id)
+    fun toEntity(courseDto: CourseDtoV1) = CourseSemester(id, note, dateStart, dateEnd, courseDto.id)
 
     companion object {
         fun fromEntity(courseSemester: CourseSemester) = CourseSemesterDtoV1(
@@ -26,5 +26,13 @@ data class CourseSemesterDtoV1(
             courseSemester.dateStart,
             courseSemester.dateEnd
         )
+    }
+
+    override fun toEntity(entity: CourseSemester): CourseSemester {
+        entity.note = note
+        entity.dateStart = dateStart
+        entity.dateEnd = dateEnd
+
+        return entity
     }
 }
