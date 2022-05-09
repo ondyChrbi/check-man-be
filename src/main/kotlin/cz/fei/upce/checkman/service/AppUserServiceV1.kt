@@ -8,7 +8,10 @@ import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 
 @Service
-class AppUserServiceV1(private val appUserRepository: AppUserRepository, private val teamService: TeamServiceV1) {
+class AppUserServiceV1(
+    private val appUserRepository: AppUserRepository,
+    private val teamService: TeamServiceV1
+) {
     fun findUser(authenticationRequest: AuthenticationRequestDtoV1) = findUser(authenticationRequest.stagId)
 
     fun findUser(stagId: String) = appUserRepository.findByStagIdEquals(stagId)
@@ -18,7 +21,7 @@ class AppUserServiceV1(private val appUserRepository: AppUserRepository, private
         return appUserRepository.save(appUser)
     }
 
-    fun updateLastAccessDate(stagId: String) : Mono<AppUser> {
+    fun updateLastAccessDate(stagId: String): Mono<AppUser> {
         return appUserRepository.findByStagIdEquals(stagId)
             .flatMap(this::updateLastAccessDate)
     }
