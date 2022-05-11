@@ -10,7 +10,7 @@ databaseChangeLog:
                   value: 0
               - column:
                   name: name
-                  value: ROLE_ASSIGN_ROLE
+                  value: ROLE_GLOBAL_ROLE_MANAGE
             tableName: global_role
 
   - changeSet:
@@ -24,5 +24,33 @@ databaseChangeLog:
                   value: 1
               - column:
                   name: name
+                  value: ROLE_GLOBAL_ROLE_VIEW
+            tableName: global_role
+
+  - changeSet:
+      id: insert-3
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
                   value: ROLE_COURSE_MANAGE
+            tableName: global_role
+
+  - changeSet:
+      id: insert-4
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: name
+                  value: ROLE_COURSE_SEMESTER_MANAGE
             tableName: global_role

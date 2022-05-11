@@ -19,6 +19,14 @@ data class CourseSemesterDtoV1(
 
     fun toEntity(courseDto: CourseDtoV1) = CourseSemester(id, note, dateStart, dateEnd, courseDto.id)
 
+    override fun toEntity(entity: CourseSemester): CourseSemester {
+        entity.note = note
+        entity.dateStart = dateStart
+        entity.dateEnd = dateEnd
+
+        return entity
+    }
+
     companion object {
         fun fromEntity(courseSemester: CourseSemester) = CourseSemesterDtoV1(
             courseSemester.id,
@@ -26,13 +34,5 @@ data class CourseSemesterDtoV1(
             courseSemester.dateStart,
             courseSemester.dateEnd
         )
-    }
-
-    override fun toEntity(entity: CourseSemester): CourseSemester {
-        entity.note = note
-        entity.dateStart = dateStart
-        entity.dateEnd = dateEnd
-
-        return entity
     }
 }

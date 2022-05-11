@@ -164,6 +164,26 @@ databaseChangeLog:
                   constraints:
                     nullable: false
 
+        - createIndex:
+            clustered: true
+            columns:
+              - column:
+                  descending: true
+                  name: app_user_id
+            indexName: idx_app_user_global_role_app_user_id
+            tableName: app_user_global_role
+            unique: true
+
+        - createIndex:
+            clustered: true
+            columns:
+              - column:
+                  descending: true
+                  name: global_role_id
+            indexName: idx_app_user_global_role_global_role_id
+            tableName: app_user_global_role
+            unique: true
+
         - addForeignKeyConstraint:
             baseColumnNames: app_user_id
             baseTableName: app_user_global_role
