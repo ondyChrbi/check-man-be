@@ -4,6 +4,7 @@ import cz.fei.upce.checkman.doc.course.CreateCourseEndpointV1
 import cz.fei.upce.checkman.doc.course.DeleteCourseEndpointV1
 import cz.fei.upce.checkman.doc.course.UpdateCourseEndpointV1
 import cz.fei.upce.checkman.dto.course.CourseDtoV1
+import cz.fei.upce.checkman.dto.course.CourseSemesterDtoV1
 import cz.fei.upce.checkman.service.course.CourseServiceV1
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
@@ -32,4 +33,20 @@ class CourseControllerV1(private var courseService: CourseServiceV1) {
     @DeleteCourseEndpointV1
     fun remove(@PathVariable courseId: Long) =
         courseService.delete(courseId).flatMap { Mono.just(ResponseEntity.noContent()) }
+
+    @PostMapping("/{courseId}/semester")
+    @PreAuthorize("hasAnyRole('ROLE_COURSE_MANAGE', 'ROLE_COURSE_SEMESTER_MANAGE')")
+    fun addSemester(@Valid @RequestBody courseSemesterDto: CourseSemesterDtoV1, @PathVariable courseId: Long) =
+        courseService.addSemester(courseId, courseSemesterDto)
+
+    @PutMapping("/{courseId}/semester/{semesterId}")
+    @PreAuthorize("hasAnyRole('ROLE_COURSE_MANAGE', 'ROLE_COURSE_SEMESTER_MANAGE')")
+    fun updateSemester(
+        @Valid @RequestBody courseSemesterDto: CourseSemesterDtoV1, @PathVariable courseId: Long,
+        @PathVariable semesterId: Long) =
+        courseService.updateSemester(courseId, semesterId, courseSemesterDto)
+
+    @DeleteMapping("/{courseId}/semester/{semesterId}")
+    @PreAuthorize("hasAnyRole('ROLE_COURSE_MANAGE', 'ROLE_COURSE_SEMESTER_MANAGE')")
+    fun deleteSemester(@PathVariable courseId: Long, @PathVariable semesterId: Long) = courseService.deleteSemester(courseId, semesterId)
 }
