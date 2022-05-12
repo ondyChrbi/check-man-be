@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.controller
 
-import cz.fei.upce.checkman.dto.course.CourseDtoV1
+import cz.fei.upce.checkman.dto.course.CourseResponseDtoV1
 import cz.fei.upce.checkman.repository.course.CourseRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -39,7 +39,7 @@ internal class CourseControllerV1Test {
     fun addNewCourseWithoutAuthenticationWillProvide401Unauthorized() {
         webTestClient.post()
             .uri(ADD_COURSE_URI)
-            .body(Mono.just(NEW_COURSE), CourseDtoV1::class.java)
+            .body(Mono.just(NEW_COURSE), CourseResponseDtoV1::class.java)
             .exchange()
             .expectStatus()
             .isEqualTo(HttpStatus.UNAUTHORIZED)
@@ -48,7 +48,7 @@ internal class CourseControllerV1Test {
     private companion object {
         const val ADD_COURSE_URI: String = "/v1/course"
 
-        val NEW_COURSE = CourseDtoV1(
+        val NEW_COURSE = CourseResponseDtoV1(
             stagId = UUID.randomUUID().toString(),
             name = UUID.randomUUID().toString()
         )

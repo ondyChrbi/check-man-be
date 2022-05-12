@@ -1,8 +1,10 @@
 package cz.fei.upce.checkman.service.course
 
 import cz.fei.upce.checkman.domain.course.CourseSemester
-import cz.fei.upce.checkman.dto.course.CourseDtoV1
-import cz.fei.upce.checkman.dto.course.CourseSemesterDtoV1
+import cz.fei.upce.checkman.dto.course.CourseRequestDtoV1
+import cz.fei.upce.checkman.dto.course.CourseResponseDtoV1
+import cz.fei.upce.checkman.dto.course.CourseSemesterRequestDtoV1
+import cz.fei.upce.checkman.dto.course.CourseSemesterResponseDtoV1
 import cz.fei.upce.checkman.repository.course.CourseRepository
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
@@ -14,14 +16,16 @@ class CourseServiceV1(
     private val courseRepository: CourseRepository,
     private val courseSemesterRepository: CourseSemesterRepository
 ) {
-    fun find(id: Long): Mono<CourseDtoV1> {
+    fun find(id: Long): Mono<CourseResponseDtoV1> {
         return courseRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-            .map { CourseDtoV1.fromEntity(it) }
+            .map { CourseResponseDtoV1.fromEntity(it) }
             .flatMap { assignSemesters(it) }
     }
 
-    fun add(courseDto: CourseDtoV1): Mono<CourseDtoV1> {
+    fun add(courseDto: CourseRequestDtoV1): Mono<CourseResponseDtoV1> = add(courseDto.toResponseDto())
+
+    fun add(courseDto: CourseResponseDtoV1): Mono<CourseResponseDtoV1> {
         return courseRepository.save(courseDto.toEntity())
             .map { courseDto.withId(it.id) }
             .flatMap { saveSemesters(it) }
@@ -29,7 +33,9 @@ class CourseServiceV1(
 
     }
 
-    fun update(courseId: Long, courseDto: CourseDtoV1): Mono<CourseDtoV1> {
+    fun update(courseId: Long, courseDto: CourseRequestDtoV1) = update(courseId, courseDto.toResponseDto())
+
+    fun update(courseId: Long, courseDto: CourseResponseDtoV1): Mono<CourseResponseDtoV1> {
         return courseRepository.findById(courseId)
             .map { courseDto.toEntity(it) }
             .flatMap { courseRepository.save(it) }
@@ -38,24 +44,33 @@ class CourseServiceV1(
 
     fun delete(courseId: Long) = courseRepository.deleteById(courseId)
 
-    fun findSemester(courseId: Long, semesterId: Long): Mono<CourseSemesterDtoV1> {
+    fun findSemester(courseId: Long, semesterId: Long): Mono<CourseSemesterResponseDtoV1> {
         return courseSemesterRepository.findById(semesterId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { checkCourseSemesterAssociation(courseId, it) }
-            .map { CourseSemesterDtoV1.fromEntity(it) }
+            .map { CourseSemesterResponseDtoV1.fromEntity(it) }
     }
 
-    fun addSemester(courseId: Long, courseSemesterDtoV1: CourseSemesterDtoV1): Mono<CourseSemesterDtoV1> {
+    fun addSemester(courseId: Long, courseSemesterDto: CourseSemesterRequestDtoV1) =
+        addSemester(courseId, courseSemesterDto.toResponseDto())
+
+    fun addSemester(
+        courseId: Long,
+        courseSemesterDtoV1: CourseSemesterResponseDtoV1
+    ): Mono<CourseSemesterResponseDtoV1> {
         return courseRepository.findById(courseId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { courseSemesterRepository.save(courseSemesterDtoV1.toEntity()) }
             .map { courseSemesterDtoV1.withId(it.id) }
     }
 
+    fun updateSemester(courseId: Long, semesterId: Long, courseSemesterDto: CourseSemesterRequestDtoV1) =
+        updateSemester(courseId, semesterId, courseSemesterDto.toResponseDto())
+
     fun updateSemester(
         courseId: Long, semesterId: Long,
-        courseSemesterDto: CourseSemesterDtoV1
-    ): Mono<CourseSemesterDtoV1> {
+        courseSemesterDto: CourseSemesterResponseDtoV1
+    ): Mono<CourseSemesterResponseDtoV1> {
         return courseSemesterRepository.findFirstByIdEqualsAndCourseIdEquals(semesterId, courseId)
             .switchIfEmpty(Mono.error(NotAssociatedSemesterWithCourseException(semesterId, courseId)))
             .map { courseSemesterDto.toEntity(it) }
@@ -63,10 +78,10 @@ class CourseServiceV1(
             .map { courseSemesterDto.withId(it.id) }
     }
 
-    private fun saveSemesters(courseDto: CourseDtoV1): Mono<MutableList<CourseSemesterDtoV1>> {
+    private fun saveSemesters(courseDto: CourseResponseDtoV1): Mono<MutableList<CourseSemesterResponseDtoV1>> {
         return courseSemesterRepository.saveAll(
             courseDto.semesters.map { it.toEntity(courseDto) }
-        ).map { CourseSemesterDtoV1.fromEntity(it) }.collectList()
+        ).map { CourseSemesterResponseDtoV1.fromEntity(it) }.collectList()
     }
 
     fun deleteSemester(courseId: Long, semesterId: Long): Mono<Void> {
@@ -75,9 +90,9 @@ class CourseServiceV1(
             .flatMap { courseSemesterRepository.deleteById(it.id!!) }
     }
 
-    private fun assignSemesters(courseDto: CourseDtoV1): Mono<CourseDtoV1> {
+    private fun assignSemesters(courseDto: CourseResponseDtoV1): Mono<CourseResponseDtoV1> {
         return courseSemesterRepository.findAllByCourseIdEquals(courseDto.id!!)
-            .map { CourseSemesterDtoV1.fromEntity(it) }
+            .map { CourseSemesterResponseDtoV1.fromEntity(it) }
             .collectList()
             .map { courseDto.withSemesters(it) }
     }

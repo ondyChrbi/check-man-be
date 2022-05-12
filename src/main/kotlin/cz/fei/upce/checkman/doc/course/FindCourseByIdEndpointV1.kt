@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.doc.course
 
-import cz.fei.upce.checkman.dto.course.CourseDtoV1
+import cz.fei.upce.checkman.dto.course.CourseResponseDtoV1
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -20,7 +20,7 @@ import java.lang.annotation.Inherited
         description = "Record",
         content = [Content(
             mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = Schema(implementation = CourseDtoV1::class)
+            schema = Schema(implementation = CourseResponseDtoV1::class)
         )]
     ),
     ApiResponse(
