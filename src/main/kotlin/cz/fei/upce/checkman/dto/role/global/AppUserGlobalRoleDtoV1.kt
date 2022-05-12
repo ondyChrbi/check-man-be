@@ -8,7 +8,7 @@ data class AppUserGlobalRoleDtoV1(
     @Id var id: Long? = null,
     var appUserId: Long? = null,
     var globalRoleId: Long? = null
-) : BaseDto<AppUserGlobalRole, AppUserGlobalRoleDtoV1> {
+): BaseDto<AppUserGlobalRole, AppUserGlobalRoleDtoV1>() {
     override fun withId(id: Long?): AppUserGlobalRoleDtoV1 {
         this.id = id
         return this

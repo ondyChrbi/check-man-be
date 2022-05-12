@@ -54,3 +54,31 @@ databaseChangeLog:
                   name: name
                   value: ROLE_COURSE_SEMESTER_MANAGE
             tableName: global_role
+
+  - changeSet:
+      id: insert-5
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 4
+              - column:
+                  name: name
+                  value: ROLE_COURSE_VIEW
+            tableName: global_role
+
+  - changeSet:
+      id: insert-6
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 5
+              - column:
+                  name: name
+                  value: ROLE_COURSE_SEMESTER_VIEW
+            tableName: global_role

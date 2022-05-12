@@ -9,7 +9,7 @@ data class CourseSemesterDtoV1(
     var note: String? = null,
     var dateStart: LocalDateTime? = null,
     var dateEnd: LocalDateTime? = null,
-) : BaseDto<CourseSemester, CourseSemesterDtoV1> {
+) : BaseDto<CourseSemester, CourseSemesterDtoV1>() {
     override fun withId(id: Long?): CourseSemesterDtoV1 {
         this.id = id
         return this

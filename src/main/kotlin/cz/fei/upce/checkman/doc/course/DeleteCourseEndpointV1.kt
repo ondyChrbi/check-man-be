@@ -11,11 +11,11 @@ import java.lang.annotation.Inherited
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
-@Operation(summary = "Create new course (semesters could be included)", security = [SecurityRequirement(name = "bearerAuth")])
+@Operation(summary = "Delete course.", security = [SecurityRequirement(name = "bearerAuth")])
 @ApiResponses(
     ApiResponse(
         responseCode = "204",
-        description = "Success",
+        description = "Success.",
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     ),
     ApiResponse(
@@ -26,6 +26,11 @@ import java.lang.annotation.Inherited
     ApiResponse(
         responseCode = "403",
         description = "Missing permissions.",
+        content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
+    ),
+    ApiResponse(
+        responseCode = "404",
+        description = "Record not found.",
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     ),
     ApiResponse(

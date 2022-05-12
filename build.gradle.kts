@@ -1,10 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "2.6.6"
+	id("org.springframework.boot") version "2.6.7"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
 	kotlin("jvm") version "1.6.10"
-	kotlin("plugin.spring") version "1.6.10"
+	kotlin("plugin.spring") version "1.6.21"
 	kotlin("plugin.jpa") version "1.6.10"
 }
 
@@ -23,9 +23,11 @@ repositories {
 }
 
 dependencies {
+	implementation ("org.springframework.boot:spring-boot-starter-data-r2dbc")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("org.springframework.hateoas:spring-hateoas:1.4.2")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -33,20 +35,19 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("org.liquibase:liquibase-core")
-	implementation ("org.springframework.boot:spring-boot-starter-data-r2dbc")
 	implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.8")
 	implementation("org.springdoc:springdoc-openapi-hateoas:1.6.8")
 	implementation("org.springdoc:springdoc-openapi-security:1.6.8")
 	implementation("org.springdoc:springdoc-openapi-ui:1.6.8")
-	implementation("io.jsonwebtoken:jjwt-api:0.11.2")
+	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2")
 	runtimeOnly("org.postgresql:postgresql")
 	runtimeOnly ("io.r2dbc:r2dbc-postgresql")
 	runtimeOnly("org.springdoc:springdoc-openapi-kotlin:1.6.8")
-	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.2")
-	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.2")
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 	testImplementation("io.r2dbc:r2dbc-h2")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.8")

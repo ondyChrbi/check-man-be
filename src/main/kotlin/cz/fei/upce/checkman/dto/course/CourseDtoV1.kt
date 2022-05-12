@@ -12,7 +12,7 @@ data class CourseDtoV1(
     var icon: String? = null,
     var template: String? = null,
     var semesters: Collection<CourseSemesterDtoV1> = emptyList()
-) : BaseDto<Course, CourseDtoV1> {
+): BaseDto<Course, CourseDtoV1>() {
     override fun withId(id: Long?): CourseDtoV1 {
         this.id = id
         return this
@@ -33,5 +33,16 @@ data class CourseDtoV1(
     fun withSemesters(semesters: Collection<CourseSemesterDtoV1>): CourseDtoV1 {
         this.semesters = semesters
         return this
+    }
+
+    companion object {
+        fun fromEntity(course: Course) = CourseDtoV1(
+            course.id,
+            course.stagId,
+            course.name,
+            course.dateCreation,
+            course.icon,
+            course.template
+        )
     }
 }

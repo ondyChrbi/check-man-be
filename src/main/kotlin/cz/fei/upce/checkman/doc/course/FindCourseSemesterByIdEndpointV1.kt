@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.doc.course
 
-import cz.fei.upce.checkman.dto.course.CourseDtoV1
+import cz.fei.upce.checkman.dto.course.CourseSemesterDtoV1
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -13,14 +13,14 @@ import java.lang.annotation.Inherited
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
-@Operation(summary = "Create new course (semesters could be included).", security = [SecurityRequirement(name = "bearerAuth")])
+@Operation(summary = "Create new course (semesters could be included)", security = [SecurityRequirement(name = "bearerAuth")])
 @ApiResponses(
     ApiResponse(
         responseCode = "200",
-        description = "Created entity with id.",
+        description = "Record",
         content = [Content(
             mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = Schema(implementation = CourseDtoV1::class)
+            schema = Schema(implementation = CourseSemesterDtoV1::class)
         )]
     ),
     ApiResponse(
@@ -34,9 +34,14 @@ import java.lang.annotation.Inherited
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     ),
     ApiResponse(
+        responseCode = "404",
+        description = "Record not found or semester is not associated with course.",
+        content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
+    ),
+    ApiResponse(
         responseCode = "500",
         description = "Error occur on server side. Please try it again later or contact technical support.",
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     )
 )
-annotation class CreateCourseEndpointV1
+annotation class FindCourseSemesterByIdEndpointV1
