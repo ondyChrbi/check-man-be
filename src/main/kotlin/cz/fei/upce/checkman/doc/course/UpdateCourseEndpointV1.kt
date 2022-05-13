@@ -23,6 +23,11 @@ import java.lang.annotation.Inherited
             schema = Schema(implementation = CourseResponseDtoV1::class))]
     ),
     ApiResponse(
+        responseCode = "400",
+        description = "Not valid request. Check all values.",
+        content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
+    ),
+    ApiResponse(
         responseCode = "401",
         description = "Not authorized.",
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
