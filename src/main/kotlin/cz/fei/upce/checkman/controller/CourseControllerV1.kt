@@ -24,6 +24,14 @@ import javax.validation.Valid
 @RequestMapping("/v1/course")
 @Tag(name = "Course V1", description = "Course API (V1)")
 class CourseControllerV1(private var courseService: CourseServiceV1) {
+    @GetMapping("")
+    @PreAuthorize("hasRole('$ROLE_COURSE_VIEW')")
+    @SearchCourseEndpointV1
+    fun search(@RequestParam(required = false, defaultValue = "") search: String)
+            : Mono<ResponseEntity<List<CourseResponseDtoV1>>> {
+        return courseService.search(search).collectList().map { ResponseEntity.ok(it) }
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('$ROLE_COURSE_VIEW')")
     @FindCourseByIdEndpointV1
@@ -54,6 +62,16 @@ class CourseControllerV1(private var courseService: CourseServiceV1) {
     @DeleteCourseEndpointV1
     fun remove(@PathVariable courseId: Long) =
         courseService.delete(courseId).flatMap { Mono.just(ResponseEntity.noContent()) }
+
+    @GetMapping("/{courseId}/semester")
+    @PreAuthorize("hasAnyRole('$ROLE_COURSE_VIEW', '$ROLE_COURSE_SEMESTER_VIEW')")
+    @SearchCourseSemesterEndpointV1
+    fun searchSemesters(
+        @RequestParam(required = false, defaultValue = "") search: String,
+        @PathVariable courseId: Long
+    ): Mono<ResponseEntity<List<CourseSemesterResponseDtoV1>>> {
+        return courseService.searchSemesters(search, courseId).collectList().map { ResponseEntity.ok(it) }
+    }
 
     @GetMapping("/{courseId}/semester/{semesterId}")
     @PreAuthorize("hasAnyRole('$ROLE_COURSE_VIEW', '$ROLE_COURSE_SEMESTER_VIEW')")

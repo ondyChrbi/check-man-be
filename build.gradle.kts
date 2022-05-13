@@ -40,6 +40,7 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-security:1.6.8")
 	implementation("org.springdoc:springdoc-openapi-ui:1.6.8")
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+	implementation("cz.jirutka.rsql:rsql-parser:2.1.0")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2")

@@ -1,5 +1,7 @@
 package cz.fei.upce.checkman.service.course
 
+import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRsqlSpecification
+import cz.fei.upce.checkman.domain.course.Course
 import cz.fei.upce.checkman.domain.course.CourseSemester
 import cz.fei.upce.checkman.dto.course.CourseRequestDtoV1
 import cz.fei.upce.checkman.dto.course.CourseResponseDtoV1
@@ -8,14 +10,30 @@ import cz.fei.upce.checkman.dto.course.CourseSemesterResponseDtoV1
 import cz.fei.upce.checkman.repository.course.CourseRepository
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Service
 class CourseServiceV1(
     private val courseRepository: CourseRepository,
-    private val courseSemesterRepository: CourseSemesterRepository
+    private val courseSemesterRepository: CourseSemesterRepository,
+    private val entityTemplate: R2dbcEntityTemplate,
+    private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRsqlSpecification
 ) {
+    fun search(search: String): Flux<CourseResponseDtoV1> {
+        val courses = if (search.isEmpty())
+            courseRepository.findAll()
+        else
+            entityTemplate.select(Course::class.java)
+                .matching(reactiveCriteriaRsqlSpecification.createCriteria(search))
+                .all()
+
+        return courses.map { CourseResponseDtoV1.fromEntity(it) }
+            .flatMap { assignSemesters(it) }
+    }
+
     fun find(id: Long): Mono<CourseResponseDtoV1> {
         return courseRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
@@ -44,6 +62,17 @@ class CourseServiceV1(
 
     fun delete(courseId: Long) = courseRepository.deleteById(courseId)
 
+    fun searchSemesters(search: String, courseId: Long): Flux<CourseSemesterResponseDtoV1> {
+        val semesters = if (search.isEmpty())
+            courseSemesterRepository.findAll()
+        else
+            entityTemplate.select(CourseSemester::class.java)
+                .matching(reactiveCriteriaRsqlSpecification.createCriteria(search))
+                .all()
+
+        return semesters.map { CourseSemesterResponseDtoV1.fromEntity(it) }
+    }
+
     fun findSemester(courseId: Long, semesterId: Long): Mono<CourseSemesterResponseDtoV1> {
         return courseSemesterRepository.findById(semesterId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
@@ -55,8 +84,7 @@ class CourseServiceV1(
         addSemester(courseId, courseSemesterDto.toResponseDto())
 
     fun addSemester(
-        courseId: Long,
-        courseSemesterDtoV1: CourseSemesterResponseDtoV1
+        courseId: Long, courseSemesterDtoV1: CourseSemesterResponseDtoV1
     ): Mono<CourseSemesterResponseDtoV1> {
         return courseRepository.findById(courseId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
