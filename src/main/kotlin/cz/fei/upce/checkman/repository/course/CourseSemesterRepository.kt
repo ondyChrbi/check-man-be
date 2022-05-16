@@ -10,4 +10,5 @@ import reactor.core.publisher.Mono
 interface CourseSemesterRepository : ReactiveCrudRepository<CourseSemester, Long> {
     fun findFirstByIdEqualsAndCourseIdEquals(courseSemesterId: Long, courseId: Long): Mono<CourseSemester>
     fun findAllByCourseIdEquals(courseId: Long): Flux<CourseSemester>
+    fun existsByIdEqualsAndCourseIdEquals(courseSemesterId: Long, courseId: Long): Mono<Boolean>
 }

@@ -3,3 +3,7 @@ springdoc:
     enabled: false
   swagger-ui:
     enabled: false
+
+server:
+  error:
+    include-stacktrace: never

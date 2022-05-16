@@ -7,6 +7,8 @@ import cz.fei.upce.checkman.dto.security.authentication.AuthenticationResponseDt
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
@@ -27,9 +29,9 @@ class AuthenticationServiceV1(private val userService: AppUserServiceV1, private
     }
 
     fun authenticate(appUser: AppUser): Mono<AuthenticationResponseDtoV1> {
-        return userService.findUser(appUser.stagId!!)
+        return userService.findUser(appUser.stagId)
             .switchIfEmpty { register(appUser) }
-            .flatMap { authenticate(appUser.stagId!!) }
+            .flatMap { authenticate(appUser.stagId) }
     }
 
     fun register(appUser: AppUser): Mono<AppUser> {
@@ -37,6 +39,14 @@ class AuthenticationServiceV1(private val userService: AppUserServiceV1, private
 
         appUser.registrationDate = LocalDateTime.now()
         return userService.save(appUser)
+    }
+
+    fun extractAuthenticateUser(authentication: Authentication): AppUser {
+        if (authentication is UsernamePasswordAuthenticationToken && authentication.principal is AppUser) {
+            return authentication.principal as AppUser
+        }
+
+        throw WrongSecurityPrincipalsException()
     }
 
     private companion object {

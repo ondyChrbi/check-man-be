@@ -38,6 +38,11 @@ import java.lang.annotation.Inherited
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     ),
     ApiResponse(
+        responseCode = "404",
+        description = "Record not found.",
+        content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
+    ),
+    ApiResponse(
         responseCode = "500",
         description = "Error occur on server side. Please try it again later or contact technical support.",
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]

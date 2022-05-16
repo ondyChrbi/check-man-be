@@ -1,5 +1,6 @@
 package cz.fei.upce.checkman.component.security
 
+import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
 import cz.fei.upce.checkman.service.role.GlobalRoleServiceV1
 import org.springframework.security.authentication.ReactiveAuthenticationManager
@@ -14,7 +15,7 @@ import reactor.kotlin.core.publisher.switchIfEmpty
 class AuthenticationManager(
     private val jwtUtil: JWTUtil,
     private val appUserServiceV1: AppUserServiceV1,
-    private val globalRoleServiceV1: GlobalRoleServiceV1
+    private val globalRoleService: GlobalRoleServiceV1
 ) : ReactiveAuthenticationManager {
     override fun authenticate(authentication: Authentication?): Mono<Authentication> {
         val authToken = authentication?.credentials.toString()
@@ -25,8 +26,13 @@ class AuthenticationManager(
             .switchIfEmpty { Mono.empty() }
             .flatMap { appUserServiceV1.findUser(username) }
             .switchIfEmpty { Mono.empty() }
-            .flatMap { globalRoleServiceV1.rolesByUser(it).collectList() }
-            .map { it.map { role -> SimpleGrantedAuthority(role.name) } }
-            .map { UsernamePasswordAuthenticationToken(username, null, it) }
+            .flatMap { authenticateUserWithRoles(it) }
+    }
+
+    private fun authenticateUserWithRoles(user: AppUser): Mono<UsernamePasswordAuthenticationToken> {
+        return globalRoleService.rolesByUser(user)
+            .map { role -> SimpleGrantedAuthority(role.name) }
+            .collectList()
+            .map { UsernamePasswordAuthenticationToken(user, null, it) }
     }
 }

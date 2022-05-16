@@ -1,4 +1,4 @@
-package cz.fei.upce.checkman.controller
+package cz.fei.upce.checkman.controller.course
 
 import cz.fei.upce.checkman.doc.course.*
 import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_COURSE_MANAGE
@@ -23,13 +23,13 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/v1/course")
 @Tag(name = "Course V1", description = "Course API (V1)")
-class CourseControllerV1(private var courseService: CourseServiceV1) {
+class CourseControllerV1(private val courseService: CourseServiceV1) {
     @GetMapping("")
     @PreAuthorize("hasRole('$ROLE_COURSE_VIEW')")
     @SearchCourseEndpointV1
     fun search(@RequestParam(required = false, defaultValue = "") search: String)
             : Mono<ResponseEntity<List<CourseResponseDtoV1>>> {
-        return courseService.search(search).collectList().map { ResponseEntity.ok(it) }
+        return courseService.search(search).flatMap { assignSelfRef(it) }.collectList().map { ResponseEntity.ok(it) }
     }
 
     @GetMapping("/{id}")
@@ -61,7 +61,7 @@ class CourseControllerV1(private var courseService: CourseServiceV1) {
     @PreAuthorize("hasRole('$ROLE_COURSE_MANAGE')")
     @DeleteCourseEndpointV1
     fun remove(@PathVariable courseId: Long) =
-        courseService.delete(courseId).flatMap { Mono.just(ResponseEntity.noContent()) }
+        courseService.delete(courseId).map { ResponseEntity.noContent().build<String>() }
 
     @GetMapping("/{courseId}/semester")
     @PreAuthorize("hasAnyRole('$ROLE_COURSE_VIEW', '$ROLE_COURSE_SEMESTER_VIEW')")
@@ -70,7 +70,9 @@ class CourseControllerV1(private var courseService: CourseServiceV1) {
         @RequestParam(required = false, defaultValue = "") search: String,
         @PathVariable courseId: Long
     ): Mono<ResponseEntity<List<CourseSemesterResponseDtoV1>>> {
-        return courseService.searchSemesters(search, courseId).collectList().map { ResponseEntity.ok(it) }
+        return courseService.searchSemesters(search, courseId)
+            .flatMap { assignSelfRef(courseId, it) }
+            .collectList().map { ResponseEntity.ok(it) }
     }
 
     @GetMapping("/{courseId}/semester/{semesterId}")
@@ -80,7 +82,8 @@ class CourseControllerV1(private var courseService: CourseServiceV1) {
         @PathVariable courseId: Long,
         @PathVariable semesterId: Long
     ): Mono<ResponseEntity<CourseSemesterResponseDtoV1>> {
-        return courseService.findSemester(courseId, semesterId).flatMap { assignSelfRef(courseId, it) }
+        return courseService.findSemester(courseId, semesterId)
+            .flatMap { assignSelfRef(courseId, it) }
             .map { ResponseEntity.ok(it) }
     }
 
@@ -108,7 +111,7 @@ class CourseControllerV1(private var courseService: CourseServiceV1) {
     @DeleteCourseSemesterEndpointV1
     fun removeSemester(@PathVariable courseId: Long, @PathVariable semesterId: Long) =
         courseService.deleteSemester(courseId, semesterId)
-            .flatMap { Mono.just(ResponseEntity.noContent()) }
+            .map { ResponseEntity.noContent().build<String>() }
 
     private fun assignSelfRef(course: CourseResponseDtoV1): Mono<CourseResponseDtoV1> {
         return linkTo(methodOn(this::class.java).find(course.id!!))

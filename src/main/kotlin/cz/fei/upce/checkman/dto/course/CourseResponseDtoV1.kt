@@ -12,7 +12,7 @@ data class CourseResponseDtoV1(
     var icon: String? = null,
     var template: String? = null,
     var semesters: Collection<CourseSemesterResponseDtoV1> = emptyList()
-): ResponseDto<Course, CourseResponseDtoV1>() {
+) : ResponseDto<Course, CourseResponseDtoV1>() {
     override fun withId(id: Long?): CourseResponseDtoV1 {
         this.id = id
         return this

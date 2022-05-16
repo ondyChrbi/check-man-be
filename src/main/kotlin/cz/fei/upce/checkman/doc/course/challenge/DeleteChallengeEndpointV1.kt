@@ -1,10 +1,7 @@
-package cz.fei.upce.checkman.doc.course
+package cz.fei.upce.checkman.doc.course.challenge
 
-import cz.fei.upce.checkman.dto.course.CourseSemesterResponseDtoV1
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
-import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
@@ -14,15 +11,12 @@ import java.lang.annotation.Inherited
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
-@Operation(summary = "Find course and semesters based on course id.", security = [SecurityRequirement(name = "bearerAuth")])
+@Operation(summary = "Delete challenge.", security = [SecurityRequirement(name = "bearerAuth")])
 @ApiResponses(
     ApiResponse(
-        responseCode = "200",
-        description = "Record",
-        content = [Content(
-            mediaType = MediaType.APPLICATION_JSON_VALUE,
-            array = ArraySchema(schema = Schema(implementation = CourseSemesterResponseDtoV1::class))
-        )]
+        responseCode = "204",
+        description = "Success.",
+        content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     ),
     ApiResponse(
         responseCode = "401",
@@ -35,9 +29,14 @@ import java.lang.annotation.Inherited
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     ),
     ApiResponse(
+        responseCode = "404",
+        description = "Record (or course semester) not found.",
+        content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
+    ),
+    ApiResponse(
         responseCode = "500",
         description = "Error occur on server side. Please try it again later or contact technical support.",
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     )
 )
-annotation class SearchCourseSemesterEndpointV1
+annotation class DeleteChallengeEndpointV1

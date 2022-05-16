@@ -1,8 +1,7 @@
-package cz.fei.upce.checkman.doc.course
+package cz.fei.upce.checkman.doc.course.challenge
 
-import cz.fei.upce.checkman.dto.course.CourseSemesterResponseDtoV1
+import cz.fei.upce.checkman.dto.course.challenge.ChallengeResponseDtoV1
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -14,15 +13,20 @@ import java.lang.annotation.Inherited
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
-@Operation(summary = "Find course and semesters based on course id.", security = [SecurityRequirement(name = "bearerAuth")])
+@Operation(summary = "Create new challenge.", security = [SecurityRequirement(name = "bearerAuth")])
 @ApiResponses(
     ApiResponse(
         responseCode = "200",
-        description = "Record",
+        description = "Created entity with id.",
         content = [Content(
             mediaType = MediaType.APPLICATION_JSON_VALUE,
-            array = ArraySchema(schema = Schema(implementation = CourseSemesterResponseDtoV1::class))
+            schema = Schema(implementation = ChallengeResponseDtoV1::class)
         )]
+    ),
+    ApiResponse(
+        responseCode = "400",
+        description = "Not valid request. Check all values.",
+        content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     ),
     ApiResponse(
         responseCode = "401",
@@ -40,4 +44,4 @@ import java.lang.annotation.Inherited
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     )
 )
-annotation class SearchCourseSemesterEndpointV1
+annotation class CreateChallengeEndpointV1

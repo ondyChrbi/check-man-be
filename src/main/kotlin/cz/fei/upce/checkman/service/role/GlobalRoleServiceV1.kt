@@ -57,8 +57,8 @@ class GlobalRoleServiceV1(
                 if (it == false) {
                     appUserGlobalRoleRepository.save(
                         AppUserGlobalRole(
-                            appUserId = appUser.id!!,
-                            globalRoleId = globalRole.id!!
+                            appUserId = appUser.id,
+                            globalRoleId = globalRole.id
                         )
                     )
                 } else {

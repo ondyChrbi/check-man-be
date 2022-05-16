@@ -26,7 +26,9 @@ data class CourseRequestDtoV1(
     )
 
     override fun preventNullCollections(): CourseRequestDtoV1 {
-        if (semesters == null) { semesters = emptyList() }
+        if (semesters == null) {
+            semesters = emptyList()
+        }
         return this
     }
 }

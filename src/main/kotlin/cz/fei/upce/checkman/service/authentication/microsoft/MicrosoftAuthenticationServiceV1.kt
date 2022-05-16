@@ -130,8 +130,8 @@ class MicrosoftAuthenticationServiceV1(
     private fun authenticate(meResponse: MicrosoftMeResponseDtoV1) = authenticationService.authenticate(
         AppUser(
             stagId = AuthenticationService.extractStagId(meResponse.userPrincipalName!!),
-            mail = meResponse.mail,
-            displayName = meResponse.displayName,
+            mail = meResponse.mail!!,
+            displayName = meResponse.displayName!!,
             lastAccessDate = LocalDateTime.now()
         )
     )

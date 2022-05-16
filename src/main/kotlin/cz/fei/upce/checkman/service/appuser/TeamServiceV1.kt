@@ -20,7 +20,7 @@ class TeamServiceV1(private val teamRepository: TeamRepository, private val user
 
     fun createTeam(appUser: AppUser) = teamRepository.save(
         Team(
-            name = createPrivateTeamName(appUser.stagId!!, privateTeamPostFix),
+            name = createPrivateTeamName(appUser.stagId, privateTeamPostFix),
             creationDate = LocalDateTime.now(),
             minMembers = PRIVATE_TEAM_MIN_MEMBERS,
             maxMembers = PRIVATE_TEAM_MAX_MEMBERS,

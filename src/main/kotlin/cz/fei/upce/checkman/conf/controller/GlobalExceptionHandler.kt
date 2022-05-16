@@ -1,6 +1,7 @@
 package cz.fei.upce.checkman.conf.controller
 
 import cz.jirutka.rsql.parser.RSQLParserException
+import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.MalformedJwtException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -16,10 +17,14 @@ class GlobalExceptionHandler {
         Mono.just(ResponseEntity.badRequest().body(ex.message))
 
     @ExceptionHandler(RSQLParserException::class)
-    fun handleBadSqlGrammarException(ex: RSQLParserException) =
+    fun handleRSQLParserException(ex: RSQLParserException) =
         Mono.just(ResponseEntity.badRequest().body(ex.message))
 
     @ExceptionHandler(MalformedJwtException::class)
-    fun handleBadSqlGrammarException(ex: MalformedJwtException) =
+    fun handleMalformedJwtException(ex: MalformedJwtException) =
+        Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED))
+
+    @ExceptionHandler(ExpiredJwtException::class)
+    fun handleExpiredJwtException(ex: ExpiredJwtException) =
         Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED))
 }

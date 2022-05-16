@@ -82,3 +82,99 @@ databaseChangeLog:
                   name: name
                   value: ROLE_COURSE_SEMESTER_VIEW
             tableName: global_role
+
+  - changeSet:
+      id: insert-7
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: name
+                  value: OPTIONAL
+              - column:
+                  name: private
+                  value: false
+            tableName: challenge_kind
+
+  - changeSet:
+      id: insert-8
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: MANDATORY
+              - column:
+                  name: private
+                  value: false
+            tableName: challenge_kind
+
+  - changeSet:
+      id: insert-9
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: CREDIT
+              - column:
+                  name: private
+                  value: true
+            tableName: challenge_kind
+
+  - changeSet:
+      id: insert-10
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: name
+                  value: EXAM
+              - column:
+                  name: private
+                  value: true
+            tableName: challenge_kind
+
+  - changeSet:
+      id: insert-11
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 6
+              - column:
+                  name: name
+                  value: ROLE_COURSE_CHALLENGE_VIEW
+            tableName: global_role
+
+  - changeSet:
+      id: insert-12
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 7
+              - column:
+                  name: name
+                  value: ROLE_COURSE_CHALLENGE_MANAGE
+            tableName: global_role

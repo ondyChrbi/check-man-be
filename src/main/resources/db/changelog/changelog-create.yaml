@@ -521,12 +521,6 @@ databaseChangeLog:
                   name: start_date
                   type: timestamp
               - column:
-                  name: obligatory
-                  type: bool
-                  constraints:
-                    nullable: false
-                    defaultValue: false
-              - column:
                   name: author_id
                   type: bigint
                   constraints:
