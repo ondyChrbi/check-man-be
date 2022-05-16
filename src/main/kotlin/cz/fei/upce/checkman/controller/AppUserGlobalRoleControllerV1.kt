@@ -22,11 +22,11 @@ class AppUserGlobalRoleControllerV1(private val globalRoleServiceV1: GlobalRoleS
     @PreAuthorize("hasRole('$ROLE_GLOBAL_ROLE_MANAGE')")
     @AssignGlobalRoleToUserEndpointV1
     fun assign(@Valid @RequestBody appUserGlobalRole: AppUserGlobalRoleDtoV1) =
-        globalRoleServiceV1.assign(appUserGlobalRole).map { ResponseEntity.ok(it) }
+        globalRoleServiceV1.assign(appUserGlobalRole).map { ResponseEntity.noContent().build<String>() }
 
     @PutMapping("/app-user/remove")
     @PreAuthorize("hasRole('$ROLE_GLOBAL_ROLE_MANAGE')")
     @RemoveGlobalRoleToUserEndpointV1
     fun remove(@Valid @RequestBody appUserGlobalRole: AppUserGlobalRoleDtoV1) =
-        globalRoleServiceV1.remove(appUserGlobalRole).map { ResponseEntity.ok(it) }
+        globalRoleServiceV1.remove(appUserGlobalRole).map { ResponseEntity.noContent().build<String>() }
 }

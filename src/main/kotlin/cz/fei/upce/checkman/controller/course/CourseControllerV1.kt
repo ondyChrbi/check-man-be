@@ -11,6 +11,7 @@ import cz.fei.upce.checkman.dto.course.CourseSemesterRequestDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterResponseDtoV1
 import cz.fei.upce.checkman.service.course.CourseServiceV1
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.linkTo
 import org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn
 import org.springframework.http.ResponseEntity
@@ -27,9 +28,13 @@ class CourseControllerV1(private val courseService: CourseServiceV1) {
     @GetMapping("")
     @PreAuthorize("hasRole('$ROLE_COURSE_VIEW')")
     @SearchCourseEndpointV1
-    fun search(@RequestParam(required = false, defaultValue = "") search: String)
-            : Mono<ResponseEntity<List<CourseResponseDtoV1>>> {
-        return courseService.search(search).flatMap { assignSelfRef(it) }.collectList().map { ResponseEntity.ok(it) }
+    fun search(@RequestParam(required = false, defaultValue = "") search: String?)
+            : Mono<ResponseEntity<CollectionModel<CourseResponseDtoV1>>> {
+        return courseService.search(search)
+            .flatMap { assignSelfRef(it) }
+            .collectList()
+            .flatMap { assignSelfRef(it) }
+            .map { ResponseEntity.ok(it) }
     }
 
     @GetMapping("/{id}")
@@ -67,12 +72,14 @@ class CourseControllerV1(private val courseService: CourseServiceV1) {
     @PreAuthorize("hasAnyRole('$ROLE_COURSE_VIEW', '$ROLE_COURSE_SEMESTER_VIEW')")
     @SearchCourseSemesterEndpointV1
     fun searchSemesters(
-        @RequestParam(required = false, defaultValue = "") search: String,
+        @RequestParam(required = false, defaultValue = "") search: String?,
         @PathVariable courseId: Long
-    ): Mono<ResponseEntity<List<CourseSemesterResponseDtoV1>>> {
+    ): Mono<ResponseEntity<CollectionModel<CourseSemesterResponseDtoV1>>> {
         return courseService.searchSemesters(search, courseId)
             .flatMap { assignSelfRef(courseId, it) }
-            .collectList().map { ResponseEntity.ok(it) }
+            .collectList()
+            .flatMap { assignSelfRef(courseId, it) }
+            .map { ResponseEntity.ok(it) }
     }
 
     @GetMapping("/{courseId}/semester/{semesterId}")
@@ -139,5 +146,24 @@ class CourseControllerV1(private val courseService: CourseServiceV1) {
             .withSelfRel()
             .toMono()
             .map { courseSemester.add(it) }
+    }
+
+    private fun assignSelfRef(
+        courses: Collection<CourseResponseDtoV1>
+    ): Mono<CollectionModel<CourseResponseDtoV1>> {
+        return linkTo(methodOn(this::class.java).search(null))
+            .withSelfRel()
+            .toMono()
+            .map { CollectionModel.of(courses, it) }
+    }
+
+    private fun assignSelfRef(
+        courseId: Long,
+        semesters: Collection<CourseSemesterResponseDtoV1>
+    ): Mono<CollectionModel<CourseSemesterResponseDtoV1>> {
+        return linkTo(methodOn(this::class.java).searchSemesters(null, courseId))
+            .withSelfRel()
+            .toMono()
+            .map { CollectionModel.of(semesters, it) }
     }
 }

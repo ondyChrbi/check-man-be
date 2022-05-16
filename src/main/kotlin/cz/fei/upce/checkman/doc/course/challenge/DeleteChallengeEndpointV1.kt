@@ -30,7 +30,7 @@ import java.lang.annotation.Inherited
     ),
     ApiResponse(
         responseCode = "404",
-        description = "Record (or course semester) not found.",
+        description = "Challenge not found.",
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     ),
     ApiResponse(

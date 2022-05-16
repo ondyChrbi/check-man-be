@@ -13,7 +13,7 @@ import java.lang.annotation.Inherited
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
-@Operation(summary = "Update existing course based on id.", security = [SecurityRequirement(name = "bearerAuth")])
+@Operation(summary = "Update existing challenge based on id.", security = [SecurityRequirement(name = "bearerAuth")])
 @ApiResponses(
     ApiResponse(
         responseCode = "200",
@@ -40,7 +40,7 @@ import java.lang.annotation.Inherited
     ),
     ApiResponse(
         responseCode = "404",
-        description = "Record (or course semester) not found.",
+        description = "Challenge not found.",
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     ),
     ApiResponse(

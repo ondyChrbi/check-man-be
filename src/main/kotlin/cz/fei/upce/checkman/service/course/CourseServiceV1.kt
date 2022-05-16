@@ -22,8 +22,8 @@ class CourseServiceV1(
     private val entityTemplate: R2dbcEntityTemplate,
     private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRsqlSpecification
 ) {
-    fun search(search: String): Flux<CourseResponseDtoV1> {
-        val courses = if (search.isEmpty())
+    fun search(search: String?): Flux<CourseResponseDtoV1> {
+        val courses = if (search == null || search.isEmpty())
             courseRepository.findAll()
         else
             entityTemplate.select(Course::class.java)
@@ -62,8 +62,8 @@ class CourseServiceV1(
 
     fun delete(courseId: Long) = courseRepository.deleteById(courseId)
 
-    fun searchSemesters(search: String, courseId: Long): Flux<CourseSemesterResponseDtoV1> {
-        val semesters = if (search.isEmpty())
+    fun searchSemesters(search: String?, courseId: Long): Flux<CourseSemesterResponseDtoV1> {
+        val semesters = if (search == null || search.isEmpty())
             courseSemesterRepository.findAll()
         else
             entityTemplate.select(CourseSemester::class.java)

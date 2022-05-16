@@ -13,7 +13,7 @@ import java.lang.annotation.Inherited
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
-@Operation(summary = "Find challenge based on course id.", security = [SecurityRequirement(name = "bearerAuth")])
+@Operation(summary = "Find challenge based on challenge id.", security = [SecurityRequirement(name = "bearerAuth")])
 @ApiResponses(
     ApiResponse(
         responseCode = "200",

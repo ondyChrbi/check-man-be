@@ -24,8 +24,8 @@ class ChallengeServiceV1(
     private val entityTemplate: R2dbcEntityTemplate,
     private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRsqlSpecification
 ) {
-    fun search(search: String, courseId: Long, semesterId: Long): Flux<ChallengeResponseDtoV1> {
-        val challenges = if (search.isEmpty())
+    fun search(search: String?, courseId: Long, semesterId: Long): Flux<ChallengeResponseDtoV1> {
+        val challenges = if (search == null || search.isEmpty())
             challengeRepository.findAll()
         else
             entityTemplate.select(Challenge::class.java)

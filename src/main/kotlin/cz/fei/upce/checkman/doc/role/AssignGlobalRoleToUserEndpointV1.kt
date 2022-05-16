@@ -1,9 +1,7 @@
 package cz.fei.upce.checkman.doc.role
 
-import cz.fei.upce.checkman.dto.role.global.AppUserGlobalRoleDtoV1
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
-import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
@@ -16,12 +14,9 @@ import java.lang.annotation.Inherited
 @Operation(summary = "Assign new role to user", security = [SecurityRequirement(name = "bearerAuth")])
 @ApiResponses(
     ApiResponse(
-        responseCode = "200",
-        description = "Successful.",
-        content = [Content(
-            mediaType = MediaType.APPLICATION_JSON_VALUE,
-            schema = Schema(implementation = AppUserGlobalRoleDtoV1::class)
-        )]
+        responseCode = "204",
+        description = "Success.",
+        content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     ),
     ApiResponse(
         responseCode = "401",

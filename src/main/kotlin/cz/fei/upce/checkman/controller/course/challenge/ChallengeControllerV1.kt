@@ -10,6 +10,7 @@ import cz.fei.upce.checkman.dto.course.challenge.ChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeResponseDtoV1
 import cz.fei.upce.checkman.service.course.challenge.ChallengeServiceV1
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.hateoas.CollectionModel
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.Authentication
@@ -24,22 +25,32 @@ import javax.validation.Valid
 @Tag(name = "Challenge V1", description = "Challenge API (V1)")
 class ChallengeControllerV1(private val challengeService: ChallengeServiceV1) {
     @GetMapping("")
-    @PreAuthorize("hasRole('${GlobalRole.ROLE_COURSE_VIEW}')")
+    @PreAuthorize("""
+        hasAnyRole(
+            '${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_SEMESTER_MANAGE}', 
+            '${GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE}', '${GlobalRole.ROLE_COURSE_CHALLENGE_VIEW}',
+            ''
+        )""")
     @SearchChallengeEndpointV1
     fun search(
-        @RequestParam(required = false, defaultValue = "") search: String,
+        @RequestParam(required = false, defaultValue = "") search: String?,
         @PathVariable courseId: Long,
-        @PathVariable semesterId: Long,
-        authentication: Authentication
-    ): Mono<ResponseEntity<List<ChallengeResponseDtoV1>>> {
+        @PathVariable semesterId: Long
+    ): Mono<ResponseEntity<CollectionModel<ChallengeResponseDtoV1>>> {
         return challengeService.search(search, courseId, semesterId)
             .flatMap { assignSelfRef(courseId, semesterId, it) }
             .collectList()
+            .flatMap { assignSelfRef(courseId, semesterId, it) }
             .map { ResponseEntity.ok(it) }
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('${GlobalRole.ROLE_COURSE_VIEW}')")
+    @PreAuthorize("""
+        hasAnyRole(
+            '${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_SEMESTER_MANAGE}', 
+            '${GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE}', '${GlobalRole.ROLE_COURSE_CHALLENGE_VIEW}',
+            ''
+        )""")
     @FindChallengeByIdEndpointV1
     fun find(
         @PathVariable id: Long,
@@ -80,10 +91,25 @@ class ChallengeControllerV1(private val challengeService: ChallengeServiceV1) {
         @PathVariable courseId: Long, @PathVariable semesterId: Long, @PathVariable challengeId: Long
     ) = challengeService.delete(courseId, semesterId, challengeId).map { ResponseEntity.noContent().build<String>() }
 
-    private fun assignSelfRef(courseId: Long, semesterId: Long, challenge: ChallengeResponseDtoV1): Mono<ChallengeResponseDtoV1> {
+    private fun assignSelfRef(
+        courseId: Long,
+        semesterId: Long,
+        challenge: ChallengeResponseDtoV1
+    ): Mono<ChallengeResponseDtoV1> {
         return linkTo(methodOn(this::class.java).find(challenge.id!!, courseId, semesterId))
             .withSelfRel()
             .toMono()
             .map { challenge.add(it) }
+    }
+
+    private fun assignSelfRef(
+        courseId: Long,
+        semesterId: Long,
+        challenges: Collection<ChallengeResponseDtoV1>
+    ): Mono<CollectionModel<ChallengeResponseDtoV1>> {
+        return linkTo(methodOn(this::class.java).search(null, courseId, semesterId))
+            .withSelfRel()
+            .toMono()
+            .map { CollectionModel.of(challenges, it) }
     }
 }
