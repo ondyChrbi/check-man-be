@@ -6,9 +6,9 @@ import java.time.LocalDateTime
 
 data class CourseResponseDtoV1(
     var id: Long? = null,
-    var stagId: String? = null,
-    var name: String? = null,
-    var dateCreation: LocalDateTime? = null,
+    var stagId: String = "",
+    var name: String = "",
+    var dateCreation: LocalDateTime = LocalDateTime.now(),
     var icon: String? = null,
     var template: String? = null,
     var semesters: Collection<CourseSemesterResponseDtoV1> = emptyList()

@@ -44,6 +44,7 @@ class CourseServiceV1(
     fun add(courseDto: CourseRequestDtoV1): Mono<CourseResponseDtoV1> = add(courseDto.toResponseDto())
 
     fun add(courseDto: CourseResponseDtoV1): Mono<CourseResponseDtoV1> {
+
         return courseRepository.save(courseDto.toEntity())
             .map { courseDto.withId(it.id) }
             .flatMap { saveSemesters(it) }

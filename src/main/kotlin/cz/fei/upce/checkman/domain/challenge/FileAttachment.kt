@@ -7,9 +7,9 @@ import java.time.LocalDateTime
 @Table("file_attachment")
 data class FileAttachment(
     @Id var id: Long? = null,
-    var name: String? = null,
-    var path: String? = null,
-    var available: Boolean? = null,
-    var creation_date: LocalDateTime? = null,
-    var challenge: Challenge? = null
+    var name: String = "",
+    var path: String = "",
+    var available: Boolean = true,
+    var creationDate: LocalDateTime = LocalDateTime.now(),
+    var authorId: Long? = null
 )

@@ -10,6 +10,7 @@ import cz.fei.upce.checkman.repository.challenge.ChallengeRepository
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
+import cz.fei.upce.checkman.service.course.challenge.attachment.ChallengeFileAttachmentServiceV1
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
@@ -32,14 +33,13 @@ class ChallengeServiceV1(
                 .matching(reactiveCriteriaRsqlSpecification.createCriteria(search))
                 .all()
 
-        return checkSemesterAccessibility(semesterId, courseId)
+        return findCourseSemester(semesterId, courseId)
             .flatMapMany { challenges.map { ChallengeResponseDtoV1.fromEntity(it) } }
     }
 
-    fun find(id: Long): Mono<ChallengeResponseDtoV1> {
+    fun find(id: Long): Mono<Challenge> {
         return challengeRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-            .map { ChallengeResponseDtoV1.fromEntity(it) }
     }
 
     fun add(challengeDto: ChallengeRequestDtoV1, courseId: Long, semesterId: Long, author: AppUser) =
@@ -51,7 +51,7 @@ class ChallengeServiceV1(
     fun add(
         challengeDto: ChallengeResponseDtoV1, courseId: Long, semesterId: Long, author: AppUser
     ): Mono<ChallengeResponseDtoV1> {
-        return checkSemesterAccessibility(semesterId, courseId)
+        return findCourseSemester(semesterId, courseId)
             .flatMap { challengeRepository.save(challengeDto.toEntity(author, it.id!!)) }
             .map { challengeDto.withId(it.id) }
     }
@@ -65,7 +65,7 @@ class ChallengeServiceV1(
         semesterId: Long,
         challengeId: Long
     ): Mono<ChallengeResponseDtoV1> {
-        return checkSemesterAccessibility(semesterId, courseId)
+        return findCourseSemester(semesterId, courseId)
             .flatMap { challengeRepository.findById(challengeId) }
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { challengeRepository.save(challengeDto.toEntity(it)) }
@@ -73,18 +73,18 @@ class ChallengeServiceV1(
     }
 
     fun delete(courseId: Long, semesterId: Long, challengeId: Long): Mono<Void> {
-        return checkSemesterExist(semesterId, courseId)
+        return checkSemesterExist(courseId, semesterId)
             .flatMap { challengeRepository.findById(challengeId) }
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { challengeRepository.delete(it) }
     }
 
-    private fun checkSemesterAccessibility(semesterId: Long, courseId: Long): Mono<CourseSemester> {
+    fun findCourseSemester(semesterId: Long, courseId: Long): Mono<CourseSemester> {
         return courseSemesterRepository.findFirstByIdEqualsAndCourseIdEquals(semesterId, courseId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
     }
 
-    private fun checkSemesterExist(semesterId: Long, courseId: Long): Mono<Boolean> {
+    fun checkSemesterExist(courseId: Long, semesterId: Long): Mono<Boolean> {
         return courseSemesterRepository.existsByIdEqualsAndCourseIdEquals(semesterId, courseId)
             .flatMap {
                 if (it == false) {
@@ -93,5 +93,21 @@ class ChallengeServiceV1(
                     Mono.just(it)
                 }
             }
+    }
+
+    fun checkChallengeAssociation(ids: ChallengeFileAttachmentServiceV1.FileAttachmentIds) =
+        checkChallengeAssociation(ids.courseId, ids.semesterId, ids.challengeId)
+
+    fun checkChallengeAssociation(courseId: Long, semesterId: Long, challengeId: Long): Mono<Boolean> {
+        return checkSemesterExist(courseId, semesterId).flatMap {
+            challengeRepository.existsByIdEqualsAndAndCourseSemesterIdEquals(challengeId, semesterId)
+                .flatMap {
+                    if (it == false) {
+                        Mono.error(ResourceNotFoundException())
+                    } else {
+                        Mono.just(it)
+                    }
+                }
+        }
     }
 }

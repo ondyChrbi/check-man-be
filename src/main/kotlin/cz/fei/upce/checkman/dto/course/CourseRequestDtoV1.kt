@@ -7,11 +7,11 @@ import javax.validation.constraints.NotNull
 
 data class CourseRequestDtoV1(
     @field:NotEmpty(message = "{course.stag-id.not-empty}")
-    var stagId: String? = null,
+    var stagId: String = "",
     @field:NotEmpty(message = "{course.name.not-empty}")
-    var name: String? = null,
+    var name: String = "null",
     @field:NotNull(message = "{course.date-creation.not-null}")
-    var dateCreation: LocalDateTime? = LocalDateTime.now(),
+    var dateCreation: LocalDateTime = LocalDateTime.now(),
     var icon: String? = null,
     var template: String? = null,
     var semesters: Collection<CourseSemesterRequestDtoV1>? = emptyList()

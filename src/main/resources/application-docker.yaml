@@ -23,3 +23,8 @@ logging:
 
 server:
   port: 9001
+
+check-man:
+  challenge:
+    file-attachment:
+      path: /tmp/check-man
