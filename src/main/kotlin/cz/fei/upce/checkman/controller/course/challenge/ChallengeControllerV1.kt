@@ -1,12 +1,7 @@
 package cz.fei.upce.checkman.controller.course.challenge
 
-import cz.fei.upce.checkman.doc.course.challenge.SearchChallengeEndpointV1
-import cz.fei.upce.checkman.doc.course.challenge.FindChallengeByIdEndpointV1
-import cz.fei.upce.checkman.doc.course.challenge.CreateChallengeEndpointV1
-import cz.fei.upce.checkman.doc.course.challenge.DeleteChallengeEndpointV1
-import cz.fei.upce.checkman.doc.course.challenge.UpdateChallengeEndpointV1
-import cz.fei.upce.checkman.doc.course.challenge.attachment.DownloadChallengeFileAttachmentV1
-import cz.fei.upce.checkman.doc.course.challenge.attachment.UploadChallengeFileAttachmentV1
+import cz.fei.upce.checkman.doc.course.challenge.*
+import cz.fei.upce.checkman.doc.course.challenge.attachment.*
 import cz.fei.upce.checkman.domain.user.GlobalRole
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeResponseDtoV1
@@ -37,12 +32,8 @@ class ChallengeControllerV1(
 ) {
     @GetMapping("")
     @PreAuthorize(
-        """
-        hasAnyRole(
-            '${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_SEMESTER_MANAGE}', 
-            '${GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE}', '${GlobalRole.ROLE_COURSE_CHALLENGE_VIEW}',
-            ''
-        )"""
+        """hasAnyRole('${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_SEMESTER_MANAGE}', 
+            '${GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE}', '${GlobalRole.ROLE_COURSE_CHALLENGE_VIEW}')"""
     )
     @SearchChallengeEndpointV1
     fun search(
@@ -51,6 +42,7 @@ class ChallengeControllerV1(
         @PathVariable semesterId: Long
     ): Mono<ResponseEntity<CollectionModel<ChallengeResponseDtoV1>>> {
         return challengeService.search(search, courseId, semesterId)
+            .flatMap { challengeFileAttachmentService.assignAll(it) }
             .flatMap { assignSelfRef(courseId, semesterId, it) }
             .collectList()
             .flatMap { assignSelfRef(courseId, semesterId, it) }
@@ -59,12 +51,8 @@ class ChallengeControllerV1(
 
     @GetMapping("/{id}")
     @PreAuthorize(
-        """
-        hasAnyRole(
-            '${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_SEMESTER_MANAGE}', 
-            '${GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE}', '${GlobalRole.ROLE_COURSE_CHALLENGE_VIEW}',
-            ''
-        )"""
+        """hasAnyRole('${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_SEMESTER_MANAGE}', 
+            '${GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE}', '${GlobalRole.ROLE_COURSE_CHALLENGE_VIEW}')"""
     )
     @FindChallengeByIdEndpointV1
     fun find(
@@ -74,6 +62,7 @@ class ChallengeControllerV1(
     ): Mono<ResponseEntity<ChallengeResponseDtoV1>> {
         return challengeService.find(id)
             .map { ChallengeResponseDtoV1.fromEntity(it) }
+            .flatMap { challengeFileAttachmentService.assignAll(it) }
             .flatMap { assignSelfRef(courseId, semesterId, it) }
             .map { ResponseEntity.ok(it) }
     }
@@ -107,11 +96,43 @@ class ChallengeControllerV1(
         @PathVariable courseId: Long, @PathVariable semesterId: Long, @PathVariable challengeId: Long
     ) = challengeService.delete(courseId, semesterId, challengeId).map { ResponseEntity.noContent().build<String>() }
 
+    @GetMapping("/{challengeId}/attachment")
+    @PreAuthorize("hasAnyRole('${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_SEMESTER_MANAGE}', '${GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE}')")
+    @SearchFileAttachmentEndpointV1
+    fun search(
+        @PathVariable courseId: Long, @PathVariable semesterId: Long, @PathVariable challengeId: Long,
+        @RequestParam(required = false, defaultValue = "") search: String?
+    ): Mono<ResponseEntity<CollectionModel<FileAttachmentResponseDtoV1>>> {
+        val ids = FileAttachmentIds(courseId, semesterId, challengeId)
+
+        return challengeFileAttachmentService.findAll(ids, search)
+            .flatMap { assignSelfRef(courseId, semesterId, challengeId, it) }
+            .collectList()
+            .flatMap { assignSelfRef(courseId, semesterId, challengeId, it) }
+            .map { ResponseEntity.ok(it) }
+    }
+
     @GetMapping("/{challengeId}/attachment/{attachmentId}")
     @PreAuthorize("hasAnyRole('${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_SEMESTER_MANAGE}', '${GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE}')")
+    @FindFileAttachmentByIdEndpointV1
+    fun findFileAttachment(
+        @PathVariable courseId: Long, @PathVariable semesterId: Long,
+        @PathVariable challengeId: Long, @PathVariable attachmentId: Long
+    ): Mono<ResponseEntity<FileAttachmentResponseDtoV1>> {
+        val ids = FileAttachmentIds(courseId, semesterId, challengeId)
+
+        return challengeFileAttachmentService.find(ids, attachmentId)
+            .flatMap { assignSelfRef(courseId, semesterId, challengeId, it) }
+            .map { ResponseEntity.ok(it) }
+    }
+
+    @GetMapping("/{challengeId}/attachment/{attachmentId}/download")
+    @PreAuthorize("hasAnyRole('${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_SEMESTER_MANAGE}', '${GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE}')")
     @DownloadChallengeFileAttachmentV1
-    fun download(@PathVariable courseId: Long, @PathVariable semesterId: Long, @PathVariable challengeId: Long,
-                 @PathVariable attachmentId: Long): Mono<ResponseEntity<Resource>> {
+    fun download(
+        @PathVariable courseId: Long, @PathVariable semesterId: Long, @PathVariable challengeId: Long,
+        @PathVariable attachmentId: Long
+    ): Mono<ResponseEntity<Resource>> {
         val ids = FileAttachmentIds(courseId, semesterId, challengeId)
 
         return challengeFileAttachmentService.load(ids, attachmentId).map { ResponseEntity.ok(it) }
@@ -126,13 +147,28 @@ class ChallengeControllerV1(
     ): Mono<ResponseEntity<FileAttachmentResponseDtoV1>> {
         val ids = FileAttachmentIds(courseId, semesterId, challengeId)
 
-        return challengeFileAttachmentService.save(ids, file, authentication).map { ResponseEntity.status(HttpStatus.ACCEPTED).body(it) }
+        return challengeFileAttachmentService.save(ids, file, authentication)
+            .map { ResponseEntity.status(HttpStatus.ACCEPTED).body(it) }
+    }
+
+    @DeleteMapping("/{challengeId}/attachment/{attachmentId}")
+    @PreAuthorize("hasAnyRole('${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_SEMESTER_MANAGE}', '${GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE}')")
+    @DeleteChallengeFileAttachmentV1
+    fun removeAttachment(@PathVariable courseId: Long, @PathVariable semesterId: Long, @PathVariable challengeId: Long,
+                         @PathVariable attachmentId: Long
+    ): Mono<ResponseEntity<String>> {
+        val ids = FileAttachmentIds(courseId, semesterId, challengeId)
+
+        return challengeFileAttachmentService.remove(ids, attachmentId).map { ResponseEntity.noContent().build() }
+    }
+
+    @ExceptionHandler(java.nio.file.NoSuchFileException::class)
+    fun handleRequestBodyError(ex: NoSuchFileException): ResponseEntity<String> {
+        return ResponseEntity.status(HttpStatus.GONE).body("File already deleted")
     }
 
     private fun assignSelfRef(
-        courseId: Long,
-        semesterId: Long,
-        challenge: ChallengeResponseDtoV1
+        courseId: Long, semesterId: Long, challenge: ChallengeResponseDtoV1
     ): Mono<ChallengeResponseDtoV1> {
         return linkTo(methodOn(this::class.java).find(challenge.id!!, courseId, semesterId))
             .withSelfRel()
@@ -141,13 +177,36 @@ class ChallengeControllerV1(
     }
 
     private fun assignSelfRef(
-        courseId: Long,
-        semesterId: Long,
-        challenges: Collection<ChallengeResponseDtoV1>
+        courseId: Long, semesterId: Long, challenges: Collection<ChallengeResponseDtoV1>
     ): Mono<CollectionModel<ChallengeResponseDtoV1>> {
         return linkTo(methodOn(this::class.java).search(null, courseId, semesterId))
             .withSelfRel()
             .toMono()
             .map { CollectionModel.of(challenges, it) }
+    }
+
+    private fun assignSelfRef(
+        courseId: Long, semesterId: Long, challengeId: Long, fileAttachment: FileAttachmentResponseDtoV1
+    ): Mono<FileAttachmentResponseDtoV1> {
+        return linkTo(
+            methodOn(this::class.java).findFileAttachment(
+                challengeId,
+                courseId,
+                semesterId,
+                fileAttachment.id!!
+            )
+        )
+            .withSelfRel()
+            .toMono()
+            .map { fileAttachment.add(it) }
+    }
+
+    private fun assignSelfRef(
+        courseId: Long, semesterId: Long, challengeId: Long, fileAttachments: Collection<FileAttachmentResponseDtoV1>
+    ): Mono<CollectionModel<FileAttachmentResponseDtoV1>> {
+        return linkTo(methodOn(this::class.java).search(courseId, semesterId, challengeId, null))
+            .withSelfRel()
+            .toMono()
+            .map { CollectionModel.of(fileAttachments, it) }
     }
 }

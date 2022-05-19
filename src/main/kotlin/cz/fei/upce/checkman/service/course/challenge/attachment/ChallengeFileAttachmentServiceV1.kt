@@ -1,10 +1,12 @@
 package cz.fei.upce.checkman.service.course.challenge.attachment
 
+import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRsqlSpecification
 import cz.fei.upce.checkman.domain.challenge.Challenge
 import cz.fei.upce.checkman.domain.challenge.ChallengeFileAttachment
 import cz.fei.upce.checkman.domain.challenge.FileAttachment
 import cz.fei.upce.checkman.domain.course.CourseSemester
 import cz.fei.upce.checkman.domain.user.AppUser
+import cz.fei.upce.checkman.dto.course.challenge.ChallengeResponseDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.attachment.FileAttachmentResponseDtoV1
 import cz.fei.upce.checkman.repository.challenge.ChallengeFileAttachmentRepository
 import cz.fei.upce.checkman.repository.challenge.FileAttachmentRepository
@@ -13,9 +15,12 @@ import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import cz.fei.upce.checkman.service.course.challenge.ChallengeServiceV1
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
+import org.springframework.data.relational.core.query.Criteria.where
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import java.nio.file.Files
@@ -28,9 +33,11 @@ import kotlin.io.path.absolutePathString
 @Service
 class ChallengeFileAttachmentServiceV1(
     private val challengeService: ChallengeServiceV1,
-    private val authenticationService: AuthenticationServiceV1,
     private val challengeFileAttachmentRepository: ChallengeFileAttachmentRepository,
-    private val fileAttachmentRepository: FileAttachmentRepository
+    private val fileAttachmentRepository: FileAttachmentRepository,
+    private val entityTemplate: R2dbcEntityTemplate,
+    private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRsqlSpecification,
+    private val authenticationService: AuthenticationServiceV1
 ) {
     @Value("\${check-man.challenge.file-attachment.path}")
     private var baseLocation: String = "./"
@@ -40,6 +47,40 @@ class ChallengeFileAttachmentServiceV1(
     @PostConstruct
     fun init() {
         this.basePath = Paths.get(baseLocation)
+    }
+
+    fun assignAll(challengeResponseDto: ChallengeResponseDtoV1): Mono<ChallengeResponseDtoV1> {
+        return findAll(challengeResponseDto.id!!)
+            .collectList()
+            .map { challengeResponseDto.withAttachments(it) }
+    }
+
+    fun findAll(challengeId: Long): Flux<FileAttachmentResponseDtoV1> {
+        return challengeFileAttachmentRepository.findAllByChallengeIdEquals(challengeId)
+            .flatMap { fileAttachmentRepository.findById(it.fileAttachmentId) }
+            .map { FileAttachmentResponseDtoV1.fromEntity(it) }
+    }
+
+    fun findAll(ids: FileAttachmentIds, search: String?): Flux<FileAttachmentResponseDtoV1> {
+        val condition = where("challengeId").`is`(ids.challengeId)
+
+        val fileAttachments = if (search == null || search.isEmpty())
+            this.findAll(ids.challengeId)
+        else
+            entityTemplate.select(FileAttachment::class.java)
+                .matching(reactiveCriteriaRsqlSpecification.createCriteria(search, condition))
+                .all()
+                .map { FileAttachmentResponseDtoV1.fromEntity(it) }
+
+        return challengeService.checkChallengeAssociation(ids)
+            .flatMapMany{ fileAttachments }
+    }
+
+    fun find(ids: FileAttachmentIds, attachmentId: Long): Mono<FileAttachmentResponseDtoV1> {
+        return challengeService.checkChallengeAssociation(ids)
+            .flatMap { fileAttachmentRepository.findById(attachmentId) }
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .map { FileAttachmentResponseDtoV1.fromEntity(it) }
     }
 
     fun load(ids: FileAttachmentIds, attachmentId: Long): Mono<FileSystemResource> {
@@ -67,6 +108,16 @@ class ChallengeFileAttachmentServiceV1(
             }
     }
 
+    fun remove(ids: FileAttachmentIds, attachmentId: Long): Mono<Void> {
+        return challengeService.checkChallengeAssociation(ids)
+            .flatMap { fileAttachmentRepository.findById(attachmentId) }
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .flatMap { deleteFile(it) }
+            .subscribeOn(Schedulers.boundedElastic())
+            .flatMap { challengeFileAttachmentRepository.deleteAllByFileAttachmentIdEquals(attachmentId) }
+            .then(fileAttachmentRepository.deleteById(attachmentId))
+    }
+
     private fun toFileProperties(ids: FileAttachmentIds, file: Path, authentication: Authentication): Mono<FileAttachmentProperties> {
         val appUser = authenticationService.extractAuthenticateUser(authentication)
         val destination = createDestinationStructure(ids)
@@ -81,7 +132,6 @@ class ChallengeFileAttachmentServiceV1(
     }
 
     private fun linkFileAttachmentToChallenge(properties: FileAttachmentProperties, attachment: FileAttachment): Mono<ChallengeFileAttachment> {
-
         return challengeFileAttachmentRepository.save(
             ChallengeFileAttachment(
                 challengeId = properties.challenge.id!!,
@@ -106,6 +156,10 @@ class ChallengeFileAttachmentServiceV1(
         if (Files.notExists(properties.saveDestination)) {
             Files.createDirectories(properties.saveDestination)
         }
+    }
+
+    private fun deleteFile(attachment: FileAttachment) = Mono.fromCallable {
+        Files.delete(Paths.get(attachment.path))
     }
 
     private fun createFileAlias(multipartFile: FilePart): Path {

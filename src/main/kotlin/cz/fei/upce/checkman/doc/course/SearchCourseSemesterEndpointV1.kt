@@ -14,7 +14,7 @@ import java.lang.annotation.Inherited
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
-@Operation(summary = "Find course and semesters based on course id.", security = [SecurityRequirement(name = "bearerAuth")])
+@Operation(summary = "Find course and semesters based on search criteria. For supported operators please visit: https://github.com/jirutka/rsql-parser", security = [SecurityRequirement(name = "bearerAuth")])
 @ApiResponses(
     ApiResponse(
         responseCode = "200",

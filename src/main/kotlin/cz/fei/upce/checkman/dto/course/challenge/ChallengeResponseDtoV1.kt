@@ -4,6 +4,7 @@ import cz.fei.upce.checkman.domain.challenge.Challenge
 import cz.fei.upce.checkman.domain.challenge.ChallengeKind
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.ResponseDto
+import cz.fei.upce.checkman.dto.course.challenge.attachment.FileAttachmentResponseDtoV1
 import java.time.LocalDateTime
 
 data class ChallengeResponseDtoV1(
@@ -12,7 +13,8 @@ data class ChallengeResponseDtoV1(
     var description: String = "",
     var deadlineDate: LocalDateTime? = null,
     var startDate: LocalDateTime? = null,
-    var challengeKind: ChallengeKind.Value = ChallengeKind.Value.OPTIONAL
+    var challengeKind: ChallengeKind.Value = ChallengeKind.Value.OPTIONAL,
+    var fileAttachments: Collection<FileAttachmentResponseDtoV1> = emptyList()
 ) : ResponseDto<Challenge, ChallengeResponseDtoV1>() {
     override fun withId(id: Long?): ChallengeResponseDtoV1 {
         this.id = id ?: 0
@@ -43,6 +45,11 @@ data class ChallengeResponseDtoV1(
         entity.courseSemesterId= semesterId
 
         return entity
+    }
+
+    fun withAttachments(fileAttachments: Collection<FileAttachmentResponseDtoV1>): ChallengeResponseDtoV1 {
+        this.fileAttachments = fileAttachments
+        return this
     }
 
     companion object {

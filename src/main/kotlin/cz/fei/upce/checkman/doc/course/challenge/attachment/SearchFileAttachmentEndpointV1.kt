@@ -1,6 +1,6 @@
-package cz.fei.upce.checkman.doc.course.challenge
+package cz.fei.upce.checkman.doc.course.challenge.attachment
 
-import cz.fei.upce.checkman.dto.course.challenge.ChallengeResponseDtoV1
+import cz.fei.upce.checkman.dto.course.challenge.attachment.FileAttachmentResponseDtoV1
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
@@ -14,14 +14,14 @@ import java.lang.annotation.Inherited
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
-@Operation(summary = "Find challenge and semesters based on search criteria. For supported operators please visit: https://github.com/jirutka/rsql-parser", security = [SecurityRequirement(name = "bearerAuth")])
+@Operation(summary = "Find file attachments based on search criteria. For supported operators please visit: https://github.com/jirutka/rsql-parser", security = [SecurityRequirement(name = "bearerAuth")])
 @ApiResponses(
     ApiResponse(
         responseCode = "200",
         description = "Record",
         content = [Content(
             mediaType = MediaType.APPLICATION_JSON_VALUE,
-            array = ArraySchema(schema = Schema(implementation = ChallengeResponseDtoV1::class))
+            array = ArraySchema(schema = Schema(implementation = FileAttachmentResponseDtoV1::class))
         )]
     ),
     ApiResponse(
@@ -40,4 +40,4 @@ import java.lang.annotation.Inherited
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     )
 )
-annotation class SearchChallengeEndpointV1
+annotation class SearchFileAttachmentEndpointV1

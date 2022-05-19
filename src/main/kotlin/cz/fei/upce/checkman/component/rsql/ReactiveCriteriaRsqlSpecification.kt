@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class ReactiveCriteriaRsqlSpecification(private val rsqlParser: RSQLParser) {
-    fun createCriteria(search: String): Query {
-        return query(createCriteria(rsqlParser.parse(search)))
+    fun createCriteria(search: String, custom: CriteriaDefinition = empty()): Query {
+        return query((createCriteria(rsqlParser.parse(search)) as Criteria).and(custom))
     }
 
     private fun createCriteria(node: Node): CriteriaDefinition {
