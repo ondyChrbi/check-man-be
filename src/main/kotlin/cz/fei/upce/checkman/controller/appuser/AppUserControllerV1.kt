@@ -4,6 +4,7 @@ import cz.fei.upce.checkman.doc.appuser.MeEndpointV1
 import cz.fei.upce.checkman.dto.appuser.AppUserResponseDtoV1
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.hateoas.server.reactive.WebFluxLinkBuilder
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
@@ -14,6 +15,7 @@ import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/v1/app-user")
+@Tag(name = "App user V1", description = "App user API (V1)")
 class AppUserControllerV1(
     private val appUserServiceV1: AppUserServiceV1,
     private val authenticationService: AuthenticationServiceV1

@@ -5,17 +5,21 @@ import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_COURSE_MANAGE
 import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_COURSE_SEMESTER_MANAGE
 import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_COURSE_SEMESTER_VIEW
 import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_COURSE_VIEW
+import cz.fei.upce.checkman.dto.appuser.CourseSemesterRoleDtoV1
 import cz.fei.upce.checkman.dto.course.CourseRequestDtoV1
 import cz.fei.upce.checkman.dto.course.CourseResponseDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterRequestDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterResponseDtoV1
+import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import cz.fei.upce.checkman.service.course.CourseServiceV1
+import cz.fei.upce.checkman.service.role.CourseSemesterRoleServiceV1
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.linkTo
 import org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -24,7 +28,11 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/v1/course")
 @Tag(name = "Course V1", description = "Course API (V1)")
-class CourseControllerV1(private val courseService: CourseServiceV1) {
+class CourseControllerV1(
+    private val courseService: CourseServiceV1,
+    private val courseSemesterRoleService: CourseSemesterRoleServiceV1,
+    private val authenticationService: AuthenticationServiceV1
+    ) {
     @GetMapping("")
     @PreAuthorize("hasRole('$ROLE_COURSE_VIEW')")
     @SearchCourseEndpointV1
@@ -132,6 +140,17 @@ class CourseControllerV1(private val courseService: CourseServiceV1) {
             .map { course.withSemesters(it) }
     }
 
+    @GetMapping("/{courseId}/semester/{semesterId}/me")
+    @CourseSemesterRolesByMeEndpointV1
+    fun meRoles(@PathVariable courseId: Long, @PathVariable semesterId: Long, authentication: Authentication?)
+            : Mono<ResponseEntity<CollectionModel<CourseSemesterRoleDtoV1>>> {
+        return courseSemesterRoleService
+            .findAllRoles(authenticationService.extractAuthenticateUser(authentication!!), semesterId)
+            .collectList()
+            .flatMap { assignSelfRef(courseId, semesterId, it) }
+            .map { ResponseEntity.ok(it) }
+    }
+
     private fun assignSelfRef(
         course: CourseResponseDtoV1,
         courseSemester: CourseSemesterResponseDtoV1
@@ -165,5 +184,16 @@ class CourseControllerV1(private val courseService: CourseServiceV1) {
             .withSelfRel()
             .toMono()
             .map { CollectionModel.of(semesters, it) }
+    }
+
+    private fun assignSelfRef(
+        courseId: Long,
+        semesterId: Long,
+        roles: Collection<CourseSemesterRoleDtoV1>
+    ): Mono<CollectionModel<CourseSemesterRoleDtoV1>> {
+        return linkTo(methodOn(this::class.java).meRoles(courseId, semesterId, null))
+            .withSelfRel()
+            .toMono()
+            .map { CollectionModel.of(roles, it) }
     }
 }

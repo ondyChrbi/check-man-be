@@ -1,5 +1,6 @@
 package cz.fei.upce.checkman.service.role
 
+import cz.fei.upce.checkman.domain.course.CourseSemester
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.appuser.CourseSemesterRoleDtoV1
 import cz.fei.upce.checkman.dto.appuser.CourseSemesterRolesResponseDtoV1
@@ -30,6 +31,16 @@ class CourseSemesterRoleServiceV1(
             .map { CourseSemesterRolesResponseDtoV1(CourseSemesterResponseDtoV1.fromEntity(it)) }
             .flatMap { assignSemesterRoles(it, appUser) }
     }
+
+    fun findAllRoles(appUser: AppUser, semesterId: Long): Flux<CourseSemesterRoleDtoV1> {
+        return appUserCourseSemesterRoleRepository
+            .findAllByAppUserIdEqualsAndCourseSemesterIdEquals(appUser.id!!, semesterId)
+            .flatMap { courseSemesterRoleRepository.findById(it.courseSemesterRoleId) }
+            .map { CourseSemesterRoleDtoV1.fromEntity(it) }
+    }
+
+    fun findAllRoles(appUser: AppUser, semester: CourseSemester): Flux<CourseSemesterRoleDtoV1> =
+        findAllRoles(appUser, semester.id!!)
 
     private fun assignSemesterRoles(responseDto: CourseSemesterRolesResponseDtoV1, appUser: AppUser): Mono<CourseSemesterRolesResponseDtoV1> {
         return assignSemesterRoles(responseDto, appUser, responseDto.semester.id!!)

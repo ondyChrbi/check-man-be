@@ -2,6 +2,7 @@ package cz.fei.upce.checkman.component.security
 
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
+import cz.fei.upce.checkman.service.authentication.DisabledUserException
 import cz.fei.upce.checkman.service.role.GlobalRoleServiceV1
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -26,6 +27,8 @@ class AuthenticationManager(
             .switchIfEmpty { Mono.empty() }
             .flatMap { appUserServiceV1.findUser(username) }
             .switchIfEmpty { Mono.empty() }
+            .flatMap { if (it.disabled) Mono.error(DisabledUserException()) else Mono.just(it) }
+            .flatMap { appUserServiceV1.updateLastAccessDate(it) }
             .flatMap { authenticateUserWithRoles(it) }
     }
 
