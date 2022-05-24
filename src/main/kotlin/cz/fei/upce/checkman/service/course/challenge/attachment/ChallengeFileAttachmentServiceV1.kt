@@ -12,6 +12,7 @@ import cz.fei.upce.checkman.repository.challenge.ChallengeFileAttachmentReposito
 import cz.fei.upce.checkman.repository.challenge.FileAttachmentRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
+import cz.fei.upce.checkman.service.course.challenge.ChallengeLocation
 import cz.fei.upce.checkman.service.course.challenge.ChallengeServiceV1
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
@@ -61,7 +62,7 @@ class ChallengeFileAttachmentServiceV1(
             .map { FileAttachmentResponseDtoV1.fromEntity(it) }
     }
 
-    fun findAll(ids: FileAttachmentIds, search: String?): Flux<FileAttachmentResponseDtoV1> {
+    fun findAll(ids: ChallengeLocation, search: String?): Flux<FileAttachmentResponseDtoV1> {
         val condition = where("challengeId").`is`(ids.challengeId)
 
         val fileAttachments = if (search == null || search.isEmpty())
@@ -76,14 +77,14 @@ class ChallengeFileAttachmentServiceV1(
             .flatMapMany{ fileAttachments }
     }
 
-    fun find(ids: FileAttachmentIds, attachmentId: Long): Mono<FileAttachmentResponseDtoV1> {
+    fun find(ids: ChallengeLocation, attachmentId: Long): Mono<FileAttachmentResponseDtoV1> {
         return challengeService.checkChallengeAssociation(ids)
             .flatMap { fileAttachmentRepository.findById(attachmentId) }
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { FileAttachmentResponseDtoV1.fromEntity(it) }
     }
 
-    fun load(ids: FileAttachmentIds, attachmentId: Long): Mono<FileSystemResource> {
+    fun load(ids: ChallengeLocation, attachmentId: Long): Mono<FileSystemResource> {
         return checkChallengeAssociation(ids, attachmentId)
             .flatMap { fileAttachmentRepository.findById(attachmentId) }
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
@@ -91,7 +92,7 @@ class ChallengeFileAttachmentServiceV1(
             .subscribeOn(Schedulers.boundedElastic())
     }
 
-    fun save(ids: FileAttachmentIds, filePartMono: Mono<FilePart>, authentication: Authentication): Mono<FileAttachmentResponseDtoV1> {
+    fun save(ids: ChallengeLocation, filePartMono: Mono<FilePart>, authentication: Authentication): Mono<FileAttachmentResponseDtoV1> {
         return filePartMono.flatMap { filePart ->
             toFileProperties(ids, createFileAlias(filePart), authentication)
                 .flatMap { properties -> save(properties, filePart) }
@@ -108,7 +109,7 @@ class ChallengeFileAttachmentServiceV1(
             }
     }
 
-    fun remove(ids: FileAttachmentIds, attachmentId: Long): Mono<Void> {
+    fun remove(ids: ChallengeLocation, attachmentId: Long): Mono<Void> {
         return challengeService.checkChallengeAssociation(ids)
             .flatMap { fileAttachmentRepository.findById(attachmentId) }
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
@@ -118,7 +119,7 @@ class ChallengeFileAttachmentServiceV1(
             .then(fileAttachmentRepository.deleteById(attachmentId))
     }
 
-    private fun toFileProperties(ids: FileAttachmentIds, file: Path, authentication: Authentication): Mono<FileAttachmentProperties> {
+    private fun toFileProperties(ids: ChallengeLocation, file: Path, authentication: Authentication): Mono<FileAttachmentProperties> {
         val appUser = authenticationService.extractAuthenticateUser(authentication)
         val destination = createDestinationStructure(ids)
 
@@ -169,7 +170,7 @@ class ChallengeFileAttachmentServiceV1(
         return Paths.get(UUID.randomUUID().toString() + extension)
     }
 
-    private fun createDestinationStructure(properties: FileAttachmentIds): Path {
+    private fun createDestinationStructure(properties: ChallengeLocation): Path {
         val coursePath = Paths.get("course/${properties.courseId}")
         val semesterPath = Paths.get("semester/${properties.semesterId}")
         val challengePath = Paths.get("challenge/${properties.challengeId}")
@@ -177,7 +178,7 @@ class ChallengeFileAttachmentServiceV1(
         return basePath.resolve(coursePath).resolve(semesterPath).resolve(challengePath)
     }
 
-    private fun checkChallengeAssociation(ids: FileAttachmentIds, attachmentId: Long): Mono<Boolean> {
+    private fun checkChallengeAssociation(ids: ChallengeLocation, attachmentId: Long): Mono<Boolean> {
         return challengeService.checkChallengeAssociation(ids)
             .flatMap { challengeFileAttachmentRepository.existsByChallengeIdEqualsAndFileAttachmentIdEquals(ids.challengeId, attachmentId) }
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
@@ -188,12 +189,6 @@ class ChallengeFileAttachmentServiceV1(
                     Mono.just(it)
             }
     }
-
-    data class FileAttachmentIds(
-        val courseId: Long,
-        val semesterId: Long,
-        val challengeId: Long
-    )
 
     data class FileAttachmentProperties(
         val courseSemester: CourseSemester,

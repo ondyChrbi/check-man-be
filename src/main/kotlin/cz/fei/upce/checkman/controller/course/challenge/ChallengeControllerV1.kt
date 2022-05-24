@@ -5,10 +5,12 @@ import cz.fei.upce.checkman.doc.course.challenge.attachment.*
 import cz.fei.upce.checkman.domain.user.GlobalRole
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeResponseDtoV1
+import cz.fei.upce.checkman.dto.course.challenge.PermitAppUserChallengeRequestDtoV1
+import cz.fei.upce.checkman.dto.course.challenge.RemoveAccessAppUserChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.attachment.FileAttachmentResponseDtoV1
 import cz.fei.upce.checkman.service.course.challenge.ChallengeServiceV1
 import cz.fei.upce.checkman.service.course.challenge.attachment.ChallengeFileAttachmentServiceV1
-import cz.fei.upce.checkman.service.course.challenge.attachment.ChallengeFileAttachmentServiceV1.FileAttachmentIds
+import cz.fei.upce.checkman.service.course.challenge.ChallengeLocation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.core.io.Resource
 import org.springframework.hateoas.CollectionModel
@@ -74,7 +76,8 @@ class ChallengeControllerV1(
         @Valid @RequestBody challengeDto: ChallengeRequestDtoV1, @PathVariable courseId: Long,
         @PathVariable semesterId: Long, authentication: Authentication
     ): Mono<ResponseEntity<ChallengeResponseDtoV1>> {
-        return challengeService.add(challengeDto.preventNullCollections(), courseId, semesterId, authentication)
+        return challengeService.add(courseId, semesterId, authentication, challengeDto.preventNullCollections())
+            .flatMap { assignSelfRef(courseId, semesterId, it) }
             .map { ResponseEntity.ok(it) }
     }
 
@@ -85,7 +88,8 @@ class ChallengeControllerV1(
         @Valid @RequestBody challengeDto: ChallengeRequestDtoV1, @PathVariable courseId: Long,
         @PathVariable semesterId: Long, @PathVariable challengeId: Long
     ): Mono<ResponseEntity<ChallengeResponseDtoV1>> {
-        return challengeService.edit(challengeDto.preventNullCollections(), courseId, semesterId, challengeId)
+        return challengeService.edit(courseId, semesterId, challengeId, challengeDto.preventNullCollections())
+            .flatMap { assignSelfRef(courseId, semesterId, it) }
             .map { ResponseEntity.ok(it) }
     }
 
@@ -103,7 +107,7 @@ class ChallengeControllerV1(
         @PathVariable courseId: Long, @PathVariable semesterId: Long, @PathVariable challengeId: Long,
         @RequestParam(required = false, defaultValue = "") search: String?
     ): Mono<ResponseEntity<CollectionModel<FileAttachmentResponseDtoV1>>> {
-        val ids = FileAttachmentIds(courseId, semesterId, challengeId)
+        val ids = ChallengeLocation(courseId, semesterId, challengeId)
 
         return challengeFileAttachmentService.findAll(ids, search)
             .flatMap { assignSelfRef(courseId, semesterId, challengeId, it) }
@@ -119,7 +123,7 @@ class ChallengeControllerV1(
         @PathVariable courseId: Long, @PathVariable semesterId: Long,
         @PathVariable challengeId: Long, @PathVariable attachmentId: Long
     ): Mono<ResponseEntity<FileAttachmentResponseDtoV1>> {
-        val ids = FileAttachmentIds(courseId, semesterId, challengeId)
+        val ids = ChallengeLocation(courseId, semesterId, challengeId)
 
         return challengeFileAttachmentService.find(ids, attachmentId)
             .flatMap { assignSelfRef(courseId, semesterId, challengeId, it) }
@@ -133,7 +137,7 @@ class ChallengeControllerV1(
         @PathVariable courseId: Long, @PathVariable semesterId: Long, @PathVariable challengeId: Long,
         @PathVariable attachmentId: Long
     ): Mono<ResponseEntity<Resource>> {
-        val ids = FileAttachmentIds(courseId, semesterId, challengeId)
+        val ids = ChallengeLocation(courseId, semesterId, challengeId)
 
         return challengeFileAttachmentService.load(ids, attachmentId).map { ResponseEntity.ok(it) }
     }
@@ -145,21 +149,51 @@ class ChallengeControllerV1(
         @PathVariable courseId: Long, @PathVariable semesterId: Long, @PathVariable challengeId: Long,
         @RequestPart file: Mono<FilePart>, authentication: Authentication
     ): Mono<ResponseEntity<FileAttachmentResponseDtoV1>> {
-        val ids = FileAttachmentIds(courseId, semesterId, challengeId)
+        val ids = ChallengeLocation(courseId, semesterId, challengeId)
 
         return challengeFileAttachmentService.save(ids, file, authentication)
+            .flatMap { assignSelfRef(courseId, semesterId, challengeId, it) }
             .map { ResponseEntity.status(HttpStatus.ACCEPTED).body(it) }
     }
 
     @DeleteMapping("/{challengeId}/attachment/{attachmentId}")
     @PreAuthorize("hasAnyRole('${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_SEMESTER_MANAGE}', '${GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE}')")
     @DeleteChallengeFileAttachmentV1
-    fun removeAttachment(@PathVariable courseId: Long, @PathVariable semesterId: Long, @PathVariable challengeId: Long,
-                         @PathVariable attachmentId: Long
+    fun removeAttachment(
+        @PathVariable courseId: Long, @PathVariable semesterId: Long, @PathVariable challengeId: Long,
+        @PathVariable attachmentId: Long
     ): Mono<ResponseEntity<String>> {
-        val ids = FileAttachmentIds(courseId, semesterId, challengeId)
+        val ids = ChallengeLocation(courseId, semesterId, challengeId)
 
         return challengeFileAttachmentService.remove(ids, attachmentId).map { ResponseEntity.noContent().build() }
+    }
+
+    @PutMapping("/{challengeId}/app-user/permit")
+    @PreAuthorize("hasAnyRole('${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_SEMESTER_MANAGE}', '${GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE}')")
+    @PermitAccessAppUserChallengeEndpointV1
+    fun permitAccessAppUser(
+        @RequestBody permitDto: PermitAppUserChallengeRequestDtoV1,
+        @PathVariable courseId: Long,
+        @PathVariable semesterId: Long,
+        @PathVariable challengeId: Long
+    ): Mono<ResponseEntity<String>> {
+        val location = ChallengeLocation(courseId, semesterId, challengeId)
+
+        return challengeService.permitAccess(location, permitDto).map { ResponseEntity.noContent().build() }
+    }
+
+    @PutMapping("/{challengeId}/app-user/disable")
+    @PreAuthorize("hasAnyRole('${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_SEMESTER_MANAGE}', '${GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE}')")
+    @RemoveAccessAppUserChallengeEndpointV1
+    fun removeAccessAppUser(
+        @RequestBody removeDto: RemoveAccessAppUserChallengeRequestDtoV1,
+        @PathVariable courseId: Long,
+        @PathVariable semesterId: Long,
+        @PathVariable challengeId: Long
+    ): Mono<ResponseEntity<String>> {
+        val location = ChallengeLocation(courseId, semesterId, challengeId)
+
+        return challengeService.removeAccess(location, removeDto).then(Mono.just(ResponseEntity.noContent().build()))
     }
 
     @ExceptionHandler(java.nio.file.NoSuchFileException::class)
