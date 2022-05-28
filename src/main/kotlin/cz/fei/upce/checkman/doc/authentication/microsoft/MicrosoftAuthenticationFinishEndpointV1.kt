@@ -12,7 +12,7 @@ import java.lang.annotation.Inherited
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
-@Operation(summary = "Start user authentication using Microsoft services.")
+@Operation(summary = "Finish user authentication using Microsoft services.")
 @ApiResponses(
     ApiResponse(
         responseCode = "200",

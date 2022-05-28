@@ -3,15 +3,6 @@ jwt:
   expiration: 28800000
 
 spring:
-  liquibase:
-    change-log: classpath:db/changelog/changelog-master.yaml
-    url: jdbc:postgresql://localhost:5432/checkman
-    user: checkman
-    password: checkman
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5432/checkman
-    username: checkman
-    password: checkman
   security:
     permit_paths: /v1/authentication/**
 
@@ -20,7 +11,7 @@ login:
     oauth2:
       microsoft:
         response_type: code
-        redirect_uri: http://localhost:${server.port}/v1/authentication/microsoft/finish
+        redirect_uri: https://localhost:${server.port}/v1/authentication/microsoft/finish
         response_mode: query
         authorization_endpoint: https://login.microsoftonline.com/common/oauth2/v2.0/authorize
         token_endpoint: https://login.microsoftonline.com/common/oauth2/v2.0/token

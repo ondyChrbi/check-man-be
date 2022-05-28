@@ -1,6 +1,15 @@
 spring:
   security:
     permit_paths: /v1/authentication/**, /v3/api-docs/**, /swagger-ui.html, /webjars/swagger-ui/**, /webjars/**
+  liquibase:
+    change-log: classpath:db/changelog/changelog-master.yaml
+    url: jdbc:postgresql://localhost:5432/checkman
+    user: checkman
+    password: checkman
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/checkman
+    username: checkman
+    password: checkman
 
 login:
   provider:
@@ -22,6 +31,12 @@ logging:
             HttpClient: debug
 
 server:
+  ssl:
+    key-store: classpath:cert/checkman_docker.p12
+    key-store-password: checkman
+    key-store-type: pkcs12
+    key-alias: checkman_docker
+    key-password: checkman
   port: 9001
 
 check-man:

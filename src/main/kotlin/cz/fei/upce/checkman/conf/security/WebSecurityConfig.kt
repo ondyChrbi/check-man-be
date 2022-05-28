@@ -35,6 +35,9 @@ class WebSecurityConfig(
             .pathMatchers(HttpMethod.OPTIONS).permitAll()
             .pathMatchers(*permitPaths).permitAll()
             .anyExchange().authenticated()
-            .and().build()
+            .and()
+            .redirectToHttps()
+            .and()
+            .build()
 
 }
