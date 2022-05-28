@@ -234,3 +234,17 @@ databaseChangeLog:
                   name: name
                   value: ROLE_UNBLOCK_APP_USER
             tableName: global_role
+
+  - changeSet:
+      id: insert-17
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: name
+                  value: COURSE_ROLE_ACCESS
+            tableName: course_semester_role

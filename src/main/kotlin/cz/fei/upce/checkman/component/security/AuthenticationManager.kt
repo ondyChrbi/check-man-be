@@ -7,7 +7,6 @@ import cz.fei.upce.checkman.service.role.GlobalRoleServiceV1
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
@@ -34,7 +33,6 @@ class AuthenticationManager(
 
     private fun authenticateUserWithRoles(user: AppUser): Mono<UsernamePasswordAuthenticationToken> {
         return globalRoleService.rolesByUser(user)
-            .map { role -> SimpleGrantedAuthority(role.name) }
             .collectList()
             .map { UsernamePasswordAuthenticationToken(user, null, it) }
     }

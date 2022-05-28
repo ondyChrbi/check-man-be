@@ -2,6 +2,7 @@ package cz.fei.upce.checkman.service.authentication
 
 import cz.fei.upce.checkman.component.security.JWTUtil
 import cz.fei.upce.checkman.domain.user.AppUser
+import cz.fei.upce.checkman.domain.user.GlobalRole
 import cz.fei.upce.checkman.dto.security.authentication.AuthenticationRequestDtoV1
 import cz.fei.upce.checkman.dto.security.authentication.AuthenticationResponseDtoV1
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
@@ -44,6 +45,14 @@ class AuthenticationServiceV1(private val userService: AppUserServiceV1, private
     fun extractAuthenticateUser(authentication: Authentication): AppUser {
         if (authentication is UsernamePasswordAuthenticationToken && authentication.principal is AppUser) {
             return authentication.principal as AppUser
+        }
+
+        throw WrongSecurityPrincipalsException()
+    }
+
+    fun extractAuthorities(authentication: Authentication): Set<GlobalRole> {
+        if (authentication is UsernamePasswordAuthenticationToken) {
+            return authentication.authorities.map { it as GlobalRole }.toSet()
         }
 
         throw WrongSecurityPrincipalsException()

@@ -2,9 +2,11 @@ package cz.fei.upce.checkman.service.course.challenge
 
 import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRsqlSpecification
 import cz.fei.upce.checkman.domain.challenge.Challenge
+import cz.fei.upce.checkman.domain.challenge.ChallengeKind
 import cz.fei.upce.checkman.domain.challenge.PermittedAppUserChallenge
 import cz.fei.upce.checkman.domain.course.CourseSemester
 import cz.fei.upce.checkman.domain.user.AppUser
+import cz.fei.upce.checkman.domain.user.GlobalRole
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeResponseDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.PermitAppUserChallengeRequestDtoV1
@@ -15,7 +17,6 @@ import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
-import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -42,6 +43,22 @@ class ChallengeServiceV1(
             .flatMapMany { challenges.map { ChallengeResponseDtoV1.fromEntity(it) } }
     }
 
+    fun search(
+        search: String?,
+        courseId: Long,
+        semesterId: Long,
+        appUser: AppUser,
+        authorities: Set<GlobalRole>
+    ): Flux<ChallengeResponseDtoV1> {
+        if (VIEW_PERMISSIONS.intersect(authorities.map { it.name }.toSet()).isNotEmpty()) {
+            return search(search, courseId, semesterId)
+        }
+
+        return findCourseSemester(semesterId, courseId)
+            .flatMapMany { findAllRelatedTo(semesterId, appUser) }
+            .map { ChallengeResponseDtoV1.fromEntity(it) }
+    }
+
     fun find(id: Long): Mono<Challenge> {
         return challengeRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
@@ -49,9 +66,6 @@ class ChallengeServiceV1(
 
     fun add(courseId: Long, semesterId: Long, author: AppUser, challengeDto: ChallengeRequestDtoV1) =
         add(courseId, semesterId, author, challengeDto.toResponseDto())
-
-    fun add(courseId: Long, semesterId: Long, authentication: Authentication, challengeDto: ChallengeRequestDtoV1) =
-        add(courseId, semesterId, authenticationService.extractAuthenticateUser(authentication), challengeDto)
 
     fun add(
         courseId: Long, semesterId: Long, author: AppUser, challengeDto: ChallengeResponseDtoV1
@@ -122,6 +136,20 @@ class ChallengeServiceV1(
             }
     }
 
+    private fun findAllRelatedTo(courseSemesterId: Long, appUser: AppUser): Flux<Challenge> {
+        val private = ChallengeKind.Value.PRIVATE.map { it.id }
+        val public = ChallengeKind.Value.PUBLIC.map { it.id }
+
+        return challengeRepository.findAllByCourseSemesterIdEqualsAndChallengeKindIdIsIn(courseSemesterId, private)
+            .concatWith(
+                challengeRepository.findAllByAppUserPermittedByCourseSemester(
+                    courseSemesterId,
+                    appUser.id!!,
+                    public
+                )
+            )
+    }
+
     fun checkChallengeAssociation(location: ChallengeLocation) =
         checkChallengeAssociation(location.courseId, location.semesterId, location.challengeId)
 
@@ -145,12 +173,12 @@ class ChallengeServiceV1(
             .flatMap { extendAccess(it, accessTo) }
 
     private fun extendAccess(
-        permittedAppUserChallenge: PermittedAppUserChallenge,
+        permitted: PermittedAppUserChallenge,
         accessTo: LocalDateTime
     ): Mono<PermittedAppUserChallenge> {
-        permittedAppUserChallenge.accessTo = accessTo
+        permitted.accessTo = accessTo
 
-        return permittedAppUserChallengeRepository.save(permittedAppUserChallenge)
+        return permittedAppUserChallengeRepository.save(permitted)
     }
 
     private fun permitToAccess(appUserId: Long, challengeId: Long, accessTo: LocalDateTime) =
@@ -172,4 +200,15 @@ class ChallengeServiceV1(
                     )
                 }
             }
+
+    companion object {
+        val MANAGE_PERMISSIONS = setOf(
+            GlobalRole.ROLE_COURSE_MANAGE, GlobalRole.ROLE_COURSE_SEMESTER_MANAGE,
+            GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE
+        )
+        val VIEW_PERMISSIONS = setOf(
+            GlobalRole.ROLE_COURSE_MANAGE, GlobalRole.ROLE_COURSE_SEMESTER_MANAGE,
+            GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE, GlobalRole.ROLE_COURSE_CHALLENGE_VIEW
+        )
+    }
 }

@@ -7,4 +7,10 @@ import org.springframework.data.relational.core.mapping.Table
 data class CourseSemesterRole(
     @Id var id: Long? = null,
     var name: String = ""
-)
+) {
+    enum class Value(val id: Long) {
+        COURSE_ROLE_ACCESS(0);
+
+        fun toEntity() = CourseSemesterRole(id, COURSE_ROLE_ACCESS.toString())
+    }
+}

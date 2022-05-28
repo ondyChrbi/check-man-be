@@ -17,6 +17,8 @@ data class CourseSemesterResponseDtoV1(
 
     override fun toEntity() = CourseSemester(id, note, dateStart, dateEnd)
 
+    fun toEntity(courseId: Long) = CourseSemester(id, note, dateStart, dateEnd, courseId)
+
     fun toEntity(courseDto: CourseResponseDtoV1) = CourseSemester(id, note, dateStart, dateEnd, courseDto.id)
 
     override fun toEntity(entity: CourseSemester): CourseSemester {

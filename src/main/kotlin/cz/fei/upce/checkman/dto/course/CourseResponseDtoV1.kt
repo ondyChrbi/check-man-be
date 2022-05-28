@@ -1,6 +1,7 @@
 package cz.fei.upce.checkman.dto.course
 
 import cz.fei.upce.checkman.domain.course.Course
+import cz.fei.upce.checkman.domain.course.CourseSemester
 import cz.fei.upce.checkman.dto.ResponseDto
 import java.time.LocalDateTime
 
@@ -44,5 +45,12 @@ data class CourseResponseDtoV1(
             course.icon,
             course.template
         )
+
+        fun fromEntity(course: Course, semesters: Collection<CourseSemester>): CourseResponseDtoV1 {
+            val dto = fromEntity(course)
+            dto.withSemesters(semesters.map { CourseSemesterResponseDtoV1.fromEntity(it) })
+
+            return dto
+        }
     }
 }

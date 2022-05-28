@@ -18,6 +18,9 @@ data class ChallengeKind(
         fun toEntity() = ChallengeKind(id, this.toString(), private)
 
         companion object {
+            val PRIVATE = setOf(CREDIT, EXAM)
+            val PUBLIC = setOf(OPTIONAL, MANDATORY)
+
             fun getById(id: Long) = values()[id.toInt()]
         }
     }
