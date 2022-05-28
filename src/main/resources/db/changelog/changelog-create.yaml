@@ -397,6 +397,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: course
             validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
 
         - createSequence:
             dataType: bigint
@@ -448,6 +450,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: course_semester_role
             validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
 
         - addForeignKeyConstraint:
             baseColumnNames: course_semester_id
@@ -456,6 +460,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: course_semester
             validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
 
         - createSequence:
             dataType: bigint
@@ -551,6 +557,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: course_semester
             validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
 
         - addForeignKeyConstraint:
             baseColumnNames: challenge_kind_id
@@ -653,6 +661,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: challenge
             validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
 
         - addForeignKeyConstraint:
             baseColumnNames: file_attachment_id
@@ -661,6 +671,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: file_attachment
             validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
 
         - createSequence:
             dataType: bigint
@@ -710,6 +722,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: challenge
             validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
 
         - createSequence:
             dataType: bigint

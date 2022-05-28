@@ -41,4 +41,14 @@ data class RequirementResponseDtoV1 (
         maxPoint = maxPoint,
         challengeId = challengeId
     )
+
+    companion object {
+        fun fromEntity(requirement: Requirement) = RequirementResponseDtoV1(
+            requirement.id,
+            requirement.name,
+            requirement.description,
+            requirement.minPoint,
+            requirement.maxPoint
+        )
+    }
 }

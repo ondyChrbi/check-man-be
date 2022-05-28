@@ -178,3 +178,59 @@ databaseChangeLog:
                   name: name
                   value: ROLE_COURSE_CHALLENGE_MANAGE
             tableName: global_role
+
+  - changeSet:
+      id: insert-13
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 8
+              - column:
+                  name: name
+                  value: ROLE_VIEW_APP_USER
+            tableName: global_role
+
+  - changeSet:
+      id: insert-14
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 9
+              - column:
+                  name: name
+                  value: ROLE_MANAGE_APP_USER
+            tableName: global_role
+
+  - changeSet:
+      id: insert-15
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 10
+              - column:
+                  name: name
+                  value: ROLE_BLOCK_APP_USER
+            tableName: global_role
+
+  - changeSet:
+      id: insert-16
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 11
+              - column:
+                  name: name
+                  value: ROLE_UNBLOCK_APP_USER
+            tableName: global_role

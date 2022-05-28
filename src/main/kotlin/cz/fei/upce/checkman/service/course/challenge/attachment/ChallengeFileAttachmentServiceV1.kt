@@ -62,18 +62,18 @@ class ChallengeFileAttachmentServiceV1(
             .map { FileAttachmentResponseDtoV1.fromEntity(it) }
     }
 
-    fun findAll(ids: ChallengeLocation, search: String?): Flux<FileAttachmentResponseDtoV1> {
-        val condition = where("challengeId").`is`(ids.challengeId)
+    fun findAll(location: ChallengeLocation, search: String?): Flux<FileAttachmentResponseDtoV1> {
+        val condition = where("challengeId").`is`(location.challengeId)
 
         val fileAttachments = if (search == null || search.isEmpty())
-            this.findAll(ids.challengeId)
+            this.findAll(location.challengeId)
         else
             entityTemplate.select(FileAttachment::class.java)
                 .matching(reactiveCriteriaRsqlSpecification.createCriteria(search, condition))
                 .all()
                 .map { FileAttachmentResponseDtoV1.fromEntity(it) }
 
-        return challengeService.checkChallengeAssociation(ids)
+        return challengeService.checkChallengeAssociation(location)
             .flatMapMany{ fileAttachments }
     }
 
@@ -183,7 +183,7 @@ class ChallengeFileAttachmentServiceV1(
             .flatMap { challengeFileAttachmentRepository.existsByChallengeIdEqualsAndFileAttachmentIdEquals(ids.challengeId, attachmentId) }
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap {
-                if (it == false)
+                if (!it)
                     Mono.error(ResourceNotFoundException())
                 else
                     Mono.just(it)

@@ -1,36 +1,33 @@
 package cz.fei.upce.checkman.controller.appuser
 
-import cz.fei.upce.checkman.doc.appuser.MeEndpointV1
-import cz.fei.upce.checkman.dto.appuser.AppUserResponseDtoV1
+import cz.fei.upce.checkman.doc.appuser.BlockAppUserEndpointV1
+import cz.fei.upce.checkman.doc.appuser.UnblockAppUserEndpointV1
+import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_BLOCK_APP_USER
+import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_MANAGE_APP_USER
+import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_UNBLOCK_APP_USER
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
-import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
-import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.hateoas.server.reactive.WebFluxLinkBuilder
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.Authentication
-import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/v1/app-user")
-@Tag(name = "App user V1", description = "App user API (V1)")
-class AppUserControllerV1(
-    private val appUserServiceV1: AppUserServiceV1,
-    private val authenticationService: AuthenticationServiceV1
-    ) {
-    @GetMapping("/me")
-    @MeEndpointV1
-    fun me(authentication: Authentication?): Mono<ResponseEntity<AppUserResponseDtoV1>> {
-        return appUserServiceV1.me(authenticationService.extractAuthenticateUser(authentication!!))
-            .flatMap { assignSelfRef(it) }
-            .map { ResponseEntity.ok(it) }
+class AppUserControllerV1(private val appUserService: AppUserServiceV1) {
+    @PostMapping("/{stagId}/block")
+    @PreAuthorize("hasAnyRole('$ROLE_MANAGE_APP_USER', '$ROLE_BLOCK_APP_USER')")
+    @BlockAppUserEndpointV1
+    fun disable(@PathVariable stagId: String): Mono<ResponseEntity<String>> {
+        return appUserService.block(stagId).map { ResponseEntity.noContent().build() }
     }
 
-    private fun assignSelfRef(appUserDto: AppUserResponseDtoV1): Mono<AppUserResponseDtoV1> =
-        WebFluxLinkBuilder.linkTo(WebFluxLinkBuilder.methodOn(this::class.java).me(null))
-            .withSelfRel()
-            .toMono()
-            .map { appUserDto.add(it) }
+    @PostMapping("/{stagId}/unblock")
+    @PreAuthorize("hasAnyRole('$ROLE_MANAGE_APP_USER', '$ROLE_UNBLOCK_APP_USER')")
+    @UnblockAppUserEndpointV1
+    fun enable(@PathVariable stagId: String): Mono<ResponseEntity<String>> {
+        return appUserService.unblock(stagId).map { ResponseEntity.noContent().build() }
+    }
 }

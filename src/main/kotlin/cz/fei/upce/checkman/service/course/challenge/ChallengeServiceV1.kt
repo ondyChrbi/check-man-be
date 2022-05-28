@@ -114,7 +114,7 @@ class ChallengeServiceV1(
     fun checkSemesterExist(courseId: Long, semesterId: Long): Mono<Boolean> {
         return courseSemesterRepository.existsByIdEqualsAndCourseIdEquals(semesterId, courseId)
             .flatMap {
-                if (it == false) {
+                if (!it) {
                     Mono.error(ResourceNotFoundException())
                 } else {
                     Mono.just(it)
@@ -129,7 +129,7 @@ class ChallengeServiceV1(
         return checkSemesterExist(courseId, semesterId).flatMap {
             challengeRepository.existsByIdEqualsAndAndCourseSemesterIdEquals(challengeId, semesterId)
                 .flatMap {
-                    if (it == false) {
+                    if (!it) {
                         Mono.error(ResourceNotFoundException())
                     } else {
                         Mono.just(it)
@@ -163,7 +163,7 @@ class ChallengeServiceV1(
     private fun removeAccessFrom(appUserId: Long, challengeId: Long) =
         permittedAppUserChallengeRepository.existsByAppUserIdEqualsAndChallengeIdEquals(appUserId, challengeId)
             .flatMap {
-                if (it == false) {
+                if (!it) {
                     Mono.error(AppUserDoesntHaveAccessToChallengeException())
                 } else {
                     permittedAppUserChallengeRepository.deleteAllByAppUserIdEqualsAndChallengeIdEquals(

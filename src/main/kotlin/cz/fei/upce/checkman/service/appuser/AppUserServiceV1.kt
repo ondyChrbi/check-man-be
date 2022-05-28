@@ -5,6 +5,7 @@ import cz.fei.upce.checkman.dto.appuser.AppUserResponseDtoV1
 import cz.fei.upce.checkman.dto.appuser.GlobalRoleResponseDtoV1
 import cz.fei.upce.checkman.dto.security.authentication.AuthenticationRequestDtoV1
 import cz.fei.upce.checkman.repository.user.AppUserRepository
+import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.role.CourseSemesterRoleServiceV1
 import cz.fei.upce.checkman.service.role.GlobalRoleServiceV1
 import org.springframework.stereotype.Service
@@ -46,5 +47,31 @@ class AppUserServiceV1(
             .flatMapMany { courseSemesterRoleService.findAllSemestersAndRoles(loggedUser) }
             .collectList()
             .map { responseDto.withCourseRoles(it) }
+    }
+
+    fun block(stagId: String): Mono<AppUser> {
+        return appUserRepository.findByStagIdEquals(stagId)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .flatMap { appUser ->
+                if (appUser.disabled) {
+                    Mono.error(AppUserAlreadyBlockedException())
+                } else {
+                    appUser.disabled = true
+                    appUserRepository.save(appUser)
+                }
+            }
+    }
+
+    fun unblock(stagId: String): Mono<AppUser> {
+        return appUserRepository.findByStagIdEquals(stagId)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .flatMap { appUser ->
+                if (!appUser.disabled) {
+                    Mono.error(AppUserNotBlockedException())
+                } else {
+                    appUser.disabled = false
+                    appUserRepository.save(appUser)
+                }
+            }
     }
 }

@@ -61,7 +61,9 @@ class CourseServiceV1(
             .map { courseDto.withId(it.id) }
     }
 
-    fun delete(courseId: Long) = courseRepository.deleteById(courseId)
+    fun delete(courseId: Long): Mono<Void> {
+        return courseRepository.deleteById(courseId)
+    }
 
     fun searchSemesters(search: String?, courseId: Long): Flux<CourseSemesterResponseDtoV1> {
         val semesters = if (search == null || search.isEmpty())

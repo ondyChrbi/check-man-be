@@ -54,7 +54,7 @@ class GlobalRoleServiceV1(
     fun assign(appUser: AppUser, globalRole: GlobalRole): Mono<AppUserGlobalRole> {
         return appUserGlobalRoleRepository.existsByGlobalRoleIdEqualsAndAppUserIdEquals(globalRole.id!!, appUser.id!!)
             .flatMap {
-                if (it == false) {
+                if (!it) {
                     appUserGlobalRoleRepository.save(
                         AppUserGlobalRole(
                             appUserId = appUser.id,
