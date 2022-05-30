@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.ServerHttpSecurity
+import org.springframework.security.web.server.SecurityWebFilterChain
 import reactor.core.publisher.Mono
 
 @EnableWebFluxSecurity
@@ -20,9 +21,12 @@ class WebSecurityConfig(
     @Value("\${spring.security.permit_paths}")
     private var permitPaths : Array<String> = arrayOf()
 
+    @Value("\${server.ssl.enabled}")
+    private var sslEnabled: Boolean = true
+
     @Bean
-    fun securityWebFilterChain(http : ServerHttpSecurity) =
-        http.exceptionHandling()
+    fun securityWebFilterChain(http : ServerHttpSecurity): SecurityWebFilterChain {
+        val conf = http.exceptionHandling()
             .authenticationEntryPoint { swe, _ -> Mono.fromRunnable { swe.response.statusCode = HttpStatus.UNAUTHORIZED } }
             .accessDeniedHandler { swe, _ -> Mono.fromRunnable { swe.response.statusCode = HttpStatus.FORBIDDEN } }
             .and()
@@ -34,10 +38,10 @@ class WebSecurityConfig(
             .authorizeExchange()
             .pathMatchers(HttpMethod.OPTIONS).permitAll()
             .pathMatchers(*permitPaths).permitAll()
-            .anyExchange().authenticated()
-            .and()
-            .redirectToHttps()
-            .and()
-            .build()
+            .anyExchange().authenticated().and()
+
+        return if (sslEnabled) conf.redirectToHttps().and().build() else conf.build()
+    }
+
 
 }

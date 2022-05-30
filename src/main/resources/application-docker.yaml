@@ -37,6 +37,7 @@ server:
     key-store-type: pkcs12
     key-alias: checkman_docker
     key-password: checkman
+    enabled: true
   port: 9001
 
 check-man:

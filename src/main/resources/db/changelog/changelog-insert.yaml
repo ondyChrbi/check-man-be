@@ -248,3 +248,45 @@ databaseChangeLog:
                   name: name
                   value: COURSE_ROLE_ACCESS
             tableName: course_semester_role
+
+  - changeSet:
+      id: insert-18
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: COURSE_ROLE_CREATE_CHALLENGE
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-19
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 12
+              - column:
+                  name: name
+                  value: ROLE_COURSE_ACCESS
+            tableName: global_role
+
+  - changeSet:
+      id: insert-20
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 13
+              - column:
+                  name: name
+                  value: ROLE_CHALLENGE_ACCESS
+            tableName: global_role

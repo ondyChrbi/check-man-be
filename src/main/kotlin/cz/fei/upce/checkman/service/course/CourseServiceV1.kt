@@ -3,11 +3,9 @@ package cz.fei.upce.checkman.service.course
 import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRsqlSpecification
 import cz.fei.upce.checkman.domain.course.Course
 import cz.fei.upce.checkman.domain.course.CourseSemester
+import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.AppUser
-import cz.fei.upce.checkman.domain.user.GlobalRole
 import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_COURSE_MANAGE
-import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_COURSE_SEMESTER_MANAGE
-import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_COURSE_SEMESTER_VIEW
 import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_COURSE_VIEW
 import cz.fei.upce.checkman.dto.course.CourseRequestDtoV1
 import cz.fei.upce.checkman.dto.course.CourseResponseDtoV1
@@ -160,36 +158,41 @@ class CourseServiceV1(
             .map { courseDto.withSemesters(it) }
     }
 
-    fun checkCourseAccess(
-        courseId: Long,
-        semesterId: Long,
-        appUser: AppUser,
-        authorities: Set<GlobalRole>
-    ): Mono<Boolean> {
-        if (MANAGE_PERMISSIONS.intersect(authorities.map { it.name }.toSet()).isNotEmpty()) {
-            return Mono.just(true)
-        }
-
+    fun checkCourseAuthority(courseAccess: CourseAccessRequest, courseRole: CourseSemesterRole.Value): Mono<Boolean> {
         return appUserCourseSemesterRoleRepository
             .existsByAppUserIdEqualsAndCourseSemesterIdEqualsAndCourseSemesterRoleIdEquals(
-                courseId,
-                semesterId,
-                appUser.id!!
+                courseAccess.appUser.id!!,
+                courseAccess.semesterId,
+                courseRole.id
             )
             .flatMap {
                 if (!it) {
-                    Mono.error(AppUserCourseSemesterForbiddenException())
+                    Mono.error(AppUserCourseSemesterForbiddenException(courseRole))
                 } else {
                     Mono.just(it)
                 }
             }
     }
 
+    fun checkCourseAccess(courseAccess: CourseAccessRequest, courseRole: CourseSemesterRole.Value): Mono<Boolean> {
+        if (VIEW_PERMISSIONS.intersect(courseAccess.authorities.map { it.name }.toSet()).isNotEmpty()) {
+            return Mono.just(true)
+        }
+
+        return checkCourseAuthority(courseAccess, courseRole)
+    }
+
+    fun checkManageAccess(courseAccess: CourseAccessRequest, courseRole: CourseSemesterRole.Value): Mono<Boolean> {
+        if (MANAGE_PERMISSIONS.intersect(courseAccess.authorities.map { it.name }.toSet()).isNotEmpty()) {
+            return Mono.just(true)
+        }
+
+        return checkCourseAuthority(courseAccess, courseRole)
+    }
+
     companion object {
-        val VIEW_PERMISSIONS =
-            setOf(ROLE_COURSE_VIEW, ROLE_COURSE_SEMESTER_VIEW, ROLE_COURSE_VIEW, ROLE_COURSE_SEMESTER_MANAGE)
-        val MANAGE_PERMISSIONS =
-            setOf(ROLE_COURSE_MANAGE, ROLE_COURSE_SEMESTER_MANAGE)
+        val VIEW_PERMISSIONS = setOf(ROLE_COURSE_MANAGE, ROLE_COURSE_VIEW)
+        val MANAGE_PERMISSIONS = setOf(ROLE_COURSE_MANAGE)
 
         private fun checkCourseSemesterAssociation(courseId: Long, courseSemester: CourseSemester) =
             if (courseId != courseSemester.courseId)

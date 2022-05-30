@@ -36,3 +36,12 @@ logging:
         http:
           client:
             HttpClient: DEBUG
+
+server:
+  ssl:
+    enabled: false
+
+check-man:
+  challenge:
+    file-attachment:
+      path: /tmp/check-man

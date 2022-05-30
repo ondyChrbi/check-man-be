@@ -9,7 +9,8 @@ data class CourseSemesterRole(
     var name: String = ""
 ) {
     enum class Value(val id: Long) {
-        COURSE_ROLE_ACCESS(0);
+        COURSE_ROLE_ACCESS(0),
+        COURSE_ROLE_CREATE_CHALLENGE(1);
 
         fun toEntity() = CourseSemesterRole(id, COURSE_ROLE_ACCESS.toString())
     }
