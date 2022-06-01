@@ -79,7 +79,7 @@ internal class AppUserServiceV1Test {
         StepVerifier.create(teamRepository.findPersonalTeam(user!!.id!!))
             .expectNextMatches {
                 it.name == TeamServiceV1.createPrivateTeamName(
-                    testAppUser.stagId!!,
+                    testAppUser.stagId,
                     privateTeamPostFix
                 )
             }

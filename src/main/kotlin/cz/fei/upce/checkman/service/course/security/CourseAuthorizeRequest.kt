@@ -1,9 +1,9 @@
-package cz.fei.upce.checkman.service.course
+package cz.fei.upce.checkman.service.course.security
 
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.domain.user.GlobalRole
 
-data class CourseAccessRequest(
+data class CourseAuthorizeRequest(
     val courseId: Long,
     val semesterId: Long,
     val appUser: AppUser,

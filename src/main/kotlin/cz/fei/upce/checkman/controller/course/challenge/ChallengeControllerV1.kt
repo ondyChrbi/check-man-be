@@ -2,7 +2,6 @@ package cz.fei.upce.checkman.controller.course.challenge
 
 import cz.fei.upce.checkman.doc.course.challenge.*
 import cz.fei.upce.checkman.doc.course.challenge.attachment.*
-import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.GlobalRole
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeResponseDtoV1
@@ -10,11 +9,12 @@ import cz.fei.upce.checkman.dto.course.challenge.PermitAppUserChallengeRequestDt
 import cz.fei.upce.checkman.dto.course.challenge.RemoveAccessAppUserChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.attachment.FileAttachmentResponseDtoV1
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
-import cz.fei.upce.checkman.service.course.CourseAccessRequest
-import cz.fei.upce.checkman.service.course.CourseServiceV1
+import cz.fei.upce.checkman.service.course.security.annotation.PreCourseAuthorize
 import cz.fei.upce.checkman.service.course.challenge.ChallengeServiceV1
 import cz.fei.upce.checkman.service.course.challenge.attachment.ChallengeFileAttachmentServiceV1
 import cz.fei.upce.checkman.service.course.challenge.ChallengeLocation
+import cz.fei.upce.checkman.service.course.security.annotation.CourseId
+import cz.fei.upce.checkman.service.course.security.annotation.SemesterId
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.core.io.Resource
 import org.springframework.hateoas.CollectionModel
@@ -35,26 +35,23 @@ import javax.validation.Valid
 class ChallengeControllerV1(
     private val challengeService: ChallengeServiceV1,
     private val challengeFileAttachmentService: ChallengeFileAttachmentServiceV1,
-    private val courseService: CourseServiceV1,
     private val authenticationService: AuthenticationServiceV1
 ) {
     @GetMapping("")
     @PreAuthorize("""hasAnyRole('${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_VIEW}', 
         '${GlobalRole.ROLE_CHALLENGE_ACCESS}')""")
+    @PreCourseAuthorize
     @SearchChallengeEndpointV1
     fun search(
         @RequestParam(required = false, defaultValue = "") search: String?,
-        @PathVariable courseId: Long,
-        @PathVariable semesterId: Long,
+        @CourseId @PathVariable courseId: Long,
+        @SemesterId @PathVariable semesterId: Long,
         authentication: Authentication?
     ): Mono<ResponseEntity<CollectionModel<ChallengeResponseDtoV1>>> {
         val loggedUser = authenticationService.extractAuthenticateUser(authentication!!)
         val authorities = authenticationService.extractAuthorities(authentication)
 
-        val accessRequest = CourseAccessRequest(courseId, semesterId, loggedUser, authorities)
-
-        return courseService.checkCourseAccess(accessRequest, CourseSemesterRole.Value.COURSE_ROLE_ACCESS)
-            .flatMapMany { challengeService.search(search, courseId, semesterId, loggedUser, authorities) }
+        return challengeService.search(search, courseId, semesterId, loggedUser, authorities)
             .flatMap { challengeFileAttachmentService.assignAll(it) }
             .flatMap { assignSelfRef(courseId, semesterId, it) }
             .collectList()
@@ -72,13 +69,8 @@ class ChallengeControllerV1(
         @PathVariable semesterId: Long,
         authentication: Authentication?
     ): Mono<ResponseEntity<ChallengeResponseDtoV1>> {
-        val loggedUser = authenticationService.extractAuthenticateUser(authentication!!)
-        val authorities = authenticationService.extractAuthorities(authentication)
 
-        val accessRequest = CourseAccessRequest(courseId, semesterId, loggedUser, authorities)
-
-        return courseService.checkCourseAccess(accessRequest, CourseSemesterRole.Value.COURSE_ROLE_ACCESS)
-            .flatMap { challengeService.find(id) }
+        return challengeService.find(id)
             .map { ChallengeResponseDtoV1.fromEntity(it) }
             .flatMap { challengeFileAttachmentService.assignAll(it) }
             .flatMap { assignSelfRef(courseId, semesterId, it) }
@@ -93,12 +85,8 @@ class ChallengeControllerV1(
         @PathVariable semesterId: Long, authentication: Authentication
     ): Mono<ResponseEntity<ChallengeResponseDtoV1>> {
         val loggedUser = authenticationService.extractAuthenticateUser(authentication)
-        val authorities = authenticationService.extractAuthorities(authentication)
 
-        val accessRequest = CourseAccessRequest(courseId, semesterId, loggedUser, authorities)
-
-        return courseService.checkManageAccess(accessRequest, CourseSemesterRole.Value.COURSE_ROLE_CREATE_CHALLENGE)
-            .flatMap { challengeService.add(courseId, semesterId, loggedUser, challengeDto.preventNullCollections()) }
+        return challengeService.add(courseId, semesterId, loggedUser, challengeDto.preventNullCollections())
             .flatMap { assignSelfRef(courseId, semesterId, it) }
             .map { ResponseEntity.ok(it) }
     }

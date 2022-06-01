@@ -23,10 +23,11 @@ repositories {
 }
 
 dependencies {
-	implementation ("org.springframework.boot:spring-boot-starter-data-r2dbc")
+	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("org.springframework.boot:spring-boot-starter-aop")
 	implementation("org.springframework.hateoas:spring-hateoas:1.4.2")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
@@ -49,6 +50,7 @@ dependencies {
 	runtimeOnly("org.springdoc:springdoc-openapi-kotlin:1.6.8")
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+	runtimeOnly("org.aspectj:aspectjweaver:1.9.9.1")
 	testImplementation("io.r2dbc:r2dbc-h2")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springdoc:springdoc-openapi-webmvc-core:1.6.8")

@@ -3,7 +3,6 @@ package cz.fei.upce.checkman.service.course
 import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRsqlSpecification
 import cz.fei.upce.checkman.domain.course.Course
 import cz.fei.upce.checkman.domain.course.CourseSemester
-import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_COURSE_MANAGE
 import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_COURSE_VIEW
@@ -156,38 +155,6 @@ class CourseServiceV1(
             .map { CourseSemesterResponseDtoV1.fromEntity(it) }
             .collectList()
             .map { courseDto.withSemesters(it) }
-    }
-
-    fun checkCourseAuthority(courseAccess: CourseAccessRequest, courseRole: CourseSemesterRole.Value): Mono<Boolean> {
-        return appUserCourseSemesterRoleRepository
-            .existsByAppUserIdEqualsAndCourseSemesterIdEqualsAndCourseSemesterRoleIdEquals(
-                courseAccess.appUser.id!!,
-                courseAccess.semesterId,
-                courseRole.id
-            )
-            .flatMap {
-                if (!it) {
-                    Mono.error(AppUserCourseSemesterForbiddenException(courseRole))
-                } else {
-                    Mono.just(it)
-                }
-            }
-    }
-
-    fun checkCourseAccess(courseAccess: CourseAccessRequest, courseRole: CourseSemesterRole.Value): Mono<Boolean> {
-        if (VIEW_PERMISSIONS.intersect(courseAccess.authorities.map { it.name }.toSet()).isNotEmpty()) {
-            return Mono.just(true)
-        }
-
-        return checkCourseAuthority(courseAccess, courseRole)
-    }
-
-    fun checkManageAccess(courseAccess: CourseAccessRequest, courseRole: CourseSemesterRole.Value): Mono<Boolean> {
-        if (MANAGE_PERMISSIONS.intersect(courseAccess.authorities.map { it.name }.toSet()).isNotEmpty()) {
-            return Mono.just(true)
-        }
-
-        return checkCourseAuthority(courseAccess, courseRole)
     }
 
     companion object {
