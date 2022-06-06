@@ -1,6 +1,5 @@
 package cz.fei.upce.checkman.dto.course.challenge.requirement
 
-import cz.fei.upce.checkman.domain.challenge.Challenge
 import cz.fei.upce.checkman.domain.review.Requirement
 import cz.fei.upce.checkman.dto.ResponseDto
 
@@ -9,8 +8,7 @@ data class RequirementResponseDtoV1 (
     var name: String = "",
     var description: String = "",
     var minPoint: Short = 0,
-    var maxPoint: Short = 0,
-    var challenge: Challenge? = null
+    var maxPoint: Short = 0
 ): ResponseDto<Requirement, RequirementResponseDtoV1>() {
     override fun withId(id: Long?): RequirementResponseDtoV1 {
         this.id = id
