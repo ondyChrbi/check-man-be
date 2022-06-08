@@ -1,6 +1,8 @@
 spring:
   security:
     permit_paths: /v1/authentication/**, /v3/api-docs/**, /swagger-ui.html, /webjars/swagger-ui/**, /webjars/**
+    cors:
+      enabled: false
   liquibase:
     change-log: classpath:db/changelog/changelog-master.yaml
     url: jdbc:postgresql://localhost:5432/checkman

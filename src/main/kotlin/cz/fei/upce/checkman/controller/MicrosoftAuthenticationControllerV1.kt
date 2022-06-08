@@ -11,15 +11,19 @@ import reactor.core.publisher.Mono
 @RequestMapping("/v1/authentication/microsoft")
 @Tag(name = "Microsoft Authentication V1", description = "Microsoft Authentication API (V1)")
 class MicrosoftAuthenticationControllerV1(private val microsoftAuthenticationService: MicrosoftAuthenticationServiceV1) {
+    @CrossOrigin
     @GetMapping("/start")
     @MicrosoftAuthenticationStartEndpointV1
-    fun start() = Mono.just(microsoftAuthenticationService.createRedirectRequest())
+    fun start(@RequestParam(required = false) redirectURI: String?) =
+        Mono.just(microsoftAuthenticationService.createRedirectRequest(redirectURI))
 
+    @CrossOrigin
     @GetMapping("/finish")
     @MicrosoftAuthenticationFinishEndpointV1
     fun finish(
+        @RequestParam(required = false) redirectURI: String?,
         @RequestParam(required = true) code: String, @RequestParam(required = false) state: String?,
         @RequestParam(required = false) adminConsent: String?, @RequestParam(required = false) error: String?,
         @RequestParam(required = false) errorDescription: String?
-    ) = microsoftAuthenticationService.finish(code)
+    ) = microsoftAuthenticationService.finish(code, redirectURI)
 }

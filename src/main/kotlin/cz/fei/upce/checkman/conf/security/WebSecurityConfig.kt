@@ -24,9 +24,12 @@ class WebSecurityConfig(
     @Value("\${server.ssl.enabled}")
     private var sslEnabled: Boolean = true
 
+    @Value("\${spring.security.cors.enabled}")
+    private var corsEnabled: Boolean = true
+
     @Bean
     fun securityWebFilterChain(http : ServerHttpSecurity): SecurityWebFilterChain {
-        val conf = http.exceptionHandling()
+        var conf = http.exceptionHandling()
             .authenticationEntryPoint { swe, _ -> Mono.fromRunnable { swe.response.statusCode = HttpStatus.UNAUTHORIZED } }
             .accessDeniedHandler { swe, _ -> Mono.fromRunnable { swe.response.statusCode = HttpStatus.FORBIDDEN } }
             .and()
@@ -40,7 +43,13 @@ class WebSecurityConfig(
             .pathMatchers(*permitPaths).permitAll()
             .anyExchange().authenticated().and()
 
-        return if (sslEnabled) conf.redirectToHttps().and().build() else conf.build()
+        if(!corsEnabled) {
+            conf = conf.cors().disable()
+        }
+
+        if (sslEnabled) { conf = conf.redirectToHttps().and() }
+
+        return conf.build()
     }
 
 

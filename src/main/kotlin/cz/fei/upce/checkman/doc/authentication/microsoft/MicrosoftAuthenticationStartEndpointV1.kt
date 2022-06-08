@@ -1,7 +1,7 @@
 package cz.fei.upce.checkman.doc.authentication.microsoft
 
+import cz.fei.upce.checkman.dto.security.authentication.MicrosoftOAuthResponseDtoV1
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.headers.Header
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -15,12 +15,11 @@ import java.lang.annotation.Inherited
 @Operation(summary = "Start user authentication using Microsoft services.")
 @ApiResponses(
     ApiResponse(
-        responseCode = "303",
-        description = "Redirection to Microsoft auth page where user will continue with authentication.",
-        headers = [Header(
-            name = "Location",
-            description = "Microsoft authentication page redirect url.",
-            schema = Schema(type = "url")
+        responseCode = "200",
+        description = "Record",
+        content = [Content(
+            mediaType = MediaType.APPLICATION_JSON_VALUE,
+            schema = Schema(implementation = MicrosoftOAuthResponseDtoV1::class)
         )]
     ),
     ApiResponse(

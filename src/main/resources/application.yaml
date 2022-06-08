@@ -5,6 +5,8 @@ jwt:
 spring:
   security:
     permit_paths: /v1/authentication/**
+    cors:
+      enabled: true
 
 login:
   provider:

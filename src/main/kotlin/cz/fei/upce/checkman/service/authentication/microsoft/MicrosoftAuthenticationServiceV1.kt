@@ -3,6 +3,7 @@ package cz.fei.upce.checkman.service.authentication.microsoft
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.microsoft.MicrosoftMeResponseDtoV1
 import cz.fei.upce.checkman.dto.security.authentication.MicrosoftAuthTokenResponseDtoV1
+import cz.fei.upce.checkman.dto.security.authentication.MicrosoftOAuthResponseDtoV1
 import cz.fei.upce.checkman.service.authentication.AuthenticationService
 import cz.fei.upce.checkman.service.authentication.AuthenticationService.Companion.MAIL_DELIMITER
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
@@ -19,7 +20,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriComponentsBuilder
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
-import javax.annotation.PostConstruct
 
 @Service
 class MicrosoftAuthenticationServiceV1(
@@ -53,35 +53,24 @@ class MicrosoftAuthenticationServiceV1(
     @Value("\${login.permit.domains}")
     private lateinit var permitEmails: Array<String>
 
-    private lateinit var redirectHeaders: HttpHeaders
+    fun createRedirectRequest(redirectUri: String?) = ResponseEntity<MicrosoftOAuthResponseDtoV1>(MicrosoftOAuthResponseDtoV1(
+        UriComponentsBuilder.fromHttpUrl(authenticationEndpoint)
+            .queryParam("client_id", clientId)
+            .queryParam("response_type", responseType)
+            .queryParam("redirect_uri", redirectUri ?: this.redirectUri)
+            .queryParam("scope", scopes.joinToString(SCOPES_SEPARATOR))
+            .buildAndExpand()
+            .toUri()
+            .toString()
+    ), HttpStatus.OK)
 
-    @PostConstruct
-    fun init() {
-        val headers = HttpHeaders()
-
-        headers.add(
-            HttpHeaders.LOCATION, UriComponentsBuilder.fromHttpUrl(authenticationEndpoint)
-                .queryParam("client_id", clientId)
-                .queryParam("response_type", responseType)
-                .queryParam("redirect_uri", redirectUri)
-                .queryParam("scope", scopes.joinToString(SCOPES_SEPARATOR))
-                .buildAndExpand()
-                .toUri()
-                .toString()
-        )
-
-        redirectHeaders = headers
-    }
-
-    fun createRedirectRequest() = ResponseEntity<String>(redirectHeaders, HttpStatus.SEE_OTHER)
-
-    fun finish(code: String) = retrieveAuthToken(code)
+    fun finish(code: String, redirectURI: String?) = retrieveAuthToken(code, redirectURI)
         .flatMap(this::retrievePersonalInfo)
         .flatMap(this::checkValidStagCredentials)
         .flatMap(this::authenticate)
         .log()
 
-    private fun retrieveAuthToken(code: String): Mono<MicrosoftAuthTokenResponseDtoV1> {
+    private fun retrieveAuthToken(code: String, redirectUri: String?): Mono<MicrosoftAuthTokenResponseDtoV1> {
         log.info("Contacting authentication API with code: $code")
 
         return webClient.post()
@@ -91,7 +80,7 @@ class MicrosoftAuthenticationServiceV1(
                     .with("client_id", clientId)
                     .with("code", code)
                     .with("scope", scopes.joinToString(SCOPES_SEPARATOR))
-                    .with("redirect_uri", redirectUri)
+                    .with("redirect_uri", redirectUri ?: this.redirectUri)
                     .with("client_secret", clientSecret)
             ).retrieve()
             .bodyToMono(MicrosoftAuthTokenResponseDtoV1::class.java)

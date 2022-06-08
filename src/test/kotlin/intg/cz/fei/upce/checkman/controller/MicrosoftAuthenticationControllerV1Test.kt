@@ -6,6 +6,7 @@ import cz.fei.upce.checkman.component.security.JWTUtil
 import cz.fei.upce.checkman.dto.microsoft.MicrosoftMeResponseDtoV1
 import cz.fei.upce.checkman.dto.security.authentication.AuthenticationResponseDtoV1
 import cz.fei.upce.checkman.dto.security.authentication.MicrosoftAuthTokenResponseDtoV1
+import cz.fei.upce.checkman.dto.security.authentication.MicrosoftOAuthResponseDtoV1
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -49,12 +50,12 @@ internal class MicrosoftAuthenticationControllerV1Test {
     private lateinit var scopes: Array<String>
 
     @Test
-    fun startMicrosoftAuthenticationProvide303RedirectToLogin() {
+    fun startMicrosoftAuthenticationProvide200Ok() {
         webTestClient.get()
             .uri(START_URI)
             .exchange()
             .expectStatus()
-            .isSeeOther
+            .isOk
     }
 
     @Test
@@ -63,18 +64,22 @@ internal class MicrosoftAuthenticationControllerV1Test {
             .uri(START_URI)
             .exchange()
             .expectStatus()
-            .isSeeOther
-            .expectHeader()
-            .valueEquals(
-                HttpHeaders.LOCATION, UriComponentsBuilder.fromHttpUrl(authenticationEndpoint)
-                    .queryParam("client_id", clientId)
-                    .queryParam("response_type", responseType)
-                    .queryParam("redirect_uri", redirectUri)
-                    .queryParam("scope", scopes.joinToString(" "))
-                    .buildAndExpand()
-                    .toUri()
-                    .toString()
-            )
+            .isOk
+            .expectBody(MicrosoftOAuthResponseDtoV1::class.java)
+            .consumeWith {
+                val body = it.responseBody
+                Assertions.assertNotNull(body)
+                Assertions.assertEquals(
+                    body!!.redirectURI, UriComponentsBuilder.fromHttpUrl(authenticationEndpoint)
+                        .queryParam("client_id", clientId)
+                        .queryParam("response_type", responseType)
+                        .queryParam("redirect_uri", redirectUri)
+                        .queryParam("scope", scopes.joinToString(" "))
+                        .buildAndExpand()
+                        .toUri()
+                        .toString()
+                )
+            }
     }
 
     @Test
