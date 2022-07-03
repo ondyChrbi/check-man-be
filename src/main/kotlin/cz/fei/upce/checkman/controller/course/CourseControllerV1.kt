@@ -49,7 +49,7 @@ class CourseControllerV1(
     @PreAuthorize("hasRole('$ROLE_COURSE_VIEW')")
     @FindCourseByIdEndpointV1
     fun find(@PathVariable id: Long): Mono<ResponseEntity<CourseResponseDtoV1>> {
-        return courseService.find(id)
+        return courseService.findAsDto(id)
             .flatMap { assignSelfRef(it) }
             .map { ResponseEntity.ok(it) }
     }

@@ -12,9 +12,9 @@ import org.springframework.data.relational.core.query.isIn
 import org.springframework.stereotype.Component
 
 @Component
-class ReactiveCriteriaRsqlSpecification(private val rsqlParser: RSQLParser) {
+class ReactiveCriteriaRSQLSpecification(private val rSQLParser: RSQLParser) {
     fun createCriteria(search: String, custom: CriteriaDefinition = empty()): Query {
-        return query((createCriteria(rsqlParser.parse(search)) as Criteria).and(custom))
+        return query((createCriteria(rSQLParser.parse(search)) as Criteria).and(custom))
     }
 
     private fun createCriteria(node: Node): CriteriaDefinition {

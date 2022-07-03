@@ -1,0 +1,21 @@
+type Query {
+    courses: [Course!]!
+    course(id: ID!): Course
+}
+
+type Course {
+    id: ID
+    stagId: String!
+    name: String!
+    dateCreation: String!
+    icon: String
+    template: String
+    semesters: [Semester!]!
+}
+
+type Semester {
+    id: ID
+    note: String
+    dateStart: String
+    dateEnd: String
+}

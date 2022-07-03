@@ -1,5 +1,7 @@
 package cz.fei.upce.checkman.domain.course
 
+import cz.fei.upce.checkman.graphql.course.CourseQL
+import cz.fei.upce.checkman.graphql.course.CourseSemesterQL
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
@@ -12,4 +14,8 @@ data class Course(
     var dateCreation: LocalDateTime = LocalDateTime.now(),
     var icon: String? = null,
     var template: String? = null
-)
+) {
+    fun toQL(semesters: List<CourseSemesterQL>) = CourseQL(
+        id, stagId, name, dateCreation, icon, template, semesters
+    )
+}
