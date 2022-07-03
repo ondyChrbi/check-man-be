@@ -1,5 +1,6 @@
 package cz.fei.upce.checkman.domain.user
 
+import cz.fei.upce.checkman.graphql.output.appuser.GlobalRoleQL
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import org.springframework.security.core.GrantedAuthority
@@ -31,6 +32,7 @@ data class GlobalRole(
     }
 
     override fun toString() = this.name
+    fun toQL() = GlobalRoleQL(id, name)
 
     companion object {
         const val ROLE_GLOBAL_ROLE_VIEW = "ROLE_GLOBAL_ROLE_VIEW"

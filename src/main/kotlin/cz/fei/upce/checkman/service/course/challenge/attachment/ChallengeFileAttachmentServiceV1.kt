@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.service.course.challenge.attachment
 
-import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRsqlSpecification
+import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRSQLSpecification
 import cz.fei.upce.checkman.domain.challenge.Challenge
 import cz.fei.upce.checkman.domain.challenge.ChallengeFileAttachment
 import cz.fei.upce.checkman.domain.challenge.FileAttachment
@@ -37,7 +37,7 @@ class ChallengeFileAttachmentServiceV1(
     private val challengeFileAttachmentRepository: ChallengeFileAttachmentRepository,
     private val fileAttachmentRepository: FileAttachmentRepository,
     private val entityTemplate: R2dbcEntityTemplate,
-    private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRsqlSpecification,
+    private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRSQLSpecification,
     private val authenticationService: AuthenticationServiceV1
 ) {
     @Value("\${check-man.challenge.file-attachment.path}")

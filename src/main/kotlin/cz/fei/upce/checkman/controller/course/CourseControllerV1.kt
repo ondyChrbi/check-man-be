@@ -49,7 +49,7 @@ class CourseControllerV1(
     @PreAuthorize("hasRole('$ROLE_COURSE_VIEW')")
     @FindCourseByIdEndpointV1
     fun find(@PathVariable id: Long): Mono<ResponseEntity<CourseResponseDtoV1>> {
-        return courseService.find(id)
+        return courseService.findAsDto(id)
             .flatMap { assignSelfRef(it) }
             .map { ResponseEntity.ok(it) }
     }
@@ -145,7 +145,7 @@ class CourseControllerV1(
     fun meRoles(@PathVariable courseId: Long, @PathVariable semesterId: Long, authentication: Authentication?)
             : Mono<ResponseEntity<CollectionModel<CourseSemesterRoleDtoV1>>> {
         return courseSemesterRoleService
-            .findAllRoles(authenticationService.extractAuthenticateUser(authentication!!), semesterId)
+            .findAllRolesAsDto(authenticationService.extractAuthenticateUser(authentication!!), semesterId)
             .collectList()
             .flatMap { assignSelfRef(courseId, semesterId, it) }
             .map { ResponseEntity.ok(it) }

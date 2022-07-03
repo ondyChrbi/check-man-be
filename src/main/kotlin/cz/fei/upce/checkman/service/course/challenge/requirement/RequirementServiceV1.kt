@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.service.course.challenge.requirement
 
-import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRsqlSpecification
+import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRSQLSpecification
 import cz.fei.upce.checkman.domain.review.Requirement
 import cz.fei.upce.checkman.dto.course.challenge.requirement.RequirementRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.requirement.RequirementResponseDtoV1
@@ -19,7 +19,7 @@ class RequirementServiceV1(
     private val requirementRepository: RequirementRepository,
     private val challengeService: ChallengeServiceV1,
     private val entityTemplate: R2dbcEntityTemplate,
-    private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRsqlSpecification
+    private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRSQLSpecification
 ) {
     fun search(location: ChallengeLocation, search: String?): Flux<RequirementResponseDtoV1> {
         return challengeService.checkChallengeAssociation(location)

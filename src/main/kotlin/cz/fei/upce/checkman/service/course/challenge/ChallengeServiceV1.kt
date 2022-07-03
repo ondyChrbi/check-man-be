@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.service.course.challenge
 
-import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRsqlSpecification
+import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRSQLSpecification
 import cz.fei.upce.checkman.domain.challenge.Challenge
 import cz.fei.upce.checkman.domain.challenge.ChallengeKind
 import cz.fei.upce.checkman.domain.challenge.PermittedAppUserChallenge
@@ -15,7 +15,6 @@ import cz.fei.upce.checkman.repository.challenge.ChallengeRepository
 import cz.fei.upce.checkman.repository.challenge.PermittedAppUserChallengeRepository
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
-import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -27,9 +26,8 @@ class ChallengeServiceV1(
     private val challengeRepository: ChallengeRepository,
     private val courseSemesterRepository: CourseSemesterRepository,
     private val permittedAppUserChallengeRepository: PermittedAppUserChallengeRepository,
-    private val authenticationService: AuthenticationServiceV1,
     private val entityTemplate: R2dbcEntityTemplate,
-    private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRsqlSpecification
+    private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRSQLSpecification
 ) {
     fun search(search: String?, courseId: Long, semesterId: Long): Flux<ChallengeResponseDtoV1> {
         val challenges = if (search == null || search.isEmpty())
@@ -202,10 +200,6 @@ class ChallengeServiceV1(
             }
 
     companion object {
-        val MANAGE_PERMISSIONS = setOf(
-            GlobalRole.ROLE_COURSE_MANAGE, GlobalRole.ROLE_COURSE_SEMESTER_MANAGE,
-            GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE
-        )
         val VIEW_PERMISSIONS = setOf(
             GlobalRole.ROLE_COURSE_MANAGE, GlobalRole.ROLE_COURSE_SEMESTER_MANAGE,
             GlobalRole.ROLE_COURSE_CHALLENGE_MANAGE, GlobalRole.ROLE_COURSE_CHALLENGE_VIEW

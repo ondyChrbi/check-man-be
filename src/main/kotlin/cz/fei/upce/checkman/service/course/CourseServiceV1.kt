@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.service.course
 
-import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRsqlSpecification
+import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRSQLSpecification
 import cz.fei.upce.checkman.domain.course.Course
 import cz.fei.upce.checkman.domain.course.CourseSemester
 import cz.fei.upce.checkman.domain.user.AppUser
@@ -10,6 +10,8 @@ import cz.fei.upce.checkman.dto.course.CourseRequestDtoV1
 import cz.fei.upce.checkman.dto.course.CourseResponseDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterRequestDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterResponseDtoV1
+import cz.fei.upce.checkman.graphql.input.course.CourseInputQL
+import cz.fei.upce.checkman.graphql.output.course.CourseQL
 import cz.fei.upce.checkman.repository.course.AppUserCourseSemesterRoleRepository
 import cz.fei.upce.checkman.repository.course.CourseRepository
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
@@ -26,31 +28,50 @@ class CourseServiceV1(
     private val courseSemesterRepository: CourseSemesterRepository,
     private val appUserCourseSemesterRoleRepository: AppUserCourseSemesterRoleRepository,
     private val entityTemplate: R2dbcEntityTemplate,
-    private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRsqlSpecification
+    private val reactiveCriteriaRSQLSpecification: ReactiveCriteriaRSQLSpecification
 ) {
     fun search(search: String?): Flux<CourseResponseDtoV1> {
         val courses = if (search == null || search.isEmpty())
             courseRepository.findAll()
         else
             entityTemplate.select(Course::class.java)
-                .matching(reactiveCriteriaRsqlSpecification.createCriteria(search))
+                .matching(reactiveCriteriaRSQLSpecification.createCriteria(search))
                 .all()
 
         return courses.map { CourseResponseDtoV1.fromEntity(it) }
             .flatMap { assignSemesters(it) }
     }
 
-    fun find(id: Long): Mono<CourseResponseDtoV1> {
+    fun findAllAsQL(): Flux<CourseQL> {
+        return courseRepository.findAll().flatMap {
+            assignSemesters(it)
+        }
+    }
+
+    fun findAsDto(id: Long): Mono<CourseResponseDtoV1> {
         return courseRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { CourseResponseDtoV1.fromEntity(it) }
             .flatMap { assignSemesters(it) }
     }
 
+    fun findAsQL(id: Long): Mono<CourseQL> {
+        return courseRepository.findById(id)
+            .flatMap { assignSemesters(it) }
+    }
+
     fun add(courseDto: CourseRequestDtoV1): Mono<CourseResponseDtoV1> = add(courseDto.toResponseDto())
 
-    fun add(courseDto: CourseResponseDtoV1): Mono<CourseResponseDtoV1> {
+    fun add(input: CourseInputQL): Mono<CourseQL> {
+        return courseRepository.save(input.toEntity())
+            .flatMap { course ->
+                courseSemesterRepository.saveAll(input.semesters.map { it.toEntity(course.id!!) })
+                    .collectList()
+                    .map { semester -> course.toQL(semester.map { it.toQL() }) }
+            }
+    }
 
+    fun add(courseDto: CourseResponseDtoV1): Mono<CourseResponseDtoV1> {
         return courseRepository.save(courseDto.toEntity())
             .map { courseDto.withId(it.id) }
             .flatMap { saveSemesters(it) }
@@ -58,7 +79,9 @@ class CourseServiceV1(
 
     }
 
-    fun update(courseId: Long, courseDto: CourseRequestDtoV1) = update(courseId, courseDto.toResponseDto())
+    fun update(courseId: Long, courseDto: CourseRequestDtoV1): Mono<CourseResponseDtoV1> {
+        return update(courseId, courseDto.toResponseDto())
+    }
 
     fun update(courseId: Long, courseDto: CourseResponseDtoV1): Mono<CourseResponseDtoV1> {
         return courseRepository.findById(courseId)
@@ -76,7 +99,7 @@ class CourseServiceV1(
             courseSemesterRepository.findAll()
         else
             entityTemplate.select(CourseSemester::class.java)
-                .matching(reactiveCriteriaRsqlSpecification.createCriteria(search))
+                .matching(reactiveCriteriaRSQLSpecification.createCriteria(search))
                 .all()
 
         return semesters.map { CourseSemesterResponseDtoV1.fromEntity(it) }
@@ -84,13 +107,13 @@ class CourseServiceV1(
 
     fun findSemester(courseId: Long, semesterId: Long): Mono<CourseSemesterResponseDtoV1> {
         return courseSemesterRepository.findById(semesterId)
-            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { checkCourseSemesterAssociation(courseId, it) }
             .map { CourseSemesterResponseDtoV1.fromEntity(it) }
     }
 
-    fun addSemester(courseId: Long, courseSemesterDto: CourseSemesterRequestDtoV1) =
-        addSemester(courseId, courseSemesterDto.toResponseDto())
+    fun addSemester(courseId: Long, courseSemesterDto: CourseSemesterRequestDtoV1): Mono<CourseSemesterResponseDtoV1> {
+        return addSemester(courseId, courseSemesterDto.toResponseDto())
+    }
 
     fun addSemester(
         courseId: Long, courseSemesterDtoV1: CourseSemesterResponseDtoV1
@@ -131,16 +154,22 @@ class CourseServiceV1(
         return appUserCourseSemesterRoleRepository.findAllByAppUserIdEquals(appUser.id!!)
             .flatMap { courseSemesterRepository.findById(it.courseSemesterId) }
             .groupBy { it.courseId!! }
-            .flatMap { groupSemestersByCourse(it.key(), it.collectList()) }
+            .flatMap { groupSemestersByCourseAsDto(it.key(), it.collectList()) }
     }
 
-    fun findAvailableTo(appUser: AppUser): Flux<CourseResponseDtoV1> {
+    fun findAvailableToAsDto(appUser: AppUser): Flux<CourseResponseDtoV1> {
         return courseSemesterRepository.findAllAvailableToAppUser(LocalDateTime.now(), appUser.id!!)
             .groupBy { it.courseId!! }
-            .flatMap { groupSemestersByCourse(it.key(), it.collectList()) }
+            .flatMap { groupSemestersByCourseAsDto(it.key(), it.collectList()) }
     }
 
-    private fun groupSemestersByCourse(
+    fun findAvailableToAsQL(appUser: AppUser): Flux<CourseQL> {
+        return courseSemesterRepository.findAllAvailableToAppUser(LocalDateTime.now(), appUser.id!!)
+            .groupBy { it.courseId!! }
+            .flatMap { groupSemestersByCourseAsQL(it.key(), it.collectList()) }
+    }
+
+    private fun groupSemestersByCourseAsDto(
         courseId: Long,
         courseSemesters: Mono<List<CourseSemester>>
     ): Mono<CourseResponseDtoV1> {
@@ -150,11 +179,28 @@ class CourseServiceV1(
         }
     }
 
+    private fun groupSemestersByCourseAsQL(
+        courseId: Long,
+        courseSemesters: Mono<List<CourseSemester>>
+    ): Mono<CourseQL> {
+        return courseSemesters.flatMap { semesters ->
+            courseRepository.findById(courseId)
+                .map { course -> course.toQL(semesters.map { it.toQL() }) }
+        }
+    }
+
     private fun assignSemesters(courseDto: CourseResponseDtoV1): Mono<CourseResponseDtoV1> {
         return courseSemesterRepository.findAllByCourseIdEquals(courseDto.id!!)
             .map { CourseSemesterResponseDtoV1.fromEntity(it) }
             .collectList()
             .map { courseDto.withSemesters(it) }
+    }
+
+    private fun assignSemesters(course: Course): Mono<CourseQL> {
+        return courseSemesterRepository.findAllByCourseIdEquals(course.id!!)
+            .map { it.toQL() }
+            .collectList()
+            .map { course.toQL(it) }
     }
 
     companion object {
