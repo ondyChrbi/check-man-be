@@ -17,6 +17,9 @@ import io.swagger.v3.oas.annotations.servers.Server
         description = "Official REST documentation",
         contact = Contact(name = "Ondřej Chrbolka", email = "ondrej.chrbolka@upce.cz"),
         version = "0.0.1"
-    ), servers = [Server(url = "https://localhost:9001", description = "Local docker services")]
+    ), servers = [
+        Server(url = "https://localhost:9001", description = "Local docker services (secured)"),
+        Server(url = "http://localhost:9001", description = "Local docker services")
+    ]
 )
 class OpenApi3

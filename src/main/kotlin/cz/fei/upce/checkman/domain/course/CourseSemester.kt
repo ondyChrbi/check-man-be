@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.domain.course
 
-import cz.fei.upce.checkman.graphql.course.CourseSemesterQL
+import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime

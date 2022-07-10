@@ -1,6 +1,39 @@
 type Query {
     courses: [Course!]!
     course(id: ID!): Course
+    me: AppUser!
+    myCourses: [Course!]!
+}
+
+type Mutation {
+    createCourse(input: CourseInput!): Course!
+}
+
+type AppUser{
+    id: ID!
+    stagId: String!
+    mail: String!
+    displayName: String!
+    registrationDate: String!
+    lastAccessDate: String!
+    disabled: Boolean!
+    globalRoles: [GlobalRole!]!
+    courseRoles: [CourseSemesterRoles!]!
+}
+
+type GlobalRole {
+    id: ID!
+    name: String!
+}
+
+type CourseSemesterRoles {
+    semester: Semester!
+    roles: [CourseSemesterRole!]!
+}
+
+type CourseSemesterRole {
+    id: ID!
+    name: String!
 }
 
 type Course {
@@ -13,8 +46,22 @@ type Course {
     semesters: [Semester!]!
 }
 
+input CourseInput {
+    stagId: String!
+    name: String!
+    icon: String
+    template: String
+    semesters: [SemesterInput]
+}
+
 type Semester {
     id: ID
+    note: String
+    dateStart: String
+    dateEnd: String
+}
+
+input SemesterInput {
     note: String
     dateStart: String
     dateEnd: String

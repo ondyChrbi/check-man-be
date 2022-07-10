@@ -145,7 +145,7 @@ class CourseControllerV1(
     fun meRoles(@PathVariable courseId: Long, @PathVariable semesterId: Long, authentication: Authentication?)
             : Mono<ResponseEntity<CollectionModel<CourseSemesterRoleDtoV1>>> {
         return courseSemesterRoleService
-            .findAllRoles(authenticationService.extractAuthenticateUser(authentication!!), semesterId)
+            .findAllRolesAsDto(authenticationService.extractAuthenticateUser(authentication!!), semesterId)
             .collectList()
             .flatMap { assignSelfRef(courseId, semesterId, it) }
             .map { ResponseEntity.ok(it) }

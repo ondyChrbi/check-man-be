@@ -35,7 +35,7 @@ class MeControllerV1(
     @GetMapping("")
     @MeEndpointV1
     fun me(authentication: Authentication?): Mono<ResponseEntity<AppUserResponseDtoV1>> {
-        return appUserService.me(authenticationService.extractAuthenticateUser(authentication!!))
+        return appUserService.meAsDto(authenticationService.extractAuthenticateUser(authentication!!))
             .flatMap { assignSelfRef(it) }
             .map { ResponseEntity.ok(it) }
     }
@@ -55,7 +55,7 @@ class MeControllerV1(
     @PreAuthorize("hasRole('${GlobalRole.ROLE_COURSE_ACCESS}')")
     @MeAvailableCoursesEndpointV1
     fun availableCourses(authentication: Authentication?): Mono<ResponseEntity<CollectionModel<CourseResponseDtoV1>>> {
-        return meService.availableCourses(authenticationService.extractAuthenticateUser(authentication!!))
+        return meService.availableCoursesAsDto(authenticationService.extractAuthenticateUser(authentication!!))
             .flatMap { assignSelfRef(it) }
             .collectList()
             .flatMap { assignSelfRefAvailable(it) }

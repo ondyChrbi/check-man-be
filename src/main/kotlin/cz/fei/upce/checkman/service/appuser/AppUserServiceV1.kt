@@ -4,6 +4,7 @@ import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.appuser.AppUserResponseDtoV1
 import cz.fei.upce.checkman.dto.appuser.GlobalRoleResponseDtoV1
 import cz.fei.upce.checkman.dto.security.authentication.AuthenticationRequestDtoV1
+import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
 import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.role.CourseSemesterRoleServiceV1
@@ -37,16 +38,29 @@ class AppUserServiceV1(
         .flatMap(teamService::createPersonalTeam)
         .flatMap { appUserRepository.findById(appUser.id!!) }
 
-    fun me(loggedUser: AppUser): Mono<AppUserResponseDtoV1> {
+    fun meAsDto(loggedUser: AppUser): Mono<AppUserResponseDtoV1> {
         val responseDto = AppUserResponseDtoV1.fromEntity(loggedUser)
 
         return globalRoleService.rolesByUser(loggedUser)
             .map { GlobalRoleResponseDtoV1.fromEntity(it) }
             .collectList()
             .doOnNext { responseDto.withGlobalRoles(it) }
-            .flatMapMany { courseSemesterRoleService.findAllSemestersAndRoles(loggedUser) }
+            .flatMapMany { courseSemesterRoleService.findAllSemestersAndRolesAsDto(loggedUser) }
             .collectList()
             .map { responseDto.withCourseRoles(it) }
+    }
+
+    fun meAsQL(loggedUser: AppUser): Mono<AppUserQL> {
+        val ql = loggedUser.toQL()
+
+        return globalRoleService.rolesByUser(loggedUser)
+            .map { it.toQL() }
+            .collectList()
+            .doOnNext { ql.globalRoles.addAll(it) }
+            .flatMapMany { courseSemesterRoleService.findAllSemestersAndRolesAsQL(loggedUser) }
+            .collectList()
+            .doOnNext { ql.courseRoles.addAll(it) }
+            .map { ql }
     }
 
     fun block(stagId: String): Mono<AppUser> {
