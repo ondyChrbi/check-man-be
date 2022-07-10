@@ -18,6 +18,11 @@ spring:
   graphql:
     graphiql:
       enabled: true
+    cors:
+      allowed-origins: '*'
+      allowed-headers: '*'
+      allowed-methods: '*'
+      allowed-origin-patterns: '*'
 
 login:
   provider:
