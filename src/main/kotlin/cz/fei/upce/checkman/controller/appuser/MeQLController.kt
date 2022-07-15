@@ -24,6 +24,11 @@ class MeQLController(
 
     @QueryMapping
     fun myCourses(authentication: Authentication?): Flux<CourseQL> {
+        return meServiceV1.coursesAsQL(authenticationService.extractAuthenticateUser(authentication!!))
+    }
+
+    @QueryMapping
+    fun availableCourses(authentication: Authentication?): Flux<CourseQL> {
         return meServiceV1.availableCoursesAsQL(authenticationService.extractAuthenticateUser(authentication!!))
     }
 }

@@ -19,6 +19,7 @@ import cz.fei.upce.checkman.service.ResourceNotFoundException
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
+import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 
@@ -150,11 +151,14 @@ class CourseServiceV1(
             .flatMap { courseSemesterRepository.deleteById(it.id!!) }
     }
 
-    fun findAllRelatedTo(appUser: AppUser): Flux<CourseResponseDtoV1> {
-        return appUserCourseSemesterRoleRepository.findAllByAppUserIdEquals(appUser.id!!)
-            .flatMap { courseSemesterRepository.findById(it.courseSemesterId) }
-            .groupBy { it.courseId!! }
+    fun findAllRelatedToAsDto(appUser: AppUser): Flux<CourseResponseDtoV1> {
+        return findAllRelatedTo(appUser)
             .flatMap { groupSemestersByCourseAsDto(it.key(), it.collectList()) }
+    }
+
+    fun findAllRelatedToAsQL(appUser: AppUser): Flux<CourseQL> {
+        return findAllRelatedTo(appUser)
+            .flatMap { groupSemestersByCourseAsQL(it.key(), it.collectList()) }
     }
 
     fun findAvailableToAsDto(appUser: AppUser): Flux<CourseResponseDtoV1> {
@@ -201,6 +205,12 @@ class CourseServiceV1(
             .map { it.toQL() }
             .collectList()
             .map { course.toQL(it) }
+    }
+
+    private fun findAllRelatedTo(appUser: AppUser): Flux<GroupedFlux<Long, CourseSemester>> {
+        return appUserCourseSemesterRoleRepository.findAllByAppUserIdEquals(appUser.id!!)
+            .flatMap { courseSemesterRepository.findById(it.courseSemesterId) }
+            .groupBy { it.courseId!! }
     }
 
     companion object {

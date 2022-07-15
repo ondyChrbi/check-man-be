@@ -59,6 +59,11 @@ dependencies {
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testImplementation("org.springframework.cloud:spring-cloud-contract-wiremock:3.1.2")
+	implementation("io.netty:netty-resolver-dns-native-macos:4.1.75.Final") {
+		artifact {
+			classifier = "osx-aarch_64"
+		}
+	}
 }
 
 tasks.withType<KotlinCompile> {

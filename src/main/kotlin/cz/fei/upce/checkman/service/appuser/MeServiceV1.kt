@@ -9,8 +9,12 @@ import reactor.core.publisher.Flux
 
 @Service
 class MeServiceV1(private val courseServiceV1: CourseServiceV1) {
-    fun courses(appUser: AppUser): Flux<CourseResponseDtoV1> {
-        return courseServiceV1.findAllRelatedTo(appUser)
+    fun coursesAsDto(appUser: AppUser): Flux<CourseResponseDtoV1> {
+        return courseServiceV1.findAllRelatedToAsDto(appUser)
+    }
+
+    fun coursesAsQL(appUser: AppUser): Flux<CourseQL> {
+        return courseServiceV1.findAllRelatedToAsQL(appUser)
     }
 
     fun availableCoursesAsDto(appUser: AppUser): Flux<CourseResponseDtoV1> {

@@ -3,6 +3,7 @@ type Query {
     course(id: ID!): Course
     me: AppUser!
     myCourses: [Course!]!
+    availableCourses: [Course!]!
 }
 
 type Mutation {
