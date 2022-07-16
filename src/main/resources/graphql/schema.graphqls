@@ -58,8 +58,8 @@ input CourseInput {
 type Semester {
     id: ID
     note: String
-    dateStart: String
-    dateEnd: String
+    dateStart: String!
+    dateEnd: String!
 }
 
 input SemesterInput {

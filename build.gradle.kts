@@ -44,6 +44,7 @@ dependencies {
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
 	implementation("cz.jirutka.rsql:rsql-parser:2.1.0")
 	compileOnly("org.projectlombok:lombok")
+	implementation("com.graphql-java:graphql-java-extended-scalars:17.0")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.h2database:h2")
 	runtimeOnly("org.postgresql:postgresql")

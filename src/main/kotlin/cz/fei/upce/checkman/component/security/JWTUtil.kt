@@ -39,11 +39,29 @@ class JWTUtil() {
     fun isValid(token : String) =
         isNotExpired(token)
 
-    fun generateToken(username : String) = Jwts.builder()
-        .setClaims(mapOf<String, Any>())
-        .setSubject(username)
-        .setIssuedAt(Date())
-        .setExpiration(Date(Date().time + expiration.toLong()))
-        .signWith(key)
-        .compact()
+    fun generateToken(username: String): String {
+        val issueAtDate = Date()
+        val expirationDate = Date(issueAtDate.time + expiration.toLong())
+
+        return generateTokenInfo(username, issueAtDate, expirationDate).jwtToken
+    }
+
+    fun generateTokenInfo(username: String): JwtTokenInfo {
+        val issueAtDate = Date()
+        val expirationDate = Date(issueAtDate.time + expiration.toLong())
+
+        return generateTokenInfo(username, issueAtDate, expirationDate)
+    }
+
+    fun generateTokenInfo(username: String, issueAtDate: Date, expirationDate: Date): JwtTokenInfo {
+        val jwtToken = Jwts.builder()
+            .setClaims(mapOf<String, Any>())
+            .setSubject(username)
+            .setIssuedAt(issueAtDate)
+            .setExpiration(expirationDate)
+            .signWith(key)
+            .compact()
+
+        return JwtTokenInfo(jwtToken, issueAtDate, expirationDate)
+    }
 }

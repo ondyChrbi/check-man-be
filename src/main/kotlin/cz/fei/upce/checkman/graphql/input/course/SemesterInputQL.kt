@@ -6,10 +6,10 @@ import java.time.LocalDateTime
 
 data class SemesterInputQL (
     val note: String?,
-    val dateStart: LocalDateTime?,
-    val dateEnd: LocalDateTime?
+    val dateStart: String,
+    val dateEnd: String
 ): InputQL<CourseSemester> {
-    override fun toEntity() = CourseSemester(note = note, dateStart = dateStart, dateEnd = dateEnd)
+    override fun toEntity() = CourseSemester(note = note, dateStart = LocalDateTime.parse(dateStart), dateEnd = LocalDateTime.parse(dateEnd))
 
     fun toEntity(courseId: Long): CourseSemester {
         val courseSemester = this.toEntity()

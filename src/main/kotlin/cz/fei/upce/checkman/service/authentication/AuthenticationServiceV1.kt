@@ -3,7 +3,6 @@ package cz.fei.upce.checkman.service.authentication
 import cz.fei.upce.checkman.component.security.JWTUtil
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.domain.user.GlobalRole
-import cz.fei.upce.checkman.dto.security.authentication.AuthenticationRequestDtoV1
 import cz.fei.upce.checkman.dto.security.authentication.AuthenticationResponseDtoV1
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
 import org.slf4j.Logger
@@ -18,21 +17,18 @@ import java.time.LocalDateTime
 @Service
 class AuthenticationServiceV1(private val userService: AppUserServiceV1, private val jwtUtil: JWTUtil) :
     AuthenticationService {
-    fun authenticate(authenticationRequest: AuthenticationRequestDtoV1) = userService.findUser(authenticationRequest)
-        .map { AuthenticationResponseDtoV1(jwtUtil.generateToken(authenticationRequest.stagId)) }
-        .log()
 
-    fun authenticate(stagId: String): Mono<AuthenticationResponseDtoV1> {
-        log.info("Authentication user with stag id $stagId started")
-
-        return userService.updateLastAccessDate(stagId)
-            .map { AuthenticationResponseDtoV1(jwtUtil.generateToken(stagId)) }
-    }
-
-    fun authenticate(appUser: AppUser): Mono<AuthenticationResponseDtoV1> {
-        return userService.findUser(appUser.stagId)
-            .switchIfEmpty { register(appUser) }
-            .flatMap { authenticate(appUser.stagId) }
+    fun authenticate(requestAppUser: AppUser): Mono<AuthenticationResponseDtoV1> {
+        return userService.findUser(requestAppUser.stagId)
+            .switchIfEmpty { register(requestAppUser) }
+            .flatMap { appUser ->
+                userService.updateLastAccessDate(appUser.stagId)
+                    .flatMap { userService.meAsDto(it) }
+                    .map { response ->
+                        jwtUtil.generateTokenInfo(appUser.stagId)
+                            .toAuthenticationResponseDtoV1(response)
+                    }
+            }
     }
 
     fun register(appUser: AppUser): Mono<AppUser> {

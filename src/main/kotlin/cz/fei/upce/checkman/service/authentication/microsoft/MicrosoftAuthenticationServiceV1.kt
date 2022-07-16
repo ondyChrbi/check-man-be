@@ -2,6 +2,7 @@ package cz.fei.upce.checkman.service.authentication.microsoft
 
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.microsoft.MicrosoftMeResponseDtoV1
+import cz.fei.upce.checkman.dto.security.authentication.AuthenticationResponseDtoV1
 import cz.fei.upce.checkman.dto.security.authentication.MicrosoftAuthTokenResponseDtoV1
 import cz.fei.upce.checkman.dto.security.authentication.MicrosoftOAuthResponseDtoV1
 import cz.fei.upce.checkman.service.authentication.AuthenticationService
@@ -64,11 +65,13 @@ class MicrosoftAuthenticationServiceV1(
             .toString()
     ), HttpStatus.OK)
 
-    fun finish(code: String, redirectURI: String?) = retrieveAuthToken(code, redirectURI)
-        .flatMap(this::retrievePersonalInfo)
-        .flatMap(this::checkValidStagCredentials)
-        .flatMap(this::authenticate)
-        .log()
+    fun finish(code: String, redirectURI: String?): Mono<AuthenticationResponseDtoV1> {
+        return retrieveAuthToken(code, redirectURI)
+            .flatMap(this::retrievePersonalInfo)
+            .flatMap(this::checkValidStagCredentials)
+            .flatMap(this::authenticate)
+            .log()
+    }
 
     private fun retrieveAuthToken(code: String, redirectUri: String?): Mono<MicrosoftAuthTokenResponseDtoV1> {
         log.info("Contacting authentication API with code: $code")
@@ -116,14 +119,16 @@ class MicrosoftAuthenticationServiceV1(
         return Mono.just(meResponse)
     }
 
-    private fun authenticate(meResponse: MicrosoftMeResponseDtoV1) = authenticationService.authenticate(
-        AppUser(
-            stagId = AuthenticationService.extractStagId(meResponse.userPrincipalName!!),
-            mail = meResponse.mail!!,
-            displayName = meResponse.displayName!!,
-            lastAccessDate = LocalDateTime.now()
+    private fun authenticate(meResponse: MicrosoftMeResponseDtoV1): Mono<AuthenticationResponseDtoV1> {
+        return authenticationService.authenticate(
+            AppUser(
+                stagId = AuthenticationService.extractStagId(meResponse.userPrincipalName!!),
+                mail = meResponse.mail!!,
+                displayName = meResponse.displayName!!,
+                lastAccessDate = LocalDateTime.now()
+            )
         )
-    )
+    }
 
     private companion object {
         const val SCOPES_SEPARATOR = " "
