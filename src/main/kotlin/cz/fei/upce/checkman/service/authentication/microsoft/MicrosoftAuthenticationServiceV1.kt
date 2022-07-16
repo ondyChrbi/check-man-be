@@ -1,18 +1,22 @@
 package cz.fei.upce.checkman.service.authentication.microsoft
 
 import cz.fei.upce.checkman.domain.user.AppUser
+import cz.fei.upce.checkman.domain.user.AuthenticationExchange
+import cz.fei.upce.checkman.domain.user.AuthenticationRequest
 import cz.fei.upce.checkman.dto.microsoft.MicrosoftMeResponseDtoV1
-import cz.fei.upce.checkman.dto.security.authentication.AuthenticationResponseDtoV1
+import cz.fei.upce.checkman.dto.security.authentication.AuthenticationExchangeResponseDtoV1
 import cz.fei.upce.checkman.dto.security.authentication.MicrosoftAuthTokenResponseDtoV1
 import cz.fei.upce.checkman.dto.security.authentication.MicrosoftOAuthResponseDtoV1
 import cz.fei.upce.checkman.service.authentication.AuthenticationService
 import cz.fei.upce.checkman.service.authentication.AuthenticationService.Companion.MAIL_DELIMITER
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
+import cz.fei.upce.checkman.service.authentication.microsoft.exception.ExpiredOrNonExistingAuthenticationRequestKeyException
+import cz.fei.upce.checkman.service.authentication.microsoft.exception.NotEqualsRedirectURIException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.redis.core.ReactiveRedisOperations
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -20,12 +24,15 @@ import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriComponentsBuilder
 import reactor.core.publisher.Mono
+import java.time.Duration
 import java.time.LocalDateTime
 
 @Service
 class MicrosoftAuthenticationServiceV1(
     private val webClient: WebClient,
-    private val authenticationService: AuthenticationServiceV1
+    private val authenticationService: AuthenticationServiceV1,
+    private val authenticationRequestOps: ReactiveRedisOperations<String, AuthenticationRequest>,
+    private val exchangeRequestOps: ReactiveRedisOperations<String, AuthenticationExchange>
 ) {
     @Value("\${login.provider.oauth2.microsoft.authorization_endpoint}")
     private lateinit var authenticationEndpoint: String
@@ -54,23 +61,54 @@ class MicrosoftAuthenticationServiceV1(
     @Value("\${login.permit.domains}")
     private lateinit var permitEmails: Array<String>
 
-    fun createRedirectRequest(redirectUri: String?) = ResponseEntity<MicrosoftOAuthResponseDtoV1>(MicrosoftOAuthResponseDtoV1(
-        UriComponentsBuilder.fromHttpUrl(authenticationEndpoint)
-            .queryParam("client_id", clientId)
-            .queryParam("response_type", responseType)
-            .queryParam("redirect_uri", redirectUri ?: this.redirectUri)
-            .queryParam("scope", scopes.joinToString(SCOPES_SEPARATOR))
-            .buildAndExpand()
-            .toUri()
-            .toString()
-    ), HttpStatus.OK)
+    @Value("\${check-man.security.authentication.microsoft.request-timeout}")
+    private lateinit var timeout: String
 
-    fun finish(code: String, redirectURI: String?): Mono<AuthenticationResponseDtoV1> {
-        return retrieveAuthToken(code, redirectURI)
+    fun createRedirectRequest(redirectUri: String?): Mono<ResponseEntity<MicrosoftOAuthResponseDtoV1>> {
+        val loginRequest = AuthenticationRequest(redirectUri = redirectUri ?: this.redirectUri)
+
+        return authenticationRequestOps.opsForValue()
+            .set(loginRequest.getRedisKey(), loginRequest, Duration.ofMillis(timeout.toLong()))
+            .map {
+                MicrosoftOAuthResponseDtoV1(
+                    UriComponentsBuilder.fromHttpUrl(authenticationEndpoint)
+                        .queryParam("client_id", clientId)
+                        .queryParam("response_type", responseType)
+                        .queryParam("redirect_uri", this.redirectUri)
+                        .queryParam("scope", scopes.joinToString(SCOPES_SEPARATOR))
+                        .queryParam("state", loginRequest.id)
+                        .buildAndExpand()
+                        .toUri()
+                        .toString()
+                )
+            }.map { ResponseEntity.ok(it) }
+    }
+
+    fun finish(code: String, state: String, redirectURI: String): Mono<AuthenticationExchangeResponseDtoV1> {
+        return retrieveAndCheckAuthRequest(state, redirectURI)
+            .flatMap { retrieveAuthToken(code, redirectURI) }
             .flatMap(this::retrievePersonalInfo)
             .flatMap(this::checkValidStagCredentials)
             .flatMap(this::authenticate)
             .log()
+    }
+
+    private fun retrieveAndCheckAuthRequest(state: String, redirectURI: String): Mono<AuthenticationRequest> {
+        return authenticationRequestOps.opsForValue().get(AuthenticationRequest.getRedisKey(state))
+            .switchIfEmpty(Mono.error(ExpiredOrNonExistingAuthenticationRequestKeyException()))
+            .flatMap { request ->
+                if (request.redirectUri != redirectURI)
+                    Mono.error(NotEqualsRedirectURIException())
+                else
+                    Mono.just(request)
+            }
+            .flatMap(this::removeAuthRequestFromCache)
+    }
+
+    private fun removeAuthRequestFromCache(authRequest: AuthenticationRequest): Mono<AuthenticationRequest> {
+        return authenticationRequestOps.opsForValue()
+            .delete(authRequest.getRedisKey())
+            .map { authRequest }
     }
 
     private fun retrieveAuthToken(code: String, redirectUri: String?): Mono<MicrosoftAuthTokenResponseDtoV1> {
@@ -119,15 +157,29 @@ class MicrosoftAuthenticationServiceV1(
         return Mono.just(meResponse)
     }
 
-    private fun authenticate(meResponse: MicrosoftMeResponseDtoV1): Mono<AuthenticationResponseDtoV1> {
-        return authenticationService.authenticate(
-            AppUser(
-                stagId = AuthenticationService.extractStagId(meResponse.userPrincipalName!!),
-                mail = meResponse.mail!!,
-                displayName = meResponse.displayName!!,
-                lastAccessDate = LocalDateTime.now()
-            )
+    private fun authenticate(meResponse: MicrosoftMeResponseDtoV1): Mono<AuthenticationExchangeResponseDtoV1> {
+        val requestingAppUser = AppUser(
+            stagId = AuthenticationService.extractStagId(meResponse.userPrincipalName!!),
+            mail = meResponse.mail!!,
+            displayName = meResponse.displayName!!,
+            lastAccessDate = LocalDateTime.now()
         )
+
+        return authenticationService
+            .authenticate(requestingAppUser)
+            .flatMap { jwtInfo ->
+                val expiration = Duration.ofMillis(timeout.toLong())
+                val exchangeRequest = AuthenticationExchange(jwtTokenInfo = jwtInfo)
+
+                exchangeRequestOps.opsForValue()
+                    .set(exchangeRequest.getRedisKey(), exchangeRequest, expiration)
+                    .map {
+                        val issueAt = LocalDateTime.now()
+                        val expiresAt = issueAt.plusSeconds(expiration.toSeconds())
+
+                        AuthenticationExchangeResponseDtoV1(exchangeRequest.id, issueAt, expiresAt)
+                    }
+            }
     }
 
     private companion object {

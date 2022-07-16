@@ -5,7 +5,6 @@ import cz.fei.upce.checkman.doc.authentication.microsoft.MicrosoftAuthentication
 import cz.fei.upce.checkman.service.authentication.microsoft.MicrosoftAuthenticationServiceV1
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
-import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/v1/authentication/microsoft")
@@ -14,16 +13,16 @@ class MicrosoftAuthenticationControllerV1(private val microsoftAuthenticationSer
     @CrossOrigin
     @GetMapping("/start")
     @MicrosoftAuthenticationStartEndpointV1
-    fun start(@RequestParam(required = false) redirectURI: String?) =
-        Mono.just(microsoftAuthenticationService.createRedirectRequest(redirectURI))
+    fun start(@RequestParam redirectURI: String?) =
+        microsoftAuthenticationService.createRedirectRequest(redirectURI)
 
     @CrossOrigin
     @GetMapping("/finish")
     @MicrosoftAuthenticationFinishEndpointV1
     fun finish(
-        @RequestParam(required = false) redirectURI: String?,
-        @RequestParam(required = true) code: String, @RequestParam(required = false) state: String?,
+        @RequestParam redirectURI: String,
+        @RequestParam(required = true) code: String, @RequestParam state: String,
         @RequestParam(required = false) adminConsent: String?, @RequestParam(required = false) error: String?,
         @RequestParam(required = false) errorDescription: String?
-    ) = microsoftAuthenticationService.finish(code, redirectURI)
+    ) = microsoftAuthenticationService.finish(code, state, redirectURI)
 }

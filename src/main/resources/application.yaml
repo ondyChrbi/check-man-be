@@ -31,3 +31,7 @@ check-man:
   team:
     private:
       post-fix: private
+  security:
+    authentication:
+      microsoft:
+        request-timeout: 60000
