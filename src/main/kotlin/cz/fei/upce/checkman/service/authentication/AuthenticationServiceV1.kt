@@ -1,7 +1,6 @@
 package cz.fei.upce.checkman.service.authentication
 
 import cz.fei.upce.checkman.component.security.JWTUtil
-import cz.fei.upce.checkman.component.security.JwtTokenInfo
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.domain.user.GlobalRole
 import cz.fei.upce.checkman.dto.security.authentication.AuthenticationResponseDtoV1
@@ -19,20 +18,16 @@ import java.time.LocalDateTime
 class AuthenticationServiceV1(private val userService: AppUserServiceV1, private val jwtUtil: JWTUtil) :
     AuthenticationService {
 
-    fun authenticateFullJwt(requestAppUser: AppUser): Mono<AuthenticationResponseDtoV1> {
-        return authenticate(requestAppUser)
-            .flatMap { jwtTokenInfo ->
-                userService.meAsDto(requestAppUser)
-                    .map { jwtTokenInfo.toAuthenticationResponseDtoV1(it) }
-            }
-    }
-
-    fun authenticate(requestAppUser: AppUser): Mono<JwtTokenInfo> {
+    fun authenticate(requestAppUser: AppUser): Mono<AuthenticationResponseDtoV1> {
         return userService.findUser(requestAppUser.stagId)
             .switchIfEmpty { register(requestAppUser) }
             .flatMap { appUser ->
                 userService.updateLastAccessDate(appUser.stagId)
-                    .map { jwtUtil.generateTokenInfo(appUser.stagId) }
+                    .flatMap { userService.meAsDto(it) }
+                    .map { response ->
+                        jwtUtil.generateTokenInfo(appUser.stagId)
+                            .toAuthenticationResponseDtoV1(response)
+                    }
             }
     }
 

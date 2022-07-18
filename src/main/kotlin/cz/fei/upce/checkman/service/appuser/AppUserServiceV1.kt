@@ -3,7 +3,6 @@ package cz.fei.upce.checkman.service.appuser
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.appuser.AppUserResponseDtoV1
 import cz.fei.upce.checkman.dto.appuser.GlobalRoleResponseDtoV1
-import cz.fei.upce.checkman.dto.security.authentication.AuthenticationRequestDtoV1
 import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
 import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
@@ -20,7 +19,6 @@ class AppUserServiceV1(
     private val globalRoleService: GlobalRoleServiceV1,
     private val courseSemesterRoleService: CourseSemesterRoleServiceV1
 ) {
-    fun findUser(authenticationRequest: AuthenticationRequestDtoV1) = findUser(authenticationRequest.stagId)
 
     fun findUser(stagId: String) = appUserRepository.findByStagIdEquals(stagId)
 

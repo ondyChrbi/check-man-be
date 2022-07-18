@@ -12,7 +12,7 @@ import java.lang.annotation.Inherited
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
-@Operation(summary = "Finish user authentication using Microsoft services.")
+@Operation(summary = "Exchange code to JWT authentication token.")
 @ApiResponses(
     ApiResponse(
         responseCode = "200",
@@ -23,19 +23,19 @@ import java.lang.annotation.Inherited
         )]
     ),
     ApiResponse(
-        responseCode = "406",
-        description = "Email or user principals provided by Microsoft services is not part of university domain or there are corrupted. ",
+        responseCode = "400",
+        description = "Not valid request. Check all values.",
+        content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
+    ),
+    ApiResponse(
+        responseCode = "404",
+        description = "Record not found.",
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     ),
     ApiResponse(
         responseCode = "500",
         description = "Error occur on server side. Please try it again later or contact technical support.",
         content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
-    ),
-    ApiResponse(
-        responseCode = "503",
-        description = "Third party service is not available. Please try it again later or contact technical support.",
-        content = [Content(mediaType = MediaType.TEXT_PLAIN_VALUE)]
     )
 )
-annotation class MicrosoftAuthenticationFinishEndpointV1
+annotation class MicrosoftAuthenticationExchangeEndpointV1
