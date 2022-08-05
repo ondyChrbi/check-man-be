@@ -29,7 +29,6 @@ import java.time.LocalDateTime
 
 import org.springframework.data.domain.Sort.by
 
-
 @Service
 class CourseServiceV1(
     private val courseRepository: CourseRepository,
@@ -49,8 +48,6 @@ class CourseServiceV1(
         return courses.map { CourseResponseDtoV1.fromEntity(it) }
             .flatMap { assignSemesters(it) }
     }
-
-    fun findCourseBySemesterId(id: Long) = courseRepository.findBySemesterIdEquals(id)
 
     fun findAllAsQL(): Flux<CourseQL> {
         return courseRepository.findAll().flatMap {
@@ -177,18 +174,23 @@ class CourseServiceV1(
     }
 
     fun findAvailableToAsQL(appUser: AppUser): Flux<CourseQL> {
-        return this.findAllAvailableToAppUser(LocalDateTime.now())
+        return this.findAllAvailableToAppUser(appUser, LocalDateTime.now())
             .groupBy { it.courseId!! }
             .flatMap { groupSemestersByCourseAsQL(it.key(), it.collectList()) }
     }
 
-    private fun findAllAvailableToAppUser(currentDateTime: LocalDateTime): Flux<CourseSemester> {
-        return this.entityTemplate.select(CourseSemester::class.java)
-            .matching(query(where("date_start").lessThanOrEquals(currentDateTime)
-                .and("date_end").greaterThanOrEquals(currentDateTime))
-                .sort(by(desc("date_start")))
-            )
-            .all()
+    private fun findAllAvailableToAppUser(appUser: AppUser, currentDateTime: LocalDateTime): Flux<CourseSemester> {
+        return this.findAllRelatedToAsQL(appUser)
+            .collectList()
+            .flatMapMany { relatedCourses ->
+                this.entityTemplate.select(CourseSemester::class.java)
+                    .matching(query(where("date_start").lessThanOrEquals(currentDateTime)
+                        .and("date_end").greaterThanOrEquals(currentDateTime)
+                        .and("id").notIn(relatedCourses.map { it.id }))
+                        .sort(by(desc("date_start")))
+                    )
+                    .all()
+            }
     }
 
     private fun groupSemestersByCourseAsDto(
