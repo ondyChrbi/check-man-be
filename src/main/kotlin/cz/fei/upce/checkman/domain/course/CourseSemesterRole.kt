@@ -12,9 +12,9 @@ data class CourseSemesterRole(
     fun toQL() = CourseSemesterRoleQL(id!!, name)
 
     enum class Value(val id: Long) {
-        COURSE_ROLE_ACCESS(0),
-        COURSE_ROLE_CREATE_CHALLENGE(1);
+        ACCESS(0),
+        CREATE_CHALLENGE(1);
 
-        fun toEntity() = CourseSemesterRole(id, COURSE_ROLE_ACCESS.toString())
+        fun toEntity() = CourseSemesterRole(id, ACCESS.toString())
     }
 }

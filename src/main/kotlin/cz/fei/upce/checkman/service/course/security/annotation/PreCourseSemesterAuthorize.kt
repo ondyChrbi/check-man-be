@@ -5,6 +5,6 @@ import java.lang.annotation.Inherited
 
 @Target(AnnotationTarget.FUNCTION)
 @Inherited
-annotation class PreCourseAuthorize(
-    val value: Array<CourseSemesterRole.Value> = [CourseSemesterRole.Value.COURSE_ROLE_ACCESS],
+annotation class PreCourseSemesterAuthorize(
+    val value: Array<CourseSemesterRole.Value> = [CourseSemesterRole.Value.ACCESS],
 )

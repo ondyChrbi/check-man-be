@@ -1,0 +1,50 @@
+databaseChangeLog:
+  - changeSet:
+      id: changelog-app_user-1
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: stag_id
+                  value: st55774
+              - column:
+                  name: mail
+                  value: ondrej.chrbolka@student.upce.cz
+              - column:
+                  name: display_name
+                  value: Chrbolka Ondrej
+              - column:
+                  name: registration_date
+                  value: 2022-07-30 16:47:10.101896 +00:00
+              - column:
+                  name: last_access_date
+                  value: 2022-07-30 16:47:10.101896 +00:00
+              - column:
+                  name: disabled
+                  value: false
+            tableName: app_user
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: name
+                  value: st55774_check-man.team.private.post-fix
+              - column:
+                  name: creation_date
+                  value: 2022-07-30 16:47:10.227843 +00:00
+              - column:
+                  name: private
+                  value: true
+              - column:
+                  name: min_members
+                  value: 1
+              - column:
+                  name: max_members
+                  value: 1
+            tableName: team

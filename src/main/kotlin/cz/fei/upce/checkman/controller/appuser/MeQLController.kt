@@ -1,6 +1,7 @@
 package cz.fei.upce.checkman.controller.appuser
 
 import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
+import cz.fei.upce.checkman.graphql.output.course.CourseDashboardQL
 import cz.fei.upce.checkman.graphql.output.course.CourseQL
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
 import cz.fei.upce.checkman.service.appuser.MeServiceV1
@@ -24,11 +25,16 @@ class MeQLController(
 
     @QueryMapping
     fun myCourses(authentication: Authentication?): Flux<CourseQL> {
-        return meServiceV1.coursesAsQL(authenticationService.extractAuthenticateUser(authentication!!))
+        return meServiceV1.myCoursesAsQL(authenticationService.extractAuthenticateUser(authentication!!))
     }
 
     @QueryMapping
     fun availableCourses(authentication: Authentication?): Flux<CourseQL> {
         return meServiceV1.availableCoursesAsQL(authenticationService.extractAuthenticateUser(authentication!!))
+    }
+
+    @QueryMapping
+    fun courseDashboard(authentication: Authentication?): Mono<CourseDashboardQL> {
+        return meServiceV1.courseDashboardAsQL(authenticationService.extractAuthenticateUser(authentication!!))
     }
 }

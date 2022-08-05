@@ -1,9 +1,11 @@
 type Query {
     courses: [Course!]!
     course(id: ID!): Course
+    semester(id: ID!): Semester
     me: AppUser!
     myCourses: [Course!]!
     availableCourses: [Course!]!
+    courseDashboard: CourseDashboard!
 }
 
 type Mutation {
@@ -45,6 +47,11 @@ type Course {
     icon: String
     template: String
     semesters: [Semester!]!
+}
+
+type CourseDashboard {
+    availableCourses: [Course!]!
+    myCourses: [Course!]!
 }
 
 input CourseInput {

@@ -246,7 +246,7 @@ databaseChangeLog:
                   value: 0
               - column:
                   name: name
-                  value: COURSE_ROLE_ACCESS
+                  value: ACCESS
             tableName: course_semester_role
 
   - changeSet:
@@ -260,7 +260,7 @@ databaseChangeLog:
                   value: 1
               - column:
                   name: name
-                  value: COURSE_ROLE_CREATE_CHALLENGE
+                  value: CREATE_CHALLENGE
             tableName: course_semester_role
 
   - changeSet:

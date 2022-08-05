@@ -30,12 +30,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name : registration_date
-                  type: timestamp
+                  type: timestamptz
                   constraints:
                     nullable: false
               - column:
                   name : last_access_date
-                  type: timestamp
+                  type: timestamptz
                   constraints:
                     nullable: false
               - column:
@@ -70,13 +70,13 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: creation_date
-                  type: timestamp
+                  type: timestamptz
                   constraints:
                     defaultValue: now()
                     nullable: false
               - column:
                   name: valid_to
-                  type: timestamp
+                  type: timestamptz
                   constraints:
                     nullable: false
               - column:
@@ -226,7 +226,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: creation_date
-                  type: timestamp
+                  type: timestamptz
                   constraints:
                     defaultValue: now()
                     nullable: false
@@ -346,7 +346,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: date_creation
-                  type: timestamp
+                  type: timestamptz
                   constraints:
                     nullable: false
               - column:
@@ -380,12 +380,12 @@ databaseChangeLog:
                   type: text
               - column:
                   name: date_start
-                  type: timestamp
+                  type: timestamptz
                   constraints:
                     nullable: false
               - column:
                   name: date_end
-                  type: timestamp
+                  type: timestamptz
               - column:
                   name: course_id
                   type: bigint
@@ -606,7 +606,7 @@ databaseChangeLog:
                     defaultValue: true
               - column:
                   name: creation_date
-                  type: timestamp
+                  type: timestamptz
                   constraints:
                     nullable: false
                     defaultValue: now()
@@ -820,7 +820,7 @@ databaseChangeLog:
                     primaryKey: true
               - column:
                   name: upload_date
-                  type: timestamp
+                  type: timestamptz
                   constraints:
                     nullable: false
                     defaultValue: now()

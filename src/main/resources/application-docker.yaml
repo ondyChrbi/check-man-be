@@ -7,7 +7,7 @@ spring:
     cors:
       enabled: false
   liquibase:
-    change-log: classpath:db/changelog/changelog-master.yaml
+    change-log: classpath:db/changelog/environment/changelog-docker.yaml
     url: jdbc:postgresql://localhost:5432/checkman
     user: checkman
     password: checkman

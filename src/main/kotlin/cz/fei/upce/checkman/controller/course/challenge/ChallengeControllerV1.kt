@@ -9,11 +9,11 @@ import cz.fei.upce.checkman.dto.course.challenge.PermitAppUserChallengeRequestDt
 import cz.fei.upce.checkman.dto.course.challenge.RemoveAccessAppUserChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.attachment.FileAttachmentResponseDtoV1
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
-import cz.fei.upce.checkman.service.course.security.annotation.PreCourseAuthorize
 import cz.fei.upce.checkman.service.course.challenge.ChallengeServiceV1
 import cz.fei.upce.checkman.service.course.challenge.attachment.ChallengeFileAttachmentServiceV1
 import cz.fei.upce.checkman.service.course.challenge.ChallengeLocation
 import cz.fei.upce.checkman.service.course.security.annotation.CourseId
+import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.fei.upce.checkman.service.course.security.annotation.SemesterId
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.core.io.Resource
@@ -40,7 +40,7 @@ class ChallengeControllerV1(
     @GetMapping("")
     @PreAuthorize("""hasAnyRole('${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_VIEW}', 
         '${GlobalRole.ROLE_CHALLENGE_ACCESS}')""")
-    @PreCourseAuthorize
+    @PreCourseSemesterAuthorize
     @SearchChallengeEndpointV1
     fun search(
         @RequestParam(required = false, defaultValue = "") search: String?,

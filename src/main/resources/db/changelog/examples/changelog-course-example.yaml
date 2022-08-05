@@ -1,0 +1,83 @@
+databaseChangeLog:
+  - changeSet:
+      id: course-example-insert-1
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: stag_id
+                  value: EXAMPLE-COURSE-1
+              - column:
+                  name: name
+                  value: Example course no. 1
+              - column:
+                  name: date_creation
+                  value: 2022-07-10 00:00:00.000000
+              - column:
+                  name: icon
+                  value: exampleIcon.png
+              - column:
+                  name: template
+                  value: f5f7dc
+            tableName: course
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: stag_id
+                  value: EXAMPLE-COURSE-2
+              - column:
+                  name: name
+                  value: Example course no. 2
+              - column:
+                  name: date_creation
+                  value: 2022-01-01 00:00:00.000000
+              - column:
+                  name: icon
+                  value: exampleIcon2.png
+              - column:
+                  name: template
+                  value: 777777
+            tableName: course
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: note
+                  value: Example semester in course no. 1
+              - column:
+                  name: date_start
+                  value: 2021-01-01 00:00:00.000000
+              - column:
+                  name: date_end
+                  value: 2023-01-01 00:00:00.000000
+              - column:
+                  name: course_id
+                  value: 0
+            tableName: course_semester
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: note
+                  value: Example semester in course no. 2
+              - column:
+                  name: date_start
+                  value: 2021-01-01 00:00:00.000000
+              - column:
+                  name: date_end
+                  value: 2023-01-01 00:00:00.000000
+              - column:
+                  name: course_id
+                  value: 1
+            tableName: course_semester

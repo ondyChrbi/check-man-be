@@ -173,7 +173,7 @@ internal class ChallengeControllerV1Test {
             .block()
         appUserCourseSemesterRoleRepository.save(AppUserCourseSemesterRole(
             appUserId = appUser.id!!,
-            courseSemesterRoleId = CourseSemesterRole.Value.COURSE_ROLE_ACCESS.id,
+            courseSemesterRoleId = CourseSemesterRole.Value.ACCESS.id,
             courseSemesterId = courseSemester.id!!
         )).block()
 

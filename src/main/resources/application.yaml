@@ -7,6 +7,12 @@ spring:
     permit_paths: /v1/authentication/**
     cors:
       enabled: true
+  liquibase:
+    change-log: classpath:db/changelog/changelog-master.yaml
+  data:
+    redis:
+      repositories:
+        enabled: false
 
 login:
   provider:

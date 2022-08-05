@@ -12,16 +12,23 @@ import cz.fei.upce.checkman.dto.course.CourseSemesterRequestDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterResponseDtoV1
 import cz.fei.upce.checkman.graphql.input.course.CourseInputQL
 import cz.fei.upce.checkman.graphql.output.course.CourseQL
+import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.repository.course.AppUserCourseSemesterRoleRepository
 import cz.fei.upce.checkman.repository.course.CourseRepository
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
+import org.springframework.data.domain.Sort.Order.desc
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
+import org.springframework.data.relational.core.query.Query.query
+import org.springframework.data.relational.core.query.Criteria.where
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.GroupedFlux
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
+
+import org.springframework.data.domain.Sort.by
+
 
 @Service
 class CourseServiceV1(
@@ -42,6 +49,8 @@ class CourseServiceV1(
         return courses.map { CourseResponseDtoV1.fromEntity(it) }
             .flatMap { assignSemesters(it) }
     }
+
+    fun findCourseBySemesterId(id: Long) = courseRepository.findBySemesterIdEquals(id)
 
     fun findAllAsQL(): Flux<CourseQL> {
         return courseRepository.findAll().flatMap {
@@ -168,9 +177,18 @@ class CourseServiceV1(
     }
 
     fun findAvailableToAsQL(appUser: AppUser): Flux<CourseQL> {
-        return courseSemesterRepository.findAllAvailableToAppUser(LocalDateTime.now(), appUser.id!!)
+        return this.findAllAvailableToAppUser(LocalDateTime.now())
             .groupBy { it.courseId!! }
             .flatMap { groupSemestersByCourseAsQL(it.key(), it.collectList()) }
+    }
+
+    private fun findAllAvailableToAppUser(currentDateTime: LocalDateTime): Flux<CourseSemester> {
+        return this.entityTemplate.select(CourseSemester::class.java)
+            .matching(query(where("date_start").lessThanOrEquals(currentDateTime)
+                .and("date_end").greaterThanOrEquals(currentDateTime))
+                .sort(by(desc("date_start")))
+            )
+            .all()
     }
 
     private fun groupSemestersByCourseAsDto(
@@ -211,6 +229,12 @@ class CourseServiceV1(
         return appUserCourseSemesterRoleRepository.findAllByAppUserIdEquals(appUser.id!!)
             .flatMap { courseSemesterRepository.findById(it.courseSemesterId) }
             .groupBy { it.courseId!! }
+    }
+
+    fun findSemesterAsQL(id: Long): Mono<CourseSemesterQL> {
+        return courseSemesterRepository.findById(id)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .map { it.toQL() }
     }
 
     companion object {

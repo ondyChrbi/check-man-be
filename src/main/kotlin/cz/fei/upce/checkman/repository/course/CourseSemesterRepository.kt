@@ -17,15 +17,8 @@ interface CourseSemesterRepository : ReactiveCrudRepository<CourseSemester, Long
     @Query(
         """
         select cs.* from course_semester cs
-        where cs.id not in (
-            select distinct aucsr.course_semester_id
-            from app_user_course_semester_role aucsr
-            where aucsr.app_user_id = :appUserId
-        )
-        and cs.date_start <= :currentDate
-        and cs.date_end >= :currentDate
+        where :currentDate between cs.date_start and cs.date_end
         """
     )
     fun findAllAvailableToAppUser(currentDate: LocalDateTime, appUserId: Long): Flux<CourseSemester>
-
 }

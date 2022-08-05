@@ -10,16 +10,16 @@ import reactor.kotlin.core.publisher.toFlux
 
 @Service
 class CourseAuthorizationService(private val appUserCourseSemesterRoleRepository: AppUserCourseSemesterRoleRepository) {
-    fun checkCourseAuthority(courseAccess: CourseAuthorizeRequest, courseRole: CourseSemesterRole.Value): Mono<Boolean> {
+    fun checkCourseSemesterAuthority(courseAccess: CourseAuthorizeRequest, courseSemesterRole: CourseSemesterRole.Value): Mono<Boolean> {
         return appUserCourseSemesterRoleRepository
             .existsByAppUserIdEqualsAndCourseSemesterIdEqualsAndCourseSemesterRoleIdEquals(
                 courseAccess.appUser.id!!,
                 courseAccess.semesterId,
-                courseRole.id
+                courseSemesterRole.id
             )
             .flatMap {
                 if (!it) {
-                    Mono.error(AppUserCourseSemesterForbiddenException(courseRole))
+                    Mono.error(AppUserCourseSemesterForbiddenException(courseSemesterRole))
                 } else {
                     Mono.just(it)
                 }
@@ -33,18 +33,21 @@ class CourseAuthorizationService(private val appUserCourseSemesterRoleRepository
     }
 
     fun checkCourseAccess(courseAccess: CourseAuthorizeRequest, courseRole: CourseSemesterRole.Value): Mono<Boolean> {
-        if (CourseServiceV1.VIEW_PERMISSIONS.intersect(courseAccess.authorities.map { it.name }.toSet()).isNotEmpty()) {
+        if (hasGlobalPermission(courseAccess)) {
             return Mono.just(true)
         }
 
-        return checkCourseAuthority(courseAccess, courseRole)
+        return checkCourseSemesterAuthority(courseAccess, courseRole)
     }
+
+    private fun hasGlobalPermission(courseAccess: CourseAuthorizeRequest) =
+        CourseServiceV1.VIEW_PERMISSIONS.intersect(courseAccess.authorities.map { it.name }.toSet()).isNotEmpty()
 
     fun checkManageAccess(courseAccess: CourseAuthorizeRequest, courseRole: CourseSemesterRole.Value): Mono<Boolean> {
         if (CourseServiceV1.MANAGE_PERMISSIONS.intersect(courseAccess.authorities.map { it.name }.toSet()).isNotEmpty()) {
             return Mono.just(true)
         }
 
-        return checkCourseAuthority(courseAccess, courseRole)
+        return checkCourseSemesterAuthority(courseAccess, courseRole)
     }
 }

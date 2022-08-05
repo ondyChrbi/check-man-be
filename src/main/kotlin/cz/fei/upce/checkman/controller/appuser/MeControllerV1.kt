@@ -44,7 +44,7 @@ class MeControllerV1(
     @PreAuthorize("hasRole('${GlobalRole.ROLE_COURSE_ACCESS}')")
     @MeCoursesEndpointV1
     fun courses(authentication: Authentication?): Mono<ResponseEntity<CollectionModel<CourseResponseDtoV1>>> {
-        return meService.coursesAsDto(authenticationService.extractAuthenticateUser(authentication!!))
+        return meService.myCoursesAsDto(authenticationService.extractAuthenticateUser(authentication!!))
             .flatMap { assignSelfRef(it) }
             .collectList()
             .flatMap { assignSelfRefCourses(it) }
