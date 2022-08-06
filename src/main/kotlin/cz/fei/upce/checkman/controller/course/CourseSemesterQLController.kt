@@ -1,7 +1,9 @@
 package cz.fei.upce.checkman.controller.course
 
 import cz.fei.upce.checkman.graphql.input.course.CourseInputQL
+import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import cz.fei.upce.checkman.service.course.CourseServiceV1
+import cz.fei.upce.checkman.service.course.security.CourseAuthorizationServiceV1
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.fei.upce.checkman.service.course.security.annotation.SemesterId
 import org.springframework.graphql.data.method.annotation.Argument
@@ -11,7 +13,11 @@ import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.security.core.Authentication
 
 @Controller
-class CourseSemesterQLController(private val courseServiceV1: CourseServiceV1) {
+class CourseSemesterQLController(
+    private val courseServiceV1: CourseServiceV1,
+    private val courseAuthorizationServiceV1: CourseAuthorizationServiceV1,
+    private val authenticationService: AuthenticationServiceV1
+    ) {
     @QueryMapping
     fun courses() = courseServiceV1.findAllAsQL()
 
@@ -24,4 +30,8 @@ class CourseSemesterQLController(private val courseServiceV1: CourseServiceV1) {
 
     @MutationMapping
     fun createCourse(@Argument input: CourseInputQL) = courseServiceV1.add(input)
+
+    @MutationMapping
+    fun createSemesterAccessRequest(@Argument semesterId: Long, authentication: Authentication) =
+        courseAuthorizationServiceV1.createCourseAccessRequest(authenticationService.extractAuthenticateUser(authentication), semesterId)
 }

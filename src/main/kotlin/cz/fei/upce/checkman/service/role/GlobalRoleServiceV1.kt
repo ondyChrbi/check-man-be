@@ -9,6 +9,7 @@ import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.repository.user.GlobalRoleRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Service
@@ -17,8 +18,10 @@ class GlobalRoleServiceV1(
     private val appUserGlobalRoleRepository: AppUserGlobalRoleRepository,
     private val appUserRepository: AppUserRepository
 ) {
-    fun rolesByUser(appUser: AppUser) = appUserGlobalRoleRepository.findAllByAppUserIdEquals(appUser.id!!)
-        .flatMap { globalRoleRepository.findById(it.globalRoleId!!) }
+    fun rolesByUser(appUser: AppUser): Flux<GlobalRole> {
+        return appUserGlobalRoleRepository.findAllByAppUserIdEquals(appUser.id!!)
+            .flatMap { globalRoleRepository.findById(it.globalRoleId!!) }
+    }
 
     fun assign(appUserGlobalRoleDto: AppUserGlobalRoleDtoV1): Mono<AppUserGlobalRoleDtoV1> {
         return assign(appUserGlobalRoleDto.appUserId!!, appUserGlobalRoleDto.globalRoleId!!).map {

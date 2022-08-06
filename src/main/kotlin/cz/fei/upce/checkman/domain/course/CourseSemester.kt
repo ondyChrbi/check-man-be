@@ -14,4 +14,12 @@ data class CourseSemester(
     var courseId: Long? = null
 ) {
     fun toQL() = CourseSemesterQL(id!!, note!!, dateStart!!, dateEnd!!)
+
+    fun isBeforeStart(nowDate: LocalDateTime = LocalDateTime.now()) = dateStart != null && nowDate.isBefore(dateStart)
+
+    fun isAfterStart(nowDate: LocalDateTime = LocalDateTime.now()) = dateStart != null && nowDate.isAfter(dateStart)
+
+    fun isBeforeEnd(nowDate: LocalDateTime = LocalDateTime.now()) = dateEnd != null && nowDate.isBefore(dateEnd)
+
+    fun isAfterEnd(nowDate: LocalDateTime = LocalDateTime.now()) = dateEnd != null && nowDate.isAfter(dateEnd)
 }

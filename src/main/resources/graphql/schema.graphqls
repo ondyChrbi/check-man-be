@@ -10,6 +10,7 @@ type Query {
 
 type Mutation {
     createCourse(input: CourseInput!): Course!
+    createSemesterAccessRequest(semesterId: ID!): CourseSemesterAccessRequest!
 }
 
 type AppUser{
@@ -27,6 +28,21 @@ type AppUser{
 type GlobalRole {
     id: ID!
     name: String!
+}
+
+type CourseSemesterAccessRequest {
+    appUser: AppUser!,
+    semester: Semester!,
+    creationDate: String!,
+    expirationDate: String!,
+    id: String!
+}
+
+type Semester {
+    id: ID
+    note: String
+    dateStart: String!
+    dateEnd: String!
 }
 
 type CourseSemesterRoles {
@@ -60,13 +76,6 @@ input CourseInput {
     icon: String
     template: String
     semesters: [SemesterInput]
-}
-
-type Semester {
-    id: ID
-    note: String
-    dateStart: String!
-    dateEnd: String!
 }
 
 input SemesterInput {

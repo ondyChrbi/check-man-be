@@ -15,6 +15,6 @@ data class CourseSemesterRole(
         ACCESS(0),
         CREATE_CHALLENGE(1);
 
-        fun toEntity() = CourseSemesterRole(id, ACCESS.toString())
+        fun toEntity() = CourseSemesterRole(id, this.toString())
     }
 }

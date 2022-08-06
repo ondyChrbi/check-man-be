@@ -1,7 +1,7 @@
 package cz.fei.upce.checkman.service.course.security
 
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
-import cz.fei.upce.checkman.service.course.CourseServiceV1
+import cz.fei.upce.checkman.service.course.AppUserCourseSemesterForbiddenException
 import cz.fei.upce.checkman.service.course.security.annotation.CourseId
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.fei.upce.checkman.service.course.security.annotation.SemesterId
@@ -19,9 +19,8 @@ import reactor.core.publisher.Mono
 @Aspect
 @Configuration
 class CourseAccessProfilingAspect(
-    private val authorizeService: CourseAuthorizationService,
-    private val authenticationService: AuthenticationServiceV1,
-    private val courseServiceV1: CourseServiceV1
+    private val authorizeService: CourseAuthorizationServiceV1,
+    private val authenticationService: AuthenticationServiceV1
     ) {
     @Around("@annotation(cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize)")
     fun checkCourseAccess(joinPoint: ProceedingJoinPoint): Mono<out Any> {
@@ -45,7 +44,8 @@ class CourseAccessProfilingAspect(
 
         val courseAccess = CourseAuthorizeRequest(courseId, semesterId, appUser, authorities)
 
-        return authorizeService.checkCourseAccess(courseAccess, annotation.value)
-            .flatMap { joinPoint.proceed() as Mono<out Any> }
+        return authorizeService.hasCourseAccess(courseAccess, annotation.value)
+            .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
+            .then(joinPoint.proceed() as Mono<out Any>)
     }
 }
