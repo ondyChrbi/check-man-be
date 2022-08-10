@@ -7,6 +7,7 @@ import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemester
 import cz.fei.upce.checkman.service.course.security.annotation.SemesterId
 import cz.fei.upce.checkman.service.course.security.exception.NotCourseIdDataTypeException
 import cz.fei.upce.checkman.service.course.security.exception.NotOneSemesterIdInMethodException
+import cz.fei.upce.checkman.service.course.security.exception.NotReactiveReturnTypeException
 import cz.fei.upce.checkman.service.course.security.exception.NotSemesterIdDataTypeException
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
@@ -14,6 +15,8 @@ import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.reflect.MethodSignature
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.core.Authentication
+import reactor.core.CorePublisher
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Aspect
@@ -23,9 +26,14 @@ class CourseAccessProfilingAspect(
     private val authenticationService: AuthenticationServiceV1
     ) {
     @Around("@annotation(cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize)")
-    fun checkCourseAccess(joinPoint: ProceedingJoinPoint): Mono<out Any> {
+    fun checkCourseAccess(joinPoint: ProceedingJoinPoint): CorePublisher<out Any> {
         val annotation = (joinPoint.signature as MethodSignature).method.getAnnotation(PreCourseSemesterAuthorize::class.java)
         val parameters = (joinPoint.signature as MethodSignature).method.parameters
+        val returnType = (joinPoint.signature as MethodSignature).returnType
+
+        if (isNotReactiveReturnType(returnType)) {
+            throw NotReactiveReturnTypeException(joinPoint.signature as MethodSignature)
+        }
 
         val courses = parameters.filter { it.annotations.filterIsInstance<CourseId>().isNotEmpty() }
         val semesters = parameters.filter { it.annotations.filterIsInstance<SemesterId>().isNotEmpty() }
@@ -44,8 +52,16 @@ class CourseAccessProfilingAspect(
 
         val courseAccess = CourseAuthorizeRequest(courseId, semesterId, appUser, authorities)
 
-        return authorizeService.hasCourseAccess(courseAccess, annotation.value)
+        val courseCheckMono = authorizeService.hasCourseAccess(courseAccess, annotation.value)
             .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
-            .then(joinPoint.proceed() as Mono<out Any>)
+
+        return when (returnType) {
+            Mono::class.java -> courseCheckMono.then(joinPoint.proceed() as Mono<out Any>)
+            Flux::class.java -> courseCheckMono.thenMany(joinPoint.proceed() as Flux<out Any>)
+            else -> throw NotReactiveReturnTypeException(joinPoint.signature as MethodSignature)
+        }
     }
+
+    private fun isNotReactiveReturnType(returnType: Class<*>) =
+        returnType != Mono::class.java && returnType != Flux::class.java
 }

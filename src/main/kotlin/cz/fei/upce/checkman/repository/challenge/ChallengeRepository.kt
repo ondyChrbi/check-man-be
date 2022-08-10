@@ -16,6 +16,8 @@ interface ChallengeRepository : ReactiveCrudRepository<Challenge, Long> {
 
     fun existsByIdEqualsAndAndCourseSemesterIdEquals(id: Long, semesterId: Long): Mono<Boolean>
 
+    fun findAllByCourseSemesterIdEquals(semesterId: Long): Flux<Challenge>
+
     @Query(
         """
         select c.* from challenge c

@@ -1,0 +1,89 @@
+databaseChangeLog:
+  - changeSet:
+      id: challenge-example-insert-1
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: name
+                  value: Example challenge no. 1
+              - column:
+                  name: description
+                  value: Some description about this challenge taller than some limit.
+              - column:
+                  name: author_id
+                  value: 0
+              - column:
+                  name: course_semester_id
+                  value: 0
+              - column:
+                  name: challenge_kind_id
+                  value: 0
+            tableName: challenge
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: Example challenge no. 2
+              - column:
+                  name: description
+                  value: Some description about this challenge taller than some limit.
+              - column:
+                  name: author_id
+                  value: 0
+              - column:
+                  name: course_semester_id
+                  value: 0
+              - column:
+                  name: challenge_kind_id
+                  value: 1
+            tableName: challenge
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: Example challenge no. 3
+              - column:
+                  name: description
+                  value: Some description about this challenge taller than some limit.
+              - column:
+                  name: author_id
+                  value: 0
+              - column:
+                  name: course_semester_id
+                  value: 0
+              - column:
+                  name: challenge_kind_id
+                  value: 2
+            tableName: challenge
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: name
+                  value: Example challenge no. 4
+              - column:
+                  name: description
+                  value: Some description about this challenge taller than some limit.
+              - column:
+                  name: author_id
+                  value: 0
+              - column:
+                  name: course_semester_id
+                  value: 0
+              - column:
+                  name: challenge_kind_id
+                  value: 3
+            tableName: challenge

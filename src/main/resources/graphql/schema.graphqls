@@ -1,11 +1,11 @@
 type Query {
     courses: [Course!]!
+    challenges(semesterId: ID!): [Challenge!]!
     course(id: ID!): Course
     semester(id: ID!): Semester
     me: AppUser!
     myCourses: [Course!]!
     availableCourses: [Course!]!
-    courseDashboard: CourseDashboard!
 }
 
 type Mutation {
@@ -39,10 +39,19 @@ type CourseSemesterAccessRequest {
 }
 
 type Semester {
-    id: ID
+    id: ID!
     note: String
     dateStart: String!
     dateEnd: String!
+}
+
+type Challenge {
+    id: ID!
+    name: String!
+    description: String!
+    deadlineDate: String
+    startDate: String
+    author: AppUser
 }
 
 type CourseSemesterRoles {
@@ -63,11 +72,6 @@ type Course {
     icon: String
     template: String
     semesters: [Semester!]!
-}
-
-type CourseDashboard {
-    availableCourses: [Course!]!
-    myCourses: [Course!]!
 }
 
 input CourseInput {

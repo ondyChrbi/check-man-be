@@ -24,7 +24,7 @@ class AuthenticationManager(
         return Mono.just(jwtUtil.isValid(authToken))
             .filter { it == true }
             .switchIfEmpty { Mono.empty() }
-            .flatMap { appUserServiceV1.findUser(username) }
+            .flatMap { appUserServiceV1.findByStagId(username) }
             .switchIfEmpty { Mono.empty() }
             .flatMap { if (it.disabled) Mono.error(DisabledUserException()) else Mono.just(it) }
             .flatMap { appUserServiceV1.updateLastAccessDate(it) }

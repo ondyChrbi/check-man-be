@@ -5,6 +5,9 @@ databaseChangeLog:
       file: classpath:db/changelog/examples/changelog-course-example.yaml
 
   - include:
-      file: classpath:db/changelog/examples/changelog_app_user.yaml
+      file: classpath:db/changelog/examples/changelog-app-user.yaml
   - include:
-      file: classpath:db/changelog/examples/changelog_app_user_course_semester_role.yaml
+      file: classpath:db/changelog/examples/changelog-app-user-course-semester-role.yaml
+
+  - include:
+      file: classpath:db/changelog/examples/changelog-challenge-example.yaml

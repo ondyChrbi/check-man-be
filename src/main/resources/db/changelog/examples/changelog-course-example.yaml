@@ -19,7 +19,7 @@ databaseChangeLog:
                   value: 2022-07-10 00:00:00.000000
               - column:
                   name: icon
-                  value: exampleIcon.png
+                  value: /icons/cube.svg
               - column:
                   name: template
                   value: f5f7dc
@@ -40,7 +40,7 @@ databaseChangeLog:
                   value: 2022-01-01 00:00:00.000000
               - column:
                   name: icon
-                  value: exampleIcon2.png
+                  value: /icons/cube.svg
               - column:
                   name: template
                   value: 777777

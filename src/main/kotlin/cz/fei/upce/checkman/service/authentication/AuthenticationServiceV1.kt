@@ -19,7 +19,7 @@ class AuthenticationServiceV1(private val userService: AppUserServiceV1, private
     AuthenticationService {
 
     fun authenticate(requestAppUser: AppUser): Mono<AuthenticationResponseDtoV1> {
-        return userService.findUser(requestAppUser.stagId)
+        return userService.findByStagId(requestAppUser.stagId)
             .switchIfEmpty { register(requestAppUser) }
             .flatMap { appUser ->
                 userService.updateLastAccessDate(appUser.stagId)

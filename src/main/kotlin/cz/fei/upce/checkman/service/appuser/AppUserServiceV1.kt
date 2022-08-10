@@ -19,8 +19,7 @@ class AppUserServiceV1(
     private val globalRoleService: GlobalRoleServiceV1,
     private val courseSemesterRoleService: CourseSemesterRoleServiceV1
 ) {
-
-    fun findUser(stagId: String) = appUserRepository.findByStagIdEquals(stagId)
+    fun findByStagId(stagId: String) = appUserRepository.findByStagIdEquals(stagId)
 
     fun updateLastAccessDate(appUser: AppUser): Mono<AppUser> {
         appUser.lastAccessDate = LocalDateTime.now()

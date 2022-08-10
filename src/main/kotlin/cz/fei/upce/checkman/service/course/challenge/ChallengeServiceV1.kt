@@ -11,9 +11,11 @@ import cz.fei.upce.checkman.dto.course.challenge.ChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeResponseDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.PermitAppUserChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.RemoveAccessAppUserChallengeRequestDtoV1
+import cz.fei.upce.checkman.graphql.output.challenge.ChallengeQL
 import cz.fei.upce.checkman.repository.challenge.ChallengeRepository
 import cz.fei.upce.checkman.repository.challenge.PermittedAppUserChallengeRepository
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
+import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.stereotype.Service
@@ -24,6 +26,7 @@ import java.time.LocalDateTime
 @Service
 class ChallengeServiceV1(
     private val challengeRepository: ChallengeRepository,
+    private val appUserRepository: AppUserRepository,
     private val courseSemesterRepository: CourseSemesterRepository,
     private val permittedAppUserChallengeRepository: PermittedAppUserChallengeRepository,
     private val entityTemplate: R2dbcEntityTemplate,
@@ -198,6 +201,15 @@ class ChallengeServiceV1(
                     )
                 }
             }
+
+    fun findAllBySemesterIdAsQL(semesterId: Long): Flux<ChallengeQL> {
+        return challengeRepository.findAllByCourseSemesterIdEquals(semesterId)
+            .flatMap { challenge ->
+                appUserRepository.findById(challenge.authorId)
+                    .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+                    .map { challenge.toQL(it.toQL()) }
+            }
+    }
 
     companion object {
         val VIEW_PERMISSIONS = setOf(
