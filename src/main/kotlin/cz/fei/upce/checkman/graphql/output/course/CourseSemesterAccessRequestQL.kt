@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 
 data class CourseSemesterAccessRequestQL(
     val appUser: AppUserQL,
-    val courseSemester: CourseSemesterQL,
+    val semesterId: Long,
     val creationDate: LocalDateTime,
     val expirationDate: LocalDateTime,
     val id: String

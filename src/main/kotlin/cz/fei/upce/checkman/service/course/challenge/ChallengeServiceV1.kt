@@ -204,11 +204,19 @@ class ChallengeServiceV1(
 
     fun findAllBySemesterIdAsQL(semesterId: Long): Flux<ChallengeQL> {
         return challengeRepository.findAllByCourseSemesterIdEquals(semesterId)
-            .flatMap { challenge ->
-                appUserRepository.findById(challenge.authorId)
-                    .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-                    .map { challenge.toQL(it.toQL()) }
-            }
+            .flatMap { assignAuthor(it) }
+    }
+
+    fun findByIdAsQL(id: Long): Mono<ChallengeQL> {
+        return challengeRepository.findById(id)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .flatMap { assignAuthor(it) }
+    }
+
+    private fun assignAuthor(challenge: Challenge): Mono<ChallengeQL> {
+        return appUserRepository.findById(challenge.authorId)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .map { challenge.toQL(it.toQL()) }
     }
 
     companion object {

@@ -1,59 +1,66 @@
 package cz.fei.upce.checkman.service.course.security
 
+import cz.fei.upce.checkman.domain.course.AppUserCourseSemesterRole
 import cz.fei.upce.checkman.domain.course.CourseSemester
 import cz.fei.upce.checkman.domain.course.CourseSemesterAccessRequest
 import cz.fei.upce.checkman.domain.course.CourseSemesterAccessRequest.Companion.EXPIRATION
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterAccessRequestQL
-import cz.fei.upce.checkman.repository.course.AppUserCourseSemesterRoleRepository
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.course.CourseServiceV1
+import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.fei.upce.checkman.service.course.security.exception.AppUserCanAlreadyAccessSemesterException
 import cz.fei.upce.checkman.service.course.security.exception.CourseSemesterAlreadyEndedException
 import cz.fei.upce.checkman.service.course.security.exception.CourseSemesterNotStartedYetException
-import cz.fei.upce.checkman.service.role.GlobalRoleServiceV1
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory
 import org.springframework.data.redis.core.ReactiveRedisOperations
+import org.springframework.data.relational.core.query.Query.query
+import org.springframework.data.relational.core.query.Criteria.where
+import org.springframework.data.relational.core.query.isEqual
+import org.springframework.data.relational.core.query.isIn
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.toFlux
 import java.time.Duration
 import java.time.LocalDateTime
 
 @Service
 class CourseAuthorizationServiceV1(
-    private val globalRoleService: GlobalRoleServiceV1,
     private val courseSemesterRepository: CourseSemesterRepository,
-    private val appUserCourseSemesterRoleRepository: AppUserCourseSemesterRoleRepository,
     private val cacheFactory: ReactiveRedisConnectionFactory,
-    private val courseAccessOps: ReactiveRedisOperations<String, CourseSemesterAccessRequest>
+    private val courseAccessOps: ReactiveRedisOperations<String, CourseSemesterAccessRequest>,
+    private val entityTemplate: R2dbcEntityTemplate
 ) {
+    fun hasCourseAccess(semesterId: Long, appUser: AppUser, requestedRoles: List<Long>): Mono<Boolean> {
+        val query = query(where("app_user_id").isEqual(appUser.id!!)
+            .and("course_semester_role_id").isIn(requestedRoles))
 
-    fun hasCourseAccess(
-        courseAccess: CourseAuthorizeRequest,
-        courseRoles: Array<CourseSemesterRole.Value>
-    ): Mono<Boolean> {
-        return courseRoles
-            .toFlux()
-            .flatMap { hasCourseAccess(courseAccess, it) }
-            .all { it == true }
+        return entityTemplate.count(query, AppUserCourseSemesterRole::class.java)
+            .map { it == requestedRoles.size.toLong() }
+    }
+
+    fun hasCourseAccess(semesterId: Long, appUser: AppUser, annotation: PreCourseSemesterAuthorize): Mono<Boolean> {
+        val requestedRoles = annotation.value.map { it.id }
+
+        return hasCourseAccess(semesterId, appUser, requestedRoles)
     }
 
     fun createCourseAccessRequest(appUser: AppUser, semesterId: Long): Mono<CourseSemesterAccessRequestQL> {
         return courseSemesterRepository.findById(semesterId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-            .flatMap(this::checkOngoingCourseSemester)
-            .flatMap { checkCourseAccess(appUser, it) }
-            .flatMap { createCourseAccessRequest(appUser, it) }
+            .flatMap { checkOngoingCourseSemester(it) }
+            .flatMap { hasCourseAccess(it.id!!, appUser, listOf(CourseSemesterRole.Value.ACCESS.id)) }
+            .flatMap { if(it) Mono.error(AppUserCanAlreadyAccessSemesterException(appUser, semesterId)) else Mono.just(semesterId) }
+            .then (storeCourseAccessRequestToCache(appUser, semesterId))
     }
 
-    fun createCourseAccessRequest(
+    fun storeCourseAccessRequestToCache(
         appUser: AppUser,
-        courseSemester: CourseSemester
+        semesterId: Long
     ): Mono<CourseSemesterAccessRequestQL> {
-        val accessRequest = CourseSemesterAccessRequest(appUser, courseSemester)
+        val accessRequest = CourseSemesterAccessRequest(appUser, semesterId)
 
         return cacheFactory.reactiveConnection
             .serverCommands()
@@ -63,46 +70,6 @@ class CourseAuthorizationServiceV1(
                     .set(accessRequest.toCacheKey(), accessRequest, Duration.ofSeconds(EXPIRATION))
             )
             .map { accessRequest.toQL() }
-    }
-
-    private fun checkCourseAccess(appUser: AppUser, courseSemester: CourseSemester): Mono<CourseSemester> {
-        return hasCourseAccess(appUser, courseSemester)
-            .flatMap {
-                if (!it)
-                    Mono.just(courseSemester)
-                else
-                    Mono.error(AppUserCanAlreadyAccessSemesterException(appUser, courseSemester))
-            }
-    }
-
-    private fun hasCourseAccess(appUser: AppUser, courseSemester: CourseSemester): Mono<Boolean> {
-        return globalRoleService.rolesByUser(appUser)
-            .collectList()
-            .map { CourseAuthorizeRequest(courseSemester.courseId!!, courseSemester.id!!, appUser, it.toSet()) }
-            .flatMap { hasCourseAccess(it, arrayOf(CourseSemesterRole.Value.ACCESS)) }
-    }
-
-    private fun hasCourseAccess(
-        courseAccess: CourseAuthorizeRequest,
-        courseRole: CourseSemesterRole.Value
-    ): Mono<Boolean> {
-        if (hasGlobalPermission(courseAccess)) {
-            return Mono.just(true)
-        }
-
-        return checkCourseSemesterAuthority(courseAccess, courseRole)
-    }
-
-    private fun checkCourseSemesterAuthority(
-        courseAccess: CourseAuthorizeRequest,
-        courseSemesterRole: CourseSemesterRole.Value
-    ): Mono<Boolean> {
-        return appUserCourseSemesterRoleRepository
-            .existsByAppUserIdEqualsAndCourseSemesterIdEqualsAndCourseSemesterRoleIdEquals(
-                courseAccess.appUser.id!!,
-                courseAccess.semesterId,
-                courseSemesterRole.id
-            )
     }
 
     private fun checkOngoingCourseSemester(semester: CourseSemester): Mono<CourseSemester> {

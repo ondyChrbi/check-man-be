@@ -3,6 +3,7 @@ type Query {
     challenges(semesterId: ID!): [Challenge!]!
     course(id: ID!): Course
     semester(id: ID!): Semester
+    challenge(id: ID!): Challenge
     me: AppUser!
     myCourses: [Course!]!
     availableCourses: [Course!]!

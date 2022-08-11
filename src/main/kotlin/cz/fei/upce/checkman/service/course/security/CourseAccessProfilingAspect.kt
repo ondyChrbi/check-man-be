@@ -1,14 +1,14 @@
 package cz.fei.upce.checkman.service.course.security
 
+import cz.fei.upce.checkman.domain.user.AppUser
+import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import cz.fei.upce.checkman.service.course.AppUserCourseSemesterForbiddenException
+import cz.fei.upce.checkman.service.course.security.annotation.ChallengeId
 import cz.fei.upce.checkman.service.course.security.annotation.CourseId
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.fei.upce.checkman.service.course.security.annotation.SemesterId
-import cz.fei.upce.checkman.service.course.security.exception.NotCourseIdDataTypeException
-import cz.fei.upce.checkman.service.course.security.exception.NotOneSemesterIdInMethodException
-import cz.fei.upce.checkman.service.course.security.exception.NotReactiveReturnTypeException
-import cz.fei.upce.checkman.service.course.security.exception.NotSemesterIdDataTypeException
+import cz.fei.upce.checkman.service.course.security.exception.*
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -19,49 +19,92 @@ import reactor.core.CorePublisher
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
+@Suppress("ReactiveStreamsUnusedPublisher")
 @Aspect
 @Configuration
 class CourseAccessProfilingAspect(
+    private val courseSemesterRepository: CourseSemesterRepository,
     private val authorizeService: CourseAuthorizationServiceV1,
     private val authenticationService: AuthenticationServiceV1
-    ) {
+) {
     @Around("@annotation(cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize)")
     fun checkCourseAccess(joinPoint: ProceedingJoinPoint): CorePublisher<out Any> {
-        val annotation = (joinPoint.signature as MethodSignature).method.getAnnotation(PreCourseSemesterAuthorize::class.java)
-        val parameters = (joinPoint.signature as MethodSignature).method.parameters
-        val returnType = (joinPoint.signature as MethodSignature).returnType
+        val methodSignature = joinPoint.signature as MethodSignature
+        val returnType = methodSignature.returnType
 
         if (isNotReactiveReturnType(returnType)) {
-            throw NotReactiveReturnTypeException(joinPoint.signature as MethodSignature)
+            return Mono.error(NotReactiveReturnTypeException(methodSignature))
         }
 
-        val courses = parameters.filter { it.annotations.filterIsInstance<CourseId>().isNotEmpty() }
+        val authentication = joinPoint.args.first { it is Authentication }
+            ?: throw MissingAuthenticationArgumentException(methodSignature)
+        val appUser = authenticationService.extractAuthenticateUser(authentication as Authentication)
+
+        val annotation = methodSignature.method.getAnnotation(PreCourseSemesterAuthorize::class.java)
+        val parameters = methodSignature.method.parameters
+
         val semesters = parameters.filter { it.annotations.filterIsInstance<SemesterId>().isNotEmpty() }
+        if (semesters.isNotEmpty()) {
+            val semesterId = joinPoint.args[parameters.indexOf(semesters.first())]
+            if (semesterId !is Long) {
+                return Mono.error<Void>(NotIdDataTypeException("semesterId", Long::class.java))
+            }
 
-        if (semesters.size != 1) { return Mono.error<Void>(NotOneSemesterIdInMethodException(semesters)) }
-        val semesterId = joinPoint.args[parameters.indexOf(semesters.first())]
-        if(semesterId !is Long) { return Mono.error<Void>(NotSemesterIdDataTypeException(Long::class.java)) }
+            val result = checkBasedCourseSemester(semesterId, appUser, annotation)
+            return finishProcessing(joinPoint, result)
+        }
 
-        val courseId = if (courses.isEmpty()) -1L else joinPoint.args[parameters.indexOf(courses.first())]
-        if(courseId !is Long) { return Mono.error<Void>(NotCourseIdDataTypeException(Long::class.java)) }
+        val challenges = parameters.filter { it.annotations.filterIsInstance<ChallengeId>().isNotEmpty() }
+        if (challenges.isNotEmpty()) {
+            val challengeId = joinPoint.args[parameters.indexOf(challenges.first())]
+            if (challengeId !is Long) {
+                return Mono.error<Void>(NotIdDataTypeException("challengeId", Long::class.java))
+            }
 
-        val authentication = joinPoint.args.first { it is Authentication } as Authentication
+            val result = checkBasedChallenge(challengeId, appUser, annotation)
+            return finishProcessing(joinPoint, result)
+        }
 
-        val appUser = authenticationService.extractAuthenticateUser(authentication)
-        val authorities = authenticationService.extractAuthorities(authentication)
+        return Mono.error(NoSemesterBasedIdInMethodArgumentsException(methodSignature, REQUIRED_ANNOTATIONS))
+    }
 
-        val courseAccess = CourseAuthorizeRequest(courseId, semesterId, appUser, authorities)
-
-        val courseCheckMono = authorizeService.hasCourseAccess(courseAccess, annotation.value)
+    private fun checkBasedChallenge(
+        challengeId: Long,
+        appUser: AppUser,
+        annotation: PreCourseSemesterAuthorize
+    ): Mono<Boolean> {
+        return courseSemesterRepository.findIdByChallengeId(challengeId)
+            .switchIfEmpty(Mono.error(AuthorizeIdentificationNotFoundException(ChallengeId::class, challengeId)))
+            .flatMap { semesterId -> authorizeService.hasCourseAccess(semesterId, appUser, annotation) }
             .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
+    }
 
-        return when (returnType) {
-            Mono::class.java -> courseCheckMono.then(joinPoint.proceed() as Mono<out Any>)
-            Flux::class.java -> courseCheckMono.thenMany(joinPoint.proceed() as Flux<out Any>)
-            else -> throw NotReactiveReturnTypeException(joinPoint.signature as MethodSignature)
+    private fun checkBasedCourseSemester(
+        semesterId: Long,
+        appUser: AppUser,
+        annotation: PreCourseSemesterAuthorize
+    ): Mono<Boolean> {
+        return authorizeService.hasCourseAccess(semesterId, appUser, annotation)
+            .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
+    }
+
+    private fun finishProcessing(
+        joinPoint: ProceedingJoinPoint,
+        result: Mono<*>,
+    ): CorePublisher<out Any> {
+        val methodSignature = joinPoint.signature as MethodSignature
+
+        return when (methodSignature.returnType) {
+            Mono::class.java -> result.then(joinPoint.proceed() as Mono<out Any>)
+            Flux::class.java -> result.thenMany(joinPoint.proceed() as Flux<out Any>)
+            else -> throw NotReactiveReturnTypeException(methodSignature)
         }
     }
 
     private fun isNotReactiveReturnType(returnType: Class<*>) =
         returnType != Mono::class.java && returnType != Flux::class.java
+
+    private companion object {
+        val REQUIRED_ANNOTATIONS = arrayOf(CourseId::class, SemesterId::class, ChallengeId::class)
+    }
 }

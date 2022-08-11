@@ -12,7 +12,13 @@ import java.time.LocalDateTime
 interface CourseSemesterRepository : ReactiveCrudRepository<CourseSemester, Long> {
     fun findFirstByIdEqualsAndCourseIdEquals(courseSemesterId: Long, courseId: Long): Mono<CourseSemester>
     fun findAllByCourseIdEquals(courseId: Long): Flux<CourseSemester>
-    fun existsByIdEqualsAndCourseIdEquals(courseSemesterId: Long, courseId: Long): Mono<Boolean>
+
+    @Query("""
+        select cs.id from course_semester cs
+        inner join challenge ch on cs.id = ch.courseSemesterId
+        where ch.id = :challengeId
+    """)
+    fun findIdByChallengeId(challengeId: Long) : Mono<Long>
 
     @Query(
         """
@@ -21,4 +27,6 @@ interface CourseSemesterRepository : ReactiveCrudRepository<CourseSemester, Long
         """
     )
     fun findAllAvailableToAppUser(currentDate: LocalDateTime, appUserId: Long): Flux<CourseSemester>
+
+    fun existsByIdEqualsAndCourseIdEquals(courseSemesterId: Long, courseId: Long): Mono<Boolean>
 }
