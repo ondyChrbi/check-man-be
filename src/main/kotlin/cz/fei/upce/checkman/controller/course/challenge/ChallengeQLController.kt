@@ -35,4 +35,12 @@ class ChallengeQLController(
         @Argument input: ChallengeInputQL,
         authentication: Authentication
     ) = challengeService.addAsQL(semesterId, input, authenticationService.extractAuthenticateUser(authentication))
+
+    @MutationMapping
+    @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.EDIT_CHALLENGE])
+    fun editChallenge(
+        @ChallengeId @Argument challengeId: Long,
+        @Argument input: ChallengeInputQL,
+        authentication: Authentication
+    ) = challengeService.editAsQL(challengeId, input, authenticationService.extractAuthenticateUser(authentication))
 }

@@ -231,6 +231,14 @@ class ChallengeServiceV1(
             .map { it.toQL(author.toQL(), emptyList()) }
     }
 
+    fun editAsQL(challengeId: Long, input: ChallengeInputQL, appUser: AppUser): Mono<ChallengeQL> {
+        return challengeRepository.findById(challengeId)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .map { input.toEntity(it.courseSemesterId!!, challengeId, appUser) }
+            .flatMap { challengeRepository.save(it) }
+            .map { it.toQL(appUser.toQL(), emptyList()) }
+    }
+
     companion object {
         val VIEW_PERMISSIONS = setOf(
             GlobalRole.ROLE_COURSE_MANAGE, GlobalRole.ROLE_COURSE_SEMESTER_MANAGE,

@@ -14,7 +14,7 @@ data class ChallengeInputQL (
     var challengeKind: String
 ) {
     fun toEntity(semesterId: Long, appUser: AppUser): Challenge {
-        val challenge = Challenge(
+        return Challenge(
             name = name,
             description = description,
             deadlineDate = if(deadlineDate != null) LocalDateTime.parse(deadlineDate, DateTimeFormatter.ISO_DATE_TIME) else null,
@@ -23,6 +23,12 @@ data class ChallengeInputQL (
             challengeKindId = ChallengeKind.Value.valueOf(challengeKind).id,
             authorId = appUser.id!!
         )
+    }
+
+    fun toEntity(semesterId: Long, challengeId: Long, appUser: AppUser): Challenge {
+        val challenge = toEntity(semesterId, appUser)
+        challenge.id = challengeId
+
         return challenge
     }
 }

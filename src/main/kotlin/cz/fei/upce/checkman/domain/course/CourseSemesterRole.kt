@@ -13,14 +13,16 @@ data class CourseSemesterRole(
 
     enum class Value(val id: Long) {
         ACCESS(0),
-        CREATE_CHALLENGE(1);
+        CREATE_CHALLENGE(1),
+        EDIT_CHALLENGE(2);
 
         fun toEntity() = CourseSemesterRole(id, this.toString())
 
         companion object {
             val IDS_MAP = mapOf(
                 0L to ACCESS,
-                1L to CREATE_CHALLENGE
+                1L to CREATE_CHALLENGE,
+                2L to EDIT_CHALLENGE
             )
         }
     }

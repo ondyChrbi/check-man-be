@@ -13,6 +13,7 @@ type Query {
 type Mutation {
     createCourse(input: CourseInput!): Course!
     createChallenge(semesterId: ID!, input: ChallengeInput!): Challenge!
+    editChallenge(challengeId: ID!, input: ChallengeInput!): Challenge!
     createSemesterAccessRequest(semesterId: ID!): CourseSemesterAccessRequest!
 }
 

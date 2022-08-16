@@ -290,3 +290,17 @@ databaseChangeLog:
                   name: name
                   value: ROLE_CHALLENGE_ACCESS
             tableName: global_role
+
+  - changeSet:
+      id: insert-21
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: EDIT_CHALLENGE
+            tableName: course_semester_role
