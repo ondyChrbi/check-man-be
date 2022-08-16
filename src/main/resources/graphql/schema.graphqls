@@ -12,6 +12,7 @@ type Query {
 
 type Mutation {
     createCourse(input: CourseInput!): Course!
+    createChallenge(semesterId: ID!, input: ChallengeInput!): Challenge!
     createSemesterAccessRequest(semesterId: ID!): CourseSemesterAccessRequest!
 }
 
@@ -83,6 +84,14 @@ input CourseInput {
     icon: String
     template: String
     semesters: [SemesterInput]
+}
+
+input ChallengeInput {
+    name: String!
+    description: String!
+    deadlineDate: String
+    startDate: String
+    challengeKind: String!
 }
 
 input SemesterInput {

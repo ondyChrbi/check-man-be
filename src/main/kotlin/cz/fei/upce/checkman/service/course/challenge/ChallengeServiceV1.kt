@@ -11,13 +11,14 @@ import cz.fei.upce.checkman.dto.course.challenge.ChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeResponseDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.PermitAppUserChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.RemoveAccessAppUserChallengeRequestDtoV1
+import cz.fei.upce.checkman.graphql.input.course.ChallengeInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.ChallengeQL
 import cz.fei.upce.checkman.repository.challenge.ChallengeRepository
 import cz.fei.upce.checkman.repository.challenge.PermittedAppUserChallengeRepository
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
+import cz.fei.upce.checkman.repository.review.RequirementRepository
 import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
-import cz.fei.upce.checkman.service.course.challenge.requirement.RequirementServiceV1
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -32,7 +33,7 @@ class ChallengeServiceV1(
     private val permittedAppUserChallengeRepository: PermittedAppUserChallengeRepository,
     private val entityTemplate: R2dbcEntityTemplate,
     private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRSQLSpecification,
-    private val requirementServiceV1: RequirementServiceV1
+    private val requirementRepository: RequirementRepository,
 ) {
     fun search(search: String?, courseId: Long, semesterId: Long): Flux<ChallengeResponseDtoV1> {
         val challenges = if (search == null || search.isEmpty())
@@ -219,10 +220,15 @@ class ChallengeServiceV1(
         return appUserRepository.findById(challenge.authorId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { author ->
-                requirementServiceV1.findAllAsQL(challenge.id!!)
+                requirementRepository.findAllByChallengeIdEquals(challenge.id!!)
                     .collectList()
                     .map { requirements -> challenge.toQL(author.toQL(), requirements.map { it.toQL() }) }
             }
+    }
+
+    fun addAsQL(semesterId: Long, input: ChallengeInputQL, author: AppUser): Mono<ChallengeQL> {
+        return challengeRepository.save(input.toEntity(semesterId, author))
+            .map { it.toQL(author.toQL(), emptyList()) }
     }
 
     companion object {

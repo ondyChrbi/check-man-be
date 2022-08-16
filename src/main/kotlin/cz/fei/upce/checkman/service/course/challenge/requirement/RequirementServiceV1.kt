@@ -48,10 +48,6 @@ class RequirementServiceV1(
             .map { RequirementResponseDtoV1.fromEntity(it) }
     }
 
-    fun findAllAsQL(challengeId: Long): Flux<Requirement> {
-        return requirementRepository.findAllByChallengeIdEquals(challengeId)
-    }
-
     fun add(location: ChallengeLocation, requirementDto: RequirementRequestDtoV1): Mono<RequirementResponseDtoV1> {
         return challengeService.checkChallengeAssociation(location)
             .flatMap { add(location, requirementDto.toResponseDto()) }
