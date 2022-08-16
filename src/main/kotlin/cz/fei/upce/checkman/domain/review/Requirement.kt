@@ -1,5 +1,6 @@
 package cz.fei.upce.checkman.domain.review
 
+import cz.fei.upce.checkman.graphql.output.challenge.requirement.RequirementQL
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 
@@ -11,4 +12,6 @@ data class Requirement(
     var minPoint: Short = 0,
     var maxPoint: Short = 0,
     var challengeId: Long = -1
-)
+) {
+    fun toQL() = RequirementQL(id, name, description, minPoint, maxPoint)
+}

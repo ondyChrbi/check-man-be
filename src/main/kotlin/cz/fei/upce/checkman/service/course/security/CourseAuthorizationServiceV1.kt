@@ -22,6 +22,7 @@ import org.springframework.data.relational.core.query.Criteria.where
 import org.springframework.data.relational.core.query.isEqual
 import org.springframework.data.relational.core.query.isIn
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.Duration
 import java.time.LocalDateTime
@@ -33,9 +34,23 @@ class CourseAuthorizationServiceV1(
     private val courseAccessOps: ReactiveRedisOperations<String, CourseSemesterAccessRequest>,
     private val entityTemplate: R2dbcEntityTemplate
 ) {
+    fun courseSemesterRoles(appUser: AppUser, semesterId: Long): Flux<AppUserCourseSemesterRole> {
+        val query = query(
+            where("app_user_id").isEqual(appUser.id!!)
+                .and("course_semester_id").isEqual(semesterId)
+        )
+
+        return entityTemplate.select(AppUserCourseSemesterRole::class.java)
+            .matching(query)
+            .all()
+    }
+
     fun hasCourseAccess(semesterId: Long, appUser: AppUser, requestedRoles: List<Long>): Mono<Boolean> {
-        val query = query(where("app_user_id").isEqual(appUser.id!!)
-            .and("course_semester_role_id").isIn(requestedRoles))
+        val query = query(
+            where("app_user_id").isEqual(appUser.id!!)
+                .and("course_semester_id").isEqual(semesterId)
+                .and("course_semester_role_id").isIn(requestedRoles)
+        )
 
         return entityTemplate.count(query, AppUserCourseSemesterRole::class.java)
             .map { it == requestedRoles.size.toLong() }
@@ -52,8 +67,12 @@ class CourseAuthorizationServiceV1(
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { checkOngoingCourseSemester(it) }
             .flatMap { hasCourseAccess(it.id!!, appUser, listOf(CourseSemesterRole.Value.ACCESS.id)) }
-            .flatMap { if(it) Mono.error(AppUserCanAlreadyAccessSemesterException(appUser, semesterId)) else Mono.just(semesterId) }
-            .then (storeCourseAccessRequestToCache(appUser, semesterId))
+            .flatMap {
+                if (it) Mono.error(AppUserCanAlreadyAccessSemesterException(appUser, semesterId)) else Mono.just(
+                    semesterId
+                )
+            }
+            .then(storeCourseAccessRequestToCache(appUser, semesterId))
     }
 
     fun storeCourseAccessRequestToCache(
@@ -78,6 +97,7 @@ class CourseAuthorizationServiceV1(
         if (semester.isBeforeStart(now)) {
             return Mono.error(CourseSemesterNotStartedYetException(semester, semester.dateStart!!, now))
         }
+
         if (semester.isAfterEnd(now)) {
             return Mono.error(CourseSemesterAlreadyEndedException(semester, semester.dateEnd!!, now))
         }

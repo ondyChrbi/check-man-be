@@ -5,6 +5,7 @@ import cz.fei.upce.checkman.graphql.output.course.CourseQL
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
 import cz.fei.upce.checkman.service.appuser.MeServiceV1
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
+import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Controller
@@ -30,5 +31,10 @@ class MeQLController(
     @QueryMapping
     fun availableCourses(authentication: Authentication?): Flux<CourseQL> {
         return meServiceV1.availableCoursesAsQL(authenticationService.extractAuthenticateUser(authentication!!))
+    }
+
+    @QueryMapping
+    fun courseRoles(@Argument id: Long, authentication: Authentication?): Flux<String> {
+        return meServiceV1.courseRolesAsQL(id, authenticationService.extractAuthenticateUser(authentication!!))
     }
 }

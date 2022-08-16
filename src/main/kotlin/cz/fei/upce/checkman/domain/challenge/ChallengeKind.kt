@@ -21,6 +21,13 @@ data class ChallengeKind(
             val PRIVATE = setOf(CREDIT, EXAM)
             val PUBLIC = setOf(OPTIONAL, MANDATORY)
 
+            val IDS_MAP = mapOf(
+                0L to OPTIONAL,
+                1L to MANDATORY,
+                2L to CREDIT,
+                3L to EXAM
+            )
+
             fun getById(id: Long) = values()[id.toInt()]
         }
     }

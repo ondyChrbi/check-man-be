@@ -3,6 +3,7 @@ package cz.fei.upce.checkman.service.course
 import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRSQLSpecification
 import cz.fei.upce.checkman.domain.course.Course
 import cz.fei.upce.checkman.domain.course.CourseSemester
+import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_COURSE_MANAGE
 import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_COURSE_VIEW
@@ -228,7 +229,7 @@ class CourseServiceV1(
     }
 
     private fun findAllRelatedTo(appUser: AppUser): Flux<GroupedFlux<Long, CourseSemester>> {
-        return appUserCourseSemesterRoleRepository.findAllByAppUserIdEquals(appUser.id!!)
+        return appUserCourseSemesterRoleRepository.findDistinctByAppUserIdEqualsAndCourseSemesterRoleIdEquals(appUser.id!!, CourseSemesterRole.Value.ACCESS.id)
             .flatMap { courseSemesterRepository.findById(it.courseSemesterId) }
             .groupBy { it.courseId!! }
     }

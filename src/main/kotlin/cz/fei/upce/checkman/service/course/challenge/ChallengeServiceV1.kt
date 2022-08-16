@@ -17,6 +17,7 @@ import cz.fei.upce.checkman.repository.challenge.PermittedAppUserChallengeReposi
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
+import cz.fei.upce.checkman.service.course.challenge.requirement.RequirementServiceV1
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -30,7 +31,8 @@ class ChallengeServiceV1(
     private val courseSemesterRepository: CourseSemesterRepository,
     private val permittedAppUserChallengeRepository: PermittedAppUserChallengeRepository,
     private val entityTemplate: R2dbcEntityTemplate,
-    private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRSQLSpecification
+    private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRSQLSpecification,
+    private val requirementServiceV1: RequirementServiceV1
 ) {
     fun search(search: String?, courseId: Long, semesterId: Long): Flux<ChallengeResponseDtoV1> {
         val challenges = if (search == null || search.isEmpty())
@@ -204,19 +206,23 @@ class ChallengeServiceV1(
 
     fun findAllBySemesterIdAsQL(semesterId: Long): Flux<ChallengeQL> {
         return challengeRepository.findAllByCourseSemesterIdEquals(semesterId)
-            .flatMap { assignAuthor(it) }
+            .flatMap { assignRelatives(it) }
     }
 
     fun findByIdAsQL(id: Long): Mono<ChallengeQL> {
         return challengeRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-            .flatMap { assignAuthor(it) }
+            .flatMap { assignRelatives(it) }
     }
 
-    private fun assignAuthor(challenge: Challenge): Mono<ChallengeQL> {
+    private fun assignRelatives(challenge: Challenge): Mono<ChallengeQL> {
         return appUserRepository.findById(challenge.authorId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-            .map { challenge.toQL(it.toQL()) }
+            .flatMap { author ->
+                requirementServiceV1.findAllAsQL(challenge.id!!)
+                    .collectList()
+                    .map { requirements -> challenge.toQL(author.toQL(), requirements.map { it.toQL() }) }
+            }
     }
 
     companion object {

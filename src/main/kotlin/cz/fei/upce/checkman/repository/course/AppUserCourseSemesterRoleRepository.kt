@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono
 
 @Repository
 interface AppUserCourseSemesterRoleRepository : ReactiveCrudRepository<AppUserCourseSemesterRole, Long> {
-    fun findAllByAppUserIdEquals(appUserId: Long): Flux<AppUserCourseSemesterRole>
+    fun findDistinctByAppUserIdEqualsAndCourseSemesterRoleIdEquals(appUserId: Long, courseSemesterRoleId: Long): Flux<AppUserCourseSemesterRole>
 
     fun findAllByAppUserIdEqualsAndCourseSemesterIdEquals(
         appUserId: Long,

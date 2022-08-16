@@ -15,7 +15,7 @@ interface CourseSemesterRepository : ReactiveCrudRepository<CourseSemester, Long
 
     @Query("""
         select cs.id from course_semester cs
-        inner join challenge ch on cs.id = ch.courseSemesterId
+        inner join challenge ch on cs.id = ch.course_semester_id
         where ch.id = :challengeId
     """)
     fun findIdByChallengeId(challengeId: Long) : Mono<Long>

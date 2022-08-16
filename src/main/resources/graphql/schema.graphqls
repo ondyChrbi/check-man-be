@@ -7,6 +7,7 @@ type Query {
     me: AppUser!
     myCourses: [Course!]!
     availableCourses: [Course!]!
+    courseRoles(id: ID!): [String!]!
 }
 
 type Mutation {
@@ -53,6 +54,7 @@ type Challenge {
     deadlineDate: String
     startDate: String
     author: AppUser
+    challengeKind: String!
 }
 
 type CourseSemesterRoles {

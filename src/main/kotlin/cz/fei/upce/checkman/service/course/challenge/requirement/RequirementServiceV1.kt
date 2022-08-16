@@ -48,6 +48,10 @@ class RequirementServiceV1(
             .map { RequirementResponseDtoV1.fromEntity(it) }
     }
 
+    fun findAllAsQL(challengeId: Long): Flux<Requirement> {
+        return requirementRepository.findAllByChallengeIdEquals(challengeId)
+    }
+
     fun add(location: ChallengeLocation, requirementDto: RequirementRequestDtoV1): Mono<RequirementResponseDtoV1> {
         return challengeService.checkChallengeAssociation(location)
             .flatMap { add(location, requirementDto.toResponseDto()) }
@@ -67,18 +71,6 @@ class RequirementServiceV1(
         requirementDto: RequirementRequestDtoV1
     ): Mono<RequirementResponseDtoV1> = update(location, challengeId, requirementDto.toResponseDto())
 
-    private fun update(
-        location: ChallengeLocation,
-        challengeId: Long,
-        requirementDto: RequirementResponseDtoV1
-    ): Mono<RequirementResponseDtoV1> {
-        return challengeService.checkChallengeAssociation(location)
-            .flatMap { requirementRepository.findById(challengeId) }
-            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-            .flatMap { requirementRepository.save(requirementDto.toEntity(it)) }
-            .map { requirementDto.withId(it.id) }
-    }
-
     fun delete(location: ChallengeLocation, requirementId: Long): Mono<Void> {
         return challengeService.checkChallengeAssociation(location)
             .flatMap { requirementRepository.existsById(requirementId) }
@@ -90,5 +82,17 @@ class RequirementServiceV1(
                     requirementRepository.deleteById(requirementId)
                 }
             }
+    }
+
+    private fun update(
+        location: ChallengeLocation,
+        challengeId: Long,
+        requirementDto: RequirementResponseDtoV1
+    ): Mono<RequirementResponseDtoV1> {
+        return challengeService.checkChallengeAssociation(location)
+            .flatMap { requirementRepository.findById(challengeId) }
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .flatMap { requirementRepository.save(requirementDto.toEntity(it)) }
+            .map { requirementDto.withId(it.id) }
     }
 }
