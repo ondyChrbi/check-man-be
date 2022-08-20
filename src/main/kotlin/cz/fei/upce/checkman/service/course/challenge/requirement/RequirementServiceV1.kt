@@ -4,6 +4,8 @@ import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRSQLSpecification
 import cz.fei.upce.checkman.domain.review.Requirement
 import cz.fei.upce.checkman.dto.course.challenge.requirement.RequirementRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.requirement.RequirementResponseDtoV1
+import cz.fei.upce.checkman.graphql.input.course.RequirementInputQL
+import cz.fei.upce.checkman.graphql.output.challenge.requirement.RequirementQL
 import cz.fei.upce.checkman.repository.review.RequirementRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.course.challenge.ChallengeLocation
@@ -78,6 +80,19 @@ class RequirementServiceV1(
                     requirementRepository.deleteById(requirementId)
                 }
             }
+    }
+
+    fun addAsQL(challengeId: Long, input: RequirementInputQL): Mono<RequirementQL> {
+        return requirementRepository.save(input.toEntity(challengeId))
+            .map { it.toQL() }
+    }
+
+    fun editAsQL(requirementId: Long, input: RequirementInputQL): Mono<RequirementQL> {
+        return requirementRepository.findById(requirementId)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .map { input.toEntity(it.id!!, it.challengeId) }
+            .flatMap { requirementRepository.save(it) }
+            .map { it.toQL() }
     }
 
     private fun update(

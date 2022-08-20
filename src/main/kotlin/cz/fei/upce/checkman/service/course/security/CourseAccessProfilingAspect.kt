@@ -4,10 +4,7 @@ import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import cz.fei.upce.checkman.service.course.AppUserCourseSemesterForbiddenException
-import cz.fei.upce.checkman.service.course.security.annotation.ChallengeId
-import cz.fei.upce.checkman.service.course.security.annotation.CourseId
-import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
-import cz.fei.upce.checkman.service.course.security.annotation.SemesterId
+import cz.fei.upce.checkman.service.course.security.annotation.*
 import cz.fei.upce.checkman.service.course.security.exception.*
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
@@ -65,6 +62,17 @@ class CourseAccessProfilingAspect(
             return finishProcessing(joinPoint, result)
         }
 
+        val requirements = parameters.filter { it.annotations.filterIsInstance<RequirementId>().isNotEmpty() }
+        if (requirements.isNotEmpty()) {
+            val requirementId = joinPoint.args[parameters.indexOf(requirements.first())]
+            if (requirementId !is Long) {
+                return Mono.error<Void>(NotIdDataTypeException("challengeId", Long::class.java))
+            }
+
+            val result = checkBasedRequirement(requirementId, appUser, annotation)
+            return finishProcessing(joinPoint, result)
+        }
+
         return Mono.error(NoSemesterBasedIdInMethodArgumentsException(methodSignature, REQUIRED_ANNOTATIONS))
     }
 
@@ -85,6 +93,17 @@ class CourseAccessProfilingAspect(
         annotation: PreCourseSemesterAuthorize
     ): Mono<Boolean> {
         return authorizeService.hasCourseAccess(semesterId, appUser, annotation)
+            .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
+    }
+
+    private fun checkBasedRequirement(
+        requirementId: Long,
+        appUser: AppUser,
+        annotation: PreCourseSemesterAuthorize
+    ): Mono<Boolean> {
+        return courseSemesterRepository.findIdByRequirementId(requirementId)
+            .switchIfEmpty(Mono.error(AuthorizeIdentificationNotFoundException(RequirementId::class, requirementId)))
+            .flatMap { semesterId -> authorizeService.hasCourseAccess(semesterId, appUser, annotation) }
             .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
     }
 

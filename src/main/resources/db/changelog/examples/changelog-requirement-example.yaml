@@ -1,0 +1,61 @@
+databaseChangeLog:
+  - changeSet:
+      id: requirement-example-insert-+
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: name
+                  value: Example requirement no. 1.1
+              - column:
+                  name: description
+                  value: Description of example requirement no. 1.1
+              - column:
+                  name: min_point
+                  value: 1
+              - column:
+                  name: max_point
+                  value: 10
+              - column:
+                  name: challenge_id
+                  value: 0
+            tableName: requirement
+
+        - insert:
+            columns:
+              - column:
+                  name: name
+                  value: Example requirement no. 1.2
+              - column:
+                  name: description
+                  value: Description of example requirement no. 1.2
+              - column:
+                  name: min_point
+                  value: 1
+              - column:
+                  name: max_point
+                  value: 10
+              - column:
+                  name: challenge_id
+                  value: 0
+            tableName: requirement
+
+        - insert:
+            columns:
+              - column:
+                  name: name
+                  value: Example requirement no. 1.3
+              - column:
+                  name: description
+                  value: Description of example requirement no. 1.3
+              - column:
+                  name: min_point
+                  value: 1
+              - column:
+                  name: max_point
+                  value: 10
+              - column:
+                  name: challenge_id
+                  value: 0
+            tableName: requirement

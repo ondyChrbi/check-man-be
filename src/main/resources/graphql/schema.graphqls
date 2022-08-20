@@ -14,6 +14,8 @@ type Mutation {
     createCourse(input: CourseInput!): Course!
     createChallenge(semesterId: ID!, input: ChallengeInput!): Challenge!
     editChallenge(challengeId: ID!, input: ChallengeInput!): Challenge!
+    createRequirement(challengeId: ID!, input: RequirementInput!): Requirement!
+    editRequirement(requirementId: ID!, input: RequirementInput!): Requirement!
     createSemesterAccessRequest(semesterId: ID!): CourseSemesterAccessRequest!
 }
 
@@ -57,6 +59,7 @@ type Challenge {
     startDate: String
     author: AppUser
     challengeKind: String!
+    requirements: [Requirement!]!
 }
 
 type CourseSemesterRoles {
@@ -67,6 +70,14 @@ type CourseSemesterRoles {
 type CourseSemesterRole {
     id: ID!
     name: String!
+}
+
+type Requirement {
+    id: ID!,
+    name: String!,
+    description: String,
+    minPoint: Int,
+    maxPoint: Int
 }
 
 type Course {
@@ -99,4 +110,11 @@ input SemesterInput {
     note: String
     dateStart: String
     dateEnd: String
+}
+
+input RequirementInput {
+    name: String!,
+    description: String,
+    minPoint: Int,
+    maxPoint: Int
 }
