@@ -5,12 +5,17 @@ import cz.fei.upce.checkman.domain.challenge.ChallengeKind
 import cz.fei.upce.checkman.domain.user.AppUser
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.NotNull
 
 data class ChallengeInputQL (
+    @field:NotEmpty(message = "{course.challenge.name.not-empty}")
     var name: String = "",
+    @field:NotEmpty(message = "{course.challenge.description.not-empty}")
     var description: String = "",
     var deadlineDate: String? = null,
     var startDate: String? = null,
+    @field: NotNull(message = "{course.challenge.challenge-kind.not-null}")
     var challengeKind: String
 ) {
     fun toEntity(semesterId: Long, appUser: AppUser): Challenge {

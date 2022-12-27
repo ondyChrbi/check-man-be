@@ -20,6 +20,7 @@ import cz.fei.upce.checkman.repository.review.RequirementRepository
 import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
+import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -226,7 +227,7 @@ class ChallengeServiceV1(
             }
     }
 
-    fun addAsQL(semesterId: Long, input: ChallengeInputQL, author: AppUser): Mono<ChallengeQL> {
+    fun addAsQL(semesterId: Long, @Argument input: ChallengeInputQL, author: AppUser): Mono<ChallengeQL> {
         return challengeRepository.save(input.toEntity(semesterId, author))
             .map { it.toQL(author.toQL(), emptyList()) }
     }

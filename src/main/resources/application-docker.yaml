@@ -8,11 +8,11 @@ spring:
       enabled: false
   liquibase:
     change-log: classpath:db/changelog/environment/changelog-docker.yaml
-    url: jdbc:postgresql://localhost:5432/checkman
+    url: jdbc:postgresql://localhost:5440/checkman
     user: checkman
     password: checkman
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/checkman
+    url: r2dbc:postgresql://localhost:5440/checkman
     username: checkman
     password: checkman
   graphql:

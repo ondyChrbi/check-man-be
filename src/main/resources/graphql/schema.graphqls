@@ -1,3 +1,6 @@
+directive @Size(min : Int = 1, max : Int = 2147483647, message : String = "graphql.validation.Size.message")
+    on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
 type Query {
     courses: [Course!]!
     challenges(semesterId: ID!): [Challenge!]!
@@ -99,7 +102,7 @@ input CourseInput {
 }
 
 input ChallengeInput {
-    name: String!
+    name: String! @Size
     description: String!
     deadlineDate: String
     startDate: String

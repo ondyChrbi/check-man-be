@@ -9,9 +9,6 @@ databaseChangeLog:
                   name: name
                   value: Example challenge no. 1
               - column:
-                  name: description
-                  value: Some description about this challenge taller than some limit.
-              - column:
                   name: author_id
                   value: 0
               - column:
@@ -26,9 +23,6 @@ databaseChangeLog:
               - column:
                   name: name
                   value: Example challenge no. 2
-              - column:
-                  name: description
-                  value: Some description about this challenge taller than some limit.
               - column:
                   name: author_id
                   value: 0
@@ -45,9 +39,6 @@ databaseChangeLog:
                   name: name
                   value: Example challenge no. 3
               - column:
-                  name: description
-                  value: Some description about this challenge taller than some limit.
-              - column:
                   name: author_id
                   value: 0
               - column:
@@ -62,9 +53,6 @@ databaseChangeLog:
               - column:
                   name: name
                   value: Example challenge no. 4
-              - column:
-                  name: description
-                  value: Some description about this challenge taller than some limit.
               - column:
                   name: author_id
                   value: 0
