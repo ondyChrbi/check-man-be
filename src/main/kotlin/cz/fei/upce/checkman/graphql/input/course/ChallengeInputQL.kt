@@ -3,13 +3,22 @@ package cz.fei.upce.checkman.graphql.input.course
 import cz.fei.upce.checkman.domain.challenge.Challenge
 import cz.fei.upce.checkman.domain.challenge.ChallengeKind
 import cz.fei.upce.checkman.domain.user.AppUser
+import org.springframework.format.annotation.DateTimeFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import javax.validation.constraints.*
 
 data class ChallengeInputQL (
+    @field:NotNull
+    @field:NotEmpty
+    @field:NotBlank
+    @field:Size(max = 128)
     var name: String = "",
+    @field:Size(max = 5000)
     var description: String = "",
+    @field:DateTimeFormat
     var deadlineDate: String? = null,
+    @field:DateTimeFormat
     var startDate: String? = null,
     var challengeKind: String
 ) {

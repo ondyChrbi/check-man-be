@@ -12,8 +12,11 @@ import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Controller
+import org.springframework.validation.annotation.Validated
+import javax.validation.Valid
 
 @Controller
+@Validated
 class ChallengeQLController(
     private val challengeService: ChallengeServiceV1,
     private val authenticationService: AuthenticationServiceV1
@@ -32,7 +35,7 @@ class ChallengeQLController(
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.CREATE_CHALLENGE])
     fun createChallenge(
         @SemesterId @Argument semesterId: Long,
-        @Argument input: ChallengeInputQL,
+        @Argument @Valid input: ChallengeInputQL,
         authentication: Authentication
     ) = challengeService.addAsQL(semesterId, input, authenticationService.extractAuthenticateUser(authentication))
 
