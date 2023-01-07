@@ -1,3 +1,5 @@
+scalar DateTime
+
 type Query {
     courses: [Course!]!
     challenges(semesterId: ID!): [Challenge!]!

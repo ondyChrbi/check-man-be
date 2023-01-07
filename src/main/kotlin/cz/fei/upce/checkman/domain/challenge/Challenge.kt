@@ -6,6 +6,7 @@ import cz.fei.upce.checkman.graphql.output.challenge.requirement.RequirementQL
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @Table("challenge")
 data class Challenge(
@@ -19,7 +20,7 @@ data class Challenge(
     var challengeKindId: Long = 0
 ) {
     fun toQL(author: AppUserQL, requirements: List<RequirementQL> = emptyList()) = ChallengeQL(
-        id, name, description, deadlineDate, startDate, author, requirements, ChallengeKind.Value.IDS_MAP[challengeKindId].toString()
+        id, name, description, deadlineDate?.atOffset(ZoneOffset.UTC), startDate?.atOffset(ZoneOffset.UTC), author, requirements, ChallengeKind.Value.IDS_MAP[challengeKindId].toString()
     )
 
     fun isPermissionNeeded(): Boolean {
