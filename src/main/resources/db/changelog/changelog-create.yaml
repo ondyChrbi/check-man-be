@@ -973,6 +973,12 @@ databaseChangeLog:
                   name: max_point
                   type: int2
               - column:
+                  name: removed
+                  type: bool
+                  constraints:
+                    nullable: false
+                    defaultValue: false
+              - column:
                   name: challenge_id
                   type: bigint
                   constraints:

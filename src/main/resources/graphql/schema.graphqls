@@ -3,6 +3,7 @@ scalar DateTime
 type Query {
     courses: [Course!]!
     challenges(semesterId: ID!): [Challenge!]!
+    requirements(challengeId: ID!): [Requirement!]!
     course(id: ID!): Course
     semester(id: ID!): Semester
     challenge(id: ID!): Challenge
@@ -18,6 +19,7 @@ type Mutation {
     editChallenge(challengeId: ID!, input: ChallengeInput!): Challenge!
     createRequirement(challengeId: ID!, input: RequirementInput!): Requirement!
     editRequirement(requirementId: ID!, input: RequirementInput!): Requirement!
+    removeRequirement(requirementId: ID!): Requirement!
     createSemesterAccessRequest(semesterId: ID!): CourseSemesterAccessRequest!
 }
 

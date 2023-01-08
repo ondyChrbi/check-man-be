@@ -37,6 +37,7 @@ class RequirementServiceV1(
 
     private fun searchAllByChallengeId(location: ChallengeLocation, search: String): Flux<Requirement> {
         val condition = Criteria.where("challengeId").`is`(location.challengeId)
+            .and("removed").`is`("false")
 
         return entityTemplate.select(Requirement::class.java)
             .matching(reactiveCriteriaRsqlSpecification.createCriteria(search, condition))
@@ -95,6 +96,12 @@ class RequirementServiceV1(
             .map { it.toQL() }
     }
 
+    fun findByChallengeIdAsQL(challengeId: Long): Flux<RequirementQL> {
+        return requirementRepository.findAllByChallengeIdEqualsAndRemovedEquals(challengeId)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .map { it.toQL() }
+    }
+
     private fun update(
         location: ChallengeLocation,
         challengeId: Long,
@@ -105,5 +112,10 @@ class RequirementServiceV1(
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { requirementRepository.save(requirementDto.toEntity(it)) }
             .map { requirementDto.withId(it.id) }
+    }
+
+    fun removeAsQL(requirementId: Long): Mono<RequirementQL> {
+        return requirementRepository.updateRemovedByIdEqualsReturnAll(requirementId)
+            .map { it.toQL() }
     }
 }

@@ -11,7 +11,8 @@ data class Requirement(
     var description: String = "",
     var minPoint: Short = 0,
     var maxPoint: Short = 0,
-    var challengeId: Long = -1
+    var challengeId: Long = -1,
+    var removed: Boolean = false
 ) {
-    fun toQL() = RequirementQL(id, name, description, minPoint, maxPoint)
+    fun toQL() = RequirementQL(id!!, name, description, minPoint.toInt(), maxPoint.toInt())
 }
