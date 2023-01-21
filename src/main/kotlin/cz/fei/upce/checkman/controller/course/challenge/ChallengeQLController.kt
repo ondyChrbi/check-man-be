@@ -2,6 +2,7 @@ package cz.fei.upce.checkman.controller.course.challenge
 
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.graphql.input.course.ChallengeInputQL
+import cz.fei.upce.checkman.graphql.output.challenge.ChallengeQL
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import cz.fei.upce.checkman.service.course.challenge.ChallengeServiceV1
 import cz.fei.upce.checkman.service.course.security.annotation.ChallengeId
@@ -13,6 +14,7 @@ import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
+import reactor.core.publisher.Mono
 import javax.validation.Valid
 
 @Controller
@@ -46,4 +48,13 @@ class ChallengeQLController(
         @Argument input: ChallengeInputQL,
         authentication: Authentication
     ) = challengeService.editAsQL(challengeId, input, authenticationService.extractAuthenticateUser(authentication))
+
+    @MutationMapping
+    @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.DELETE_CHALLENGE])
+    fun deleteChallenge(
+        @ChallengeId @Argument challengeId: Long,
+        authentication: Authentication
+    ): Mono<ChallengeQL> {
+        return challengeService.deleteAsQL(challengeId, authenticationService.extractAuthenticateUser(authentication));
+    }
 }

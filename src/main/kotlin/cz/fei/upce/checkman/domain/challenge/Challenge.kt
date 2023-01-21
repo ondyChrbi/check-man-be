@@ -14,12 +14,13 @@ data class Challenge(
     var description: String = "",
     var deadlineDate: LocalDateTime? = null,
     var startDate: LocalDateTime? = null,
+    var active: Boolean = true,
     var authorId: Long = 0,
     var courseSemesterId: Long? = null,
     var challengeKindId: Long = 0
 ) {
     fun toQL(author: AppUserQL, requirements: List<RequirementQL> = emptyList()) = ChallengeQL(
-        id, name, description, deadlineDate, startDate, author, requirements, ChallengeKind.Value.IDS_MAP[challengeKindId].toString()
+        id, name, description, deadlineDate, startDate, active, author, requirements, ChallengeKind.Value.IDS_MAP[challengeKindId].toString()
     )
 
     fun isPermissionNeeded(): Boolean {

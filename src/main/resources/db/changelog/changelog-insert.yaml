@@ -318,3 +318,17 @@ databaseChangeLog:
                   name: name
                   value: SUBMIT_CHALLENGE_SOLUTION
             tableName: course_semester_role
+
+  - changeSet:
+      id: insert-23
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 4
+              - column:
+                  name: name
+                  value: DELETE_CHALLENGE
+            tableName: course_semester_role

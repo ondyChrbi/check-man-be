@@ -23,6 +23,7 @@ import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toMono
 import java.time.LocalDateTime
 
 @Service
@@ -206,7 +207,7 @@ class ChallengeServiceV1(
             }
 
     fun findAllBySemesterIdAsQL(semesterId: Long): Flux<ChallengeQL> {
-        return challengeRepository.findAllByCourseSemesterIdEquals(semesterId)
+        return challengeRepository.findAllByCourseSemesterIdEqualsAndActive(semesterId)
             .flatMap { assignRelatives(it) }
     }
 
@@ -226,6 +227,12 @@ class ChallengeServiceV1(
             }
     }
 
+    private fun assignAuthor(challenge: Challenge): Mono<ChallengeQL> {
+        return appUserRepository.findById(challenge.authorId)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .map { challenge.toQL(it.toQL()) }
+    }
+
     fun addAsQL(semesterId: Long, input: ChallengeInputQL, author: AppUser): Mono<ChallengeQL> {
         return challengeRepository.save(input.toEntity(semesterId, author))
             .map { it.toQL(author.toQL(), emptyList()) }
@@ -237,6 +244,12 @@ class ChallengeServiceV1(
             .map { input.toEntity(it.courseSemesterId!!, challengeId, appUser) }
             .flatMap { challengeRepository.save(it) }
             .map { it.toQL(appUser.toQL(), emptyList()) }
+    }
+
+    fun deleteAsQL(challengeId: Long, appUser: AppUser): Mono<ChallengeQL> {
+        return challengeRepository.disableChallenge(challengeId)
+            .flatMap { assignAuthor(it) }
+            .toMono()
     }
 
     companion object {

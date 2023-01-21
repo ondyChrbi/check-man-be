@@ -14,6 +14,7 @@ type Mutation {
     createCourse(input: CourseInput!): Course!
     createChallenge(semesterId: ID!, input: ChallengeInput!): Challenge!
     editChallenge(challengeId: ID!, input: ChallengeInput!): Challenge!
+    deleteChallenge(challengeId: ID!): Challenge!
     createRequirement(challengeId: ID!, input: RequirementInput!): Requirement!
     editRequirement(requirementId: ID!, input: RequirementInput!): Requirement!
     createSemesterAccessRequest(semesterId: ID!): CourseSemesterAccessRequest!

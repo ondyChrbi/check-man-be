@@ -10,6 +10,7 @@ data class ChallengeQL (
     var description: String = "",
     var deadlineDate: LocalDateTime? = null,
     var startDate: LocalDateTime? = null,
+    var active: Boolean = true,
     var author: AppUserQL? = null,
     var requirements: List<RequirementQL> = emptyList(),
     var challengeKind: String = ""
