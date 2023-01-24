@@ -971,6 +971,10 @@ databaseChangeLog:
                   name: description
                   type: varchar(1024)
               - column:
+                  name: active
+                  type: boolean
+                  defaultValue: true
+              - column:
                   name: min_point
                   type: int2
               - column:

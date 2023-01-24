@@ -221,7 +221,7 @@ class ChallengeServiceV1(
         return appUserRepository.findById(challenge.authorId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { author ->
-                requirementRepository.findAllByChallengeIdEquals(challenge.id!!)
+                requirementRepository.findAllByChallengeIdEqualsAndActiveEquals(challenge.id!!)
                     .collectList()
                     .map { requirements -> challenge.toQL(author.toQL(), requirements.map { it.toQL() }) }
             }

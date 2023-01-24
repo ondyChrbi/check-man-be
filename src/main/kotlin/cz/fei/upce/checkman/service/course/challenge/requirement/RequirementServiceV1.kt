@@ -15,6 +15,7 @@ import org.springframework.data.relational.core.query.Criteria
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toMono
 
 @Service
 class RequirementServiceV1(
@@ -26,8 +27,8 @@ class RequirementServiceV1(
     fun search(location: ChallengeLocation, search: String?): Flux<RequirementResponseDtoV1> {
         return challengeService.checkChallengeAssociation(location)
             .flatMapMany {
-                if (search == null || search.isEmpty()) {
-                    requirementRepository.findAllByChallengeIdEquals(location.challengeId)
+                if (search.isNullOrEmpty()) {
+                    requirementRepository.findAllByChallengeIdEqualsAndActiveEquals(location.challengeId)
                 } else {
                     searchAllByChallengeId(location, search)
                 }
@@ -93,6 +94,17 @@ class RequirementServiceV1(
             .map { input.toEntity(it.id!!, it.challengeId) }
             .flatMap { requirementRepository.save(it) }
             .map { it.toQL() }
+    }
+
+    fun findAllByChallengeIdAsQL(challengeId: Long): Flux<RequirementQL> {
+        return requirementRepository.findAllByChallengeIdEqualsAndActiveEquals(challengeId)
+            .map { it.toQL() }
+    }
+
+    fun removeAsQL(requirementId: Long): Mono<RequirementQL> {
+        return requirementRepository.disableRequirement(requirementId)
+            .map { it.toQL() }
+            .toMono()
     }
 
     private fun update(

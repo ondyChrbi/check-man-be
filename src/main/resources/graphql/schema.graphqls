@@ -1,6 +1,7 @@
 type Query {
     courses: [Course!]!
     challenges(semesterId: ID!): [Challenge!]!
+    requirements(challengeId: ID!): [Requirement!]!
     course(id: ID!): Course
     semester(id: ID!): Semester
     challenge(id: ID!): Challenge
@@ -17,6 +18,7 @@ type Mutation {
     deleteChallenge(challengeId: ID!): Challenge!
     createRequirement(challengeId: ID!, input: RequirementInput!): Requirement!
     editRequirement(requirementId: ID!, input: RequirementInput!): Requirement!
+    removeRequirement(requirementId: ID!): Requirement!
     createSemesterAccessRequest(semesterId: ID!): CourseSemesterAccessRequest!
 }
 
@@ -77,6 +79,7 @@ type Requirement {
     id: ID!,
     name: String!,
     description: String,
+    active: Boolean!,
     minPoint: Int,
     maxPoint: Int
 }
