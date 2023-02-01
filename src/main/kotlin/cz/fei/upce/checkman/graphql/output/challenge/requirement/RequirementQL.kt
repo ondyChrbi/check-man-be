@@ -1,10 +1,11 @@
 package cz.fei.upce.checkman.graphql.output.challenge.requirement
 
 data class RequirementQL (
-    var id: Long? = null,
+    var id: Long,
     var name: String = "",
-    var description: String = "",
+    var description: String?,
     var active: Boolean = true,
-    var minPoint: Short = 0,
-    var maxPoint: Short = 0,
+    var minPoint: Int? = 0,
+    var maxPoint: Int? = 0,
+    var removed: Boolean = false
 )
