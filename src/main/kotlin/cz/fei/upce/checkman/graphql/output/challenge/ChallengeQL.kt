@@ -11,6 +11,7 @@ data class ChallengeQL (
     var deadlineDate: OffsetDateTime? = null,
     var startDate: OffsetDateTime? = null,
     var active: Boolean = true,
+    var published: Boolean = false,
     var author: AppUserQL? = null,
     var requirements: List<RequirementQL> = emptyList(),
     var challengeKind: String = ""

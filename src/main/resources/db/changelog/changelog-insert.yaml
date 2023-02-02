@@ -332,3 +332,44 @@ databaseChangeLog:
                   name: name
                   value: DELETE_CHALLENGE
             tableName: course_semester_role
+
+  - changeSet:
+      id: insert-24
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: name
+                  value: APPROVED
+              - column:
+                  name: approved
+                  value: true
+            tableName: status
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: RETURN_TO_EDIT
+              - column:
+                  name: approved
+                  value: false
+            tableName: status
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: DENIED
+              - column:
+                  name: approved
+                  value: false
+            tableName: status

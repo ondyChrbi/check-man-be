@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: requirement-example-insert-+
+      id: requirement-example-insert-1
       author: ondrej.chrbolka
       changes:
         - insert:

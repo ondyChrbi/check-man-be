@@ -252,6 +252,21 @@ class ChallengeServiceV1(
             .toMono()
     }
 
+    fun publish(challengeId: Long, extractAuthenticateUser: AppUser): Mono<Boolean> {
+        return challengeRepository.findById(challengeId)
+            .flatMap { challenge ->
+                if (challenge.authorId != extractAuthenticateUser.id)
+                    Mono.error(UserNotAuthorException(challengeId))
+                else if (challenge.published)
+                    Mono.error(AlreadyPublishedException(challengeId))
+                else
+                    Mono.just(challenge)
+            }.flatMap { challenge ->
+                challenge.published = true
+                challengeRepository.save(challenge)
+            }.map { true }
+    }
+
     companion object {
         val VIEW_PERMISSIONS = setOf(
             GlobalRole.ROLE_COURSE_MANAGE, GlobalRole.ROLE_COURSE_SEMESTER_MANAGE,

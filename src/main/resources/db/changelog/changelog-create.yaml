@@ -531,6 +531,10 @@ databaseChangeLog:
                   type: boolean
                   defaultValue: true
               - column:
+                  name: published
+                  type: boolean
+                  defaultValue: false
+              - column:
                   name: author_id
                   type: bigint
                   constraints:
@@ -829,7 +833,7 @@ databaseChangeLog:
                     nullable: false
                     defaultValue: now()
               - column:
-                  name: team_id
+                  name: user_id
                   type: bigint
                   constraints:
                     nullable: false
@@ -845,11 +849,11 @@ databaseChangeLog:
                     nullable: false
 
         - addForeignKeyConstraint:
-            baseColumnNames: team_id
+            baseColumnNames: user_id
             baseTableName: solution
-            constraintName: solution_team_id_fk
+            constraintName: solution_user_id_fk
             referencedColumnNames: id
-            referencedTableName: team
+            referencedTableName: app_user
             validate: true
 
         - addForeignKeyConstraint:

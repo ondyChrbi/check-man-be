@@ -55,6 +55,13 @@ class ChallengeQLController(
         @ChallengeId @Argument challengeId: Long,
         authentication: Authentication
     ): Mono<ChallengeQL> {
-        return challengeService.deleteAsQL(challengeId, authenticationService.extractAuthenticateUser(authentication));
+        return challengeService.deleteAsQL(challengeId, authenticationService.extractAuthenticateUser(authentication))
+    }
+
+    @MutationMapping
+    @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.EDIT_CHALLENGE])
+    fun publishChallenge(@ChallengeId @Argument challengeId: Long,
+                         authentication: Authentication) : Mono<Boolean> {
+        return challengeService.publish(challengeId, authenticationService.extractAuthenticateUser(authentication))
     }
 }

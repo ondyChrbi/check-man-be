@@ -22,6 +22,7 @@ type Mutation {
     editRequirement(requirementId: ID!, input: RequirementInput!): Requirement!
     removeRequirement(requirementId: ID!): Requirement!
     createSemesterAccessRequest(semesterId: ID!): CourseSemesterAccessRequest!
+    publishChallenge(challengeId: ID!): Boolean
 }
 
 type AppUser{
@@ -63,6 +64,7 @@ type Challenge {
     deadlineDate: String
     startDate: String
     author: AppUser
+    published: Boolean,
     challengeKind: String!
     requirements: [Requirement!]!
 }

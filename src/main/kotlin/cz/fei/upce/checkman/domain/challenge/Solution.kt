@@ -1,6 +1,5 @@
 package cz.fei.upce.checkman.domain.challenge
 
-import cz.fei.upce.checkman.domain.user.Team
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
@@ -9,9 +8,9 @@ import java.time.LocalDateTime
 data class Solution(
     @Id var id: Long? = null,
     var uploadDate: LocalDateTime? = null,
-    var team: Team? = null,
-    var status: Status? = null,
-    var challenge: Challenge? = null
+    var userId: Long = -1L,
+    var statusId: Long = -1L,
+    var challengeId: Long = -1L,
 ) {
     enum class Status(approve: Boolean) {
         APPROVED(true),
