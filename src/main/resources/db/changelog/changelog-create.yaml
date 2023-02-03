@@ -763,7 +763,7 @@ databaseChangeLog:
       author: ondrej.chrbolka
       changes:
         - createTable:
-            tableName: feedback
+            tableName: feedback_type
             columns:
               - column:
                   name: id
@@ -775,13 +775,12 @@ databaseChangeLog:
                   type: varchar(32)
                   constraints:
                     nullable: false
-
         - createSequence:
             dataType: bigint
             incrementBy: 1
             startValue: 0
             minValue: 0
-            sequenceName: feedback_id_seq
+            sequenceName: feedback_type_id_seq
 
   - changeSet:
       id: create-18
@@ -936,7 +935,7 @@ databaseChangeLog:
             baseTableName: review
             constraintName: review_feedback_id_fk
             referencedColumnNames: id
-            referencedTableName: feedback
+            referencedTableName: feedback_type
             validate: true
 
         - addForeignKeyConstraint:

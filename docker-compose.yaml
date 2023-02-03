@@ -8,7 +8,31 @@ services:
       POSTGRES_PASSWORD: checkman
     ports:
       - 5432:5432
+
   redis:
     image: redis
     ports:
       - 6379:6379
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      discovery.type: single-node
+      bootstrap.memory_lock: true
+      "ES_JAVA_OPTS": "-Xmx256m -Xms256m"
+
+  logstash:
+    image: mylogstash
+    container_name: logstash
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    ports:
+      - 5001:5000
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    depends_on:
+      - elasticsearch
+

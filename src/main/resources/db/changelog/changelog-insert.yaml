@@ -426,7 +426,7 @@ databaseChangeLog:
               - column:
                   name: name
                   value: EXTREMELY_POSITIVE
-            tableName: feedback
+            tableName: feedback_type
         - insert:
             columns:
               - column:
@@ -435,7 +435,7 @@ databaseChangeLog:
               - column:
                   name: name
                   value: POSITIVE
-            tableName: feedback
+            tableName: feedback_type
         - insert:
             columns:
               - column:
@@ -444,7 +444,7 @@ databaseChangeLog:
               - column:
                   name: name
                   value: NEUTRAL
-            tableName: feedback
+            tableName: feedback_type
         - insert:
             columns:
               - column:
@@ -456,5 +456,5 @@ databaseChangeLog:
               - column:
                   name: name
                   value: NEGATIVE
-            tableName: feedback
+            tableName: feedback_type
 
