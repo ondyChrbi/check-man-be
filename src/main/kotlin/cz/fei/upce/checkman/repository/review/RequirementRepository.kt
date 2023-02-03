@@ -13,6 +13,8 @@ interface RequirementRepository : ReactiveCrudRepository<Requirement, Long> {
 
     fun findAllByChallengeIdEqualsAndRemovedEquals(challengeId: Long, removed: Boolean = false): Flux<Requirement>
 
+    fun findAllByChallengeIdEquals(challengeId: Long) : Flux<Requirement>
+
     @Query("update requirement set removed = :removed where id = :id returning *")
     fun updateRemovedByIdEqualsReturnAll(id: Long, removed: Boolean = true): Mono<Requirement>
 
@@ -20,4 +22,11 @@ interface RequirementRepository : ReactiveCrudRepository<Requirement, Long> {
         update requirement set active = false where id = :id returning *
     """)
     fun disableRequirement(id: Long) : Flux<Requirement>
+    @Query("""
+        select * from requirement req
+        inner join requirement_review rr on req.id = rr.requirement_id
+        inner join review r on rr.review_id = r.id
+        where r.solution_id = :solutionId
+    """)
+    fun findAllBySolutionIdEquals(solutionId: Long) : Flux<Requirement>
 }

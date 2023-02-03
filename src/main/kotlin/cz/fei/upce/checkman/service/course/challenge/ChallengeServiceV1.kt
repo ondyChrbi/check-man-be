@@ -64,7 +64,7 @@ class ChallengeServiceV1(
             .map { ChallengeResponseDtoV1.fromEntity(it) }
     }
 
-    fun find(id: Long): Mono<Challenge> {
+    fun findById(id: Long): Mono<Challenge> {
         return challengeRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
     }

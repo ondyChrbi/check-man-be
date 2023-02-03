@@ -50,6 +50,10 @@ class CourseServiceV1(
             .flatMap { assignSemesters(it) }
     }
 
+    fun findBySolutionId(solutionId: Long) : Mono<Course> {
+        return courseRepository.findFirstBySolutionId(solutionId)
+    }
+
     fun findAllAsQL(): Flux<CourseQL> {
         return courseRepository.findAll().flatMap {
             assignSemesters(it)

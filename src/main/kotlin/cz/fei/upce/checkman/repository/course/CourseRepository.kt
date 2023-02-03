@@ -14,4 +14,14 @@ interface CourseRepository : ReactiveCrudRepository<Course, Long> {
         where cs.id = :semesterId
     """)
     fun findBySemesterIdEquals(semesterId: Long): Mono<Course>
+
+
+    @Query("""
+        select * from course c
+        inner join course_semester cs on c.id = cs.course_id
+        inner join challenge c2 on cs.id = c2.course_semester_id
+        inner join solution s on c2.id = s.challenge_id
+        where s.id = :solutionId
+    """)
+    fun findFirstBySolutionId(solutionId: Long): Mono<Course>
 }

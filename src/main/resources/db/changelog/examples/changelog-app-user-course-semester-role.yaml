@@ -67,3 +67,29 @@ databaseChangeLog:
                   name: course_semester_id
                   value: 0
             tableName: app_user_course_semester_role
+
+        - insert:
+            columns:
+              - column:
+                  name: app_user_id
+                  value: 0
+              - column:
+                  name: course_semester_role_id
+                  value: 5
+              - column:
+                  name: course_semester_id
+                  value: 0
+            tableName: app_user_course_semester_role
+
+        - insert:
+            columns:
+              - column:
+                  name: app_user_id
+                  value: 0
+              - column:
+                  name: course_semester_role_id
+                  value: 6
+              - column:
+                  name: course_semester_id
+                  value: 0
+            tableName: app_user_course_semester_role

@@ -913,7 +913,7 @@ databaseChangeLog:
                   name: review_template_id
                   type: bigint
                   constraints:
-                    nullable: false
+                    nullable: true
 
         - addForeignKeyConstraint:
             baseColumnNames: solution_id

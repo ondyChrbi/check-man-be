@@ -1,0 +1,143 @@
+databaseChangeLog:
+  - changeSet:
+      id: solution-review-example-insert-1
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: upload_date
+                  value: 2022-07-30 16:47:10.101896 +00:00
+              - column:
+                  name: user_id
+                  value: 0
+              - column:
+                  name: status_id
+                  value: 0
+              - column:
+                  name: challenge_id
+                  value: 0
+            tableName: solution
+
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: upload_date
+                  value: 2022-08-02 16:47:10.101896 +00:00
+              - column:
+                  name: user_id
+                  value: 0
+              - column:
+                  name: status_id
+                  value: 1
+              - column:
+                  name: challenge_id
+                  value: 0
+            tableName: solution
+
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: upload_date
+                  value: 2022-08-05 16:47:10.101896 +00:00
+              - column:
+                  name: user_id
+                  value: 0
+              - column:
+                  name: status_id
+                  value: 2
+              - column:
+                  name: challenge_id
+                  value: 0
+            tableName: solution
+
+  - changeSet:
+      id: solution-review-example-insert-2
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: description
+                  value: Requirement description N 0
+              - column:
+                  name: solution_id
+                  value: 0
+              - column:
+                  name: app_user_id
+                  value: 0
+              - column:
+                  name: feedback_id
+                  value: 0
+            tableName: review
+
+  - changeSet:
+      id: solution-review-example-insert-3
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: point
+                  value: 3
+              - column:
+                  name: description
+                  value: Some D to R 0
+              - column:
+                  name: requirement_id
+                  value: 0
+              - column:
+                  name: review_id
+                  value: 0
+            tableName: requirement_review
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: point
+                  value: 0
+              - column:
+                  name: description
+                  value: Some D to R 1
+              - column:
+                  name: requirement_id
+                  value: 1
+              - column:
+                  name: review_id
+                  value: 0
+            tableName: requirement_review
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: point
+                  value: 7
+              - column:
+                  name: description
+                  value: Some D to R 2
+              - column:
+                  name: requirement_id
+                  value: 2
+              - column:
+                  name: review_id
+                  value: 0
+            tableName: requirement_review

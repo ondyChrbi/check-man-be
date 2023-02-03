@@ -70,7 +70,7 @@ class ChallengeControllerV1(
         authentication: Authentication?
     ): Mono<ResponseEntity<ChallengeResponseDtoV1>> {
 
-        return challengeService.find(id)
+        return challengeService.findById(id)
             .map { ChallengeResponseDtoV1.fromEntity(it) }
             .flatMap { challengeFileAttachmentService.assignAll(it) }
             .flatMap { assignSelfRef(courseId, semesterId, it) }

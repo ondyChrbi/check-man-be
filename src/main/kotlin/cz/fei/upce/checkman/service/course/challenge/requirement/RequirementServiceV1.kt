@@ -2,11 +2,13 @@ package cz.fei.upce.checkman.service.course.challenge.requirement
 
 import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRSQLSpecification
 import cz.fei.upce.checkman.domain.review.Requirement
+import cz.fei.upce.checkman.domain.review.RequirementReview
 import cz.fei.upce.checkman.dto.course.challenge.requirement.RequirementRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.requirement.RequirementResponseDtoV1
 import cz.fei.upce.checkman.graphql.input.course.RequirementInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.requirement.RequirementQL
 import cz.fei.upce.checkman.repository.review.RequirementRepository
+import cz.fei.upce.checkman.repository.review.RequirementReviewRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.course.challenge.ChallengeLocation
 import cz.fei.upce.checkman.service.course.challenge.ChallengeServiceV1
@@ -20,6 +22,7 @@ import reactor.kotlin.core.publisher.toMono
 @Service
 class RequirementServiceV1(
     private val requirementRepository: RequirementRepository,
+    private val requirementReviewRepository: RequirementReviewRepository,
     private val challengeService: ChallengeServiceV1,
     private val entityTemplate: R2dbcEntityTemplate,
     private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRSQLSpecification
@@ -97,14 +100,28 @@ class RequirementServiceV1(
             .map { it.toQL() }
     }
 
+    fun findBySolutionIdAsQL(solutionId: Long): Flux<RequirementQL> {
+        return requirementRepository.findAllBySolutionIdEquals(solutionId)
+            .map { it.toQL() }
+    }
+
     fun findByChallengeIdAsQL(challengeId: Long): Flux<RequirementQL> {
         return requirementRepository.findAllByChallengeIdEqualsAndRemovedEquals(challengeId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { it.toQL() }
     }
 
+    fun findAllRequirementReviewsByReviewId(reviewId: Long): Flux<RequirementReview> {
+        return requirementReviewRepository.findAllByReviewIdEquals(reviewId)
+    }
+
     fun findAllByChallengeIdAsQL(challengeId: Long): Flux<RequirementQL> {
         return requirementRepository.findAllByChallengeIdEqualsAndActiveEquals(challengeId)
+            .map { it.toQL() }
+    }
+
+    fun findAllBySolutionIdAsQL(solutionId: Long): Flux<RequirementQL> {
+        return requirementRepository.findAllBySolutionIdEquals(solutionId)
             .map { it.toQL() }
     }
 

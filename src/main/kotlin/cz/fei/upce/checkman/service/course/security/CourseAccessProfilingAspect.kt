@@ -73,6 +73,17 @@ class CourseAccessProfilingAspect(
             return finishProcessing(joinPoint, result)
         }
 
+        val solutions = parameters.filter { it.annotations.filterIsInstance<SolutionId>().isNotEmpty() }
+        if (solutions.isNotEmpty()) {
+            val solutionId = joinPoint.args[parameters.indexOf(solutions.first())]
+            if (solutionId !is Long) {
+                return Mono.error<Void>(NotIdDataTypeException("solutionId", Long::class.java))
+            }
+
+            val result = checkBasedSolution(solutionId, appUser, annotation)
+            return finishProcessing(joinPoint, result)
+        }
+
         return Mono.error(NoSemesterBasedIdInMethodArgumentsException(methodSignature, REQUIRED_ANNOTATIONS))
     }
 
@@ -103,6 +114,17 @@ class CourseAccessProfilingAspect(
     ): Mono<Boolean> {
         return courseSemesterRepository.findIdByRequirementId(requirementId)
             .switchIfEmpty(Mono.error(AuthorizeIdentificationNotFoundException(RequirementId::class, requirementId)))
+            .flatMap { semesterId -> authorizeService.hasCourseAccess(semesterId, appUser, annotation) }
+            .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
+    }
+
+    private fun checkBasedSolution(
+        solutionId: Long,
+        appUser: AppUser,
+        annotation: PreCourseSemesterAuthorize
+    ): Mono<Boolean> {
+        return courseSemesterRepository.findIdBySolutionId(solutionId)
+            .switchIfEmpty(Mono.error(AuthorizeIdentificationNotFoundException(SolutionId::class, solutionId)))
             .flatMap { semesterId -> authorizeService.hasCourseAccess(semesterId, appUser, annotation) }
             .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
     }

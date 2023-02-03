@@ -373,3 +373,88 @@ databaseChangeLog:
                   name: approved
                   value: false
             tableName: status
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: name
+                  value: WAITING_TO_REVIEW
+              - column:
+                  name: approved
+                  value: false
+            tableName: status
+
+  - changeSet:
+      id: insert-25
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 5
+              - column:
+                  name: name
+                  value: REVIEW_CHALLENGE
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-26
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 6
+              - column:
+                  name: name
+                  value: VIEW_SOLUTIONS
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-27
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: name
+                  value: EXTREMELY_POSITIVE
+            tableName: feedback
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: POSITIVE
+            tableName: feedback
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: NEUTRAL
+            tableName: feedback
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: name
+                  value: WAITING_TO_REVIEW
+              - column:
+                  name: name
+                  value: NEGATIVE
+            tableName: feedback
+

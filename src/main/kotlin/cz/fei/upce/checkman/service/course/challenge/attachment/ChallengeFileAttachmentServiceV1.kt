@@ -125,7 +125,7 @@ class ChallengeFileAttachmentServiceV1(
 
         return challengeService.findCourseSemester(ids.semesterId, ids.courseId)
             .flatMap { courseSemester ->
-                challengeService.find(ids.challengeId)
+                challengeService.findById(ids.challengeId)
                     .map { challenge ->
                         FileAttachmentProperties(courseSemester, challenge, appUser, destination, file)
                     }

@@ -11,6 +11,8 @@ type Query {
     myCourses: [Course!]!
     availableCourses: [Course!]!
     courseRoles(id: ID!): [String!]!
+    solutions(challengeId: ID!): [Solution!]!
+    solution(id: ID!): Solution!
 }
 
 type Mutation {
@@ -88,6 +90,13 @@ type Requirement {
     maxPoint: Int
 }
 
+type ReviewedRequirement {
+    id: ID!,
+    points: Int
+    description: String,
+    requirement: Requirement
+}
+
 type Course {
     id: ID
     stagId: String!
@@ -96,6 +105,19 @@ type Course {
     icon: String
     template: String
     semesters: [Semester!]!
+}
+
+type Solution {
+    id: ID!
+    uploadDate: DateTime!
+    status: String!
+    review: Review
+}
+
+type Review{
+    id: ID!
+    description: String!
+    requirements: [ReviewedRequirement!]!
 }
 
 input CourseInput {
