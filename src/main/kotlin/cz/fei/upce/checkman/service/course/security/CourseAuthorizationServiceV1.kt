@@ -45,6 +45,10 @@ class CourseAuthorizationServiceV1(
             .all()
     }
 
+    fun findAllCoursesWhereUserHasRoles(courseId: Long, appUser: AppUser, requestedRoles: List<Long>): Flux<CourseSemester> {
+        return courseSemesterRepository.findAllByUserHasRolesInCourse(courseId, appUser.id!!, requestedRoles)
+    }
+
     fun hasCourseAccess(semesterId: Long, appUser: AppUser, requestedRoles: List<Long>): Mono<Boolean> {
         val query = query(
             where("app_user_id").isEqual(appUser.id!!)

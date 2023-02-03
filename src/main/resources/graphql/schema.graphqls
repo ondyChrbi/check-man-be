@@ -13,6 +13,9 @@ type Query {
     courseRoles(id: ID!): [String!]!
     solutions(challengeId: ID!): [Solution!]!
     solution(id: ID!): Solution!
+    countToReview(challengeId: ID!): Int!
+    solutionsToReview(challengeId: ID!): [Solution!]!
+    allSolutionsToReview(courseId: ID!): [CoursesReviewList]
 }
 
 type Mutation {
@@ -94,7 +97,7 @@ type ReviewedRequirement {
     id: ID!,
     points: Int
     description: String,
-    requirement: Requirement
+    requirement: Requirement,
 }
 
 type Course {
@@ -107,11 +110,22 @@ type Course {
     semesters: [Semester!]!
 }
 
+type ChallengeSolutions {
+    challenge: Challenge,
+    solutions: [Solution!]
+}
+
+type CoursesReviewList{
+    course: Semester,
+    reviews: ChallengeSolutions
+}
+
 type Solution {
     id: ID!
     uploadDate: DateTime!
     status: String!
-    review: Review
+    review: Review,
+    author: AppUser
 }
 
 type Review{

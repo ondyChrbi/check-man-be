@@ -1,5 +1,6 @@
 package cz.fei.upce.checkman.domain.challenge
 
+import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.graphql.output.challenge.solution.ReviewQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.SolutionQL
 import org.springframework.data.annotation.Id
@@ -19,8 +20,8 @@ data class Solution(
     fun toQL(review: ReviewQL) =
         SolutionQL(id, uploadDate?.atOffset(ZoneOffset.UTC), getById(statusId), review)
 
-    fun toQL() =
-        SolutionQL(id, uploadDate?.atOffset(ZoneOffset.UTC), getById(statusId))
+    fun toQL(review: ReviewQL? = null, author: AppUser? = null) =
+        SolutionQL(id, uploadDate?.atOffset(ZoneOffset.UTC), getById(statusId), review, author)
 
     enum class Status(approve: Boolean) {
         APPROVED(true),

@@ -1,7 +1,7 @@
 package cz.fei.upce.checkman.controller.course.challenge
 
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
-import cz.fei.upce.checkman.graphql.input.course.ChallengeInputQL
+import cz.fei.upce.checkman.graphql.input.course.challenge.ChallengeInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.ChallengeQL
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import cz.fei.upce.checkman.service.course.challenge.ChallengeServiceV1

@@ -21,6 +21,10 @@ class AppUserServiceV1(
 ) {
     fun findByStagId(stagId: String) = appUserRepository.findByStagIdEquals(stagId)
 
+    fun findById(id: Long): Mono<AppUser> {
+        return appUserRepository.findById(id)
+    }
+
     fun updateLastAccessDate(appUser: AppUser): Mono<AppUser> {
         appUser.lastAccessDate = LocalDateTime.now()
         return appUserRepository.save(appUser)

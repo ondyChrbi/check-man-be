@@ -1,4 +1,4 @@
-package cz.fei.upce.checkman.graphql.input.course
+package cz.fei.upce.checkman.graphql.input.course.challenge
 
 import cz.fei.upce.checkman.domain.challenge.Challenge
 import cz.fei.upce.checkman.domain.challenge.ChallengeKind

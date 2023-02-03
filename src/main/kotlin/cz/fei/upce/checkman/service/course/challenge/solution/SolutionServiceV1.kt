@@ -45,6 +45,14 @@ class SolutionServiceV1(
             .map { it.toQL() }
     }
 
+    fun findAllToReview(challengeId: Long): Flux<Solution> {
+        return solutionRepository.findAllWithoutReview(challengeId)
+    }
+
+    fun countToReview(challengeId: Long): Mono<Long> {
+        return solutionRepository.countAllWithoutReview(challengeId)
+    }
+
     private fun toReviewQL(solution: Solution): Mono<SolutionQL> {
         return findReview(solution.id!!).flatMap { review ->
             findAllRequirementsByChallengeId(solution.challengeId)

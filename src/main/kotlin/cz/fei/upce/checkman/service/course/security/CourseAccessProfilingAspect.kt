@@ -98,6 +98,15 @@ class CourseAccessProfilingAspect(
             .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
     }
 
+    private fun checkBasedCourse(
+        semesterId: Long,
+        appUser: AppUser,
+        annotation: PreCourseSemesterAuthorize
+    ): Mono<Boolean> {
+        return authorizeService.hasCourseAccess(semesterId, appUser, annotation)
+            .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
+    }
+
     private fun checkBasedCourseSemester(
         semesterId: Long,
         appUser: AppUser,

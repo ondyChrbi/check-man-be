@@ -11,7 +11,7 @@ import cz.fei.upce.checkman.dto.course.challenge.ChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeResponseDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.PermitAppUserChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.RemoveAccessAppUserChallengeRequestDtoV1
-import cz.fei.upce.checkman.graphql.input.course.ChallengeInputQL
+import cz.fei.upce.checkman.graphql.input.course.challenge.ChallengeInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.ChallengeQL
 import cz.fei.upce.checkman.repository.challenge.ChallengeRepository
 import cz.fei.upce.checkman.repository.challenge.PermittedAppUserChallengeRepository
@@ -209,6 +209,10 @@ class ChallengeServiceV1(
     fun findAllBySemesterIdAsQL(semesterId: Long): Flux<ChallengeQL> {
         return challengeRepository.findAllByCourseSemesterIdEqualsAndActive(semesterId)
             .flatMap { assignRelatives(it) }
+    }
+
+    fun findAllBySemesterId(semesterId: Long): Flux<Challenge> {
+        return challengeRepository.findAllByCourseSemesterIdEqualsAndActive(semesterId)
     }
 
     fun findByIdAsQL(id: Long): Mono<ChallengeQL> {

@@ -913,6 +913,10 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     nullable: true
+              - column:
+                  name: active
+                  type: boolean
+                  defaultValue: true
 
         - addForeignKeyConstraint:
             baseColumnNames: solution_id
@@ -1249,3 +1253,55 @@ databaseChangeLog:
             incrementBy: 1
             startWith: 0
             tableName: requirement_review
+
+  - changeSet:
+      id: create-24
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: feedback
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: description
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: feedback_type_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: review_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: feedback_type_id
+            baseTableName: feedback
+            constraintName: feedback_type_id_fk
+            referencedColumnNames: id
+            referencedTableName: feedback_type
+            validate: true
+
+        - addForeignKeyConstraint:
+            baseColumnNames: review_id
+            baseTableName: feedback
+            constraintName: review_feedback_id_fk
+            referencedColumnNames: id
+            referencedTableName: review
+            validate: true
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: feedback
