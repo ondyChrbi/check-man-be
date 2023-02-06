@@ -58,4 +58,16 @@ class ReviewQLController(
     fun deleteReview(@ReviewId @Argument reviewId: Long, authentication: Authentication) {
 
     }
+
+    @MutationMapping
+    @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
+    fun removeFeedbackFromReview(@ReviewId @Argument reviewId: Long, @Argument feedbackId: Long, authentication: Authentication) {
+        return reviewService.removeFeedback(reviewId, feedbackId)
+    }
+
+    @MutationMapping
+    @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
+    fun addFeedbackToReview(@ReviewId @Argument reviewId: Long, authentication: Authentication) {
+
+    }
 }

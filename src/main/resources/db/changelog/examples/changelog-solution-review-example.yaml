@@ -141,3 +141,109 @@ databaseChangeLog:
                   name: review_id
                   value: 0
             tableName: requirement_review
+
+  - changeSet:
+      id: solution-review-example-insert-4
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: description
+                  value: The classes are missing interfaces
+              - column:
+                  name: feedback_type_id
+                  value: 3
+            tableName: feedback
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: description
+                  value: Code could be more refactored
+              - column:
+                  name: feedback_type_id
+                  value: 2
+            tableName: feedback
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: description
+                  value: All methods with inner class logic has private access
+              - column:
+                  name: feedback_type_id
+                  value: 1
+            tableName: feedback
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: description
+                  value: Performance of algorithm is one of the best
+              - column:
+                  name: feedback_type_id
+                  value: 0
+            tableName: feedback
+
+  - changeSet:
+      id: solution-review-example-insert-5
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: feedback_id
+                  value: 0
+              - column:
+                  name: review_id
+                  value: 0
+            tableName: feedback_review
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: feedback_id
+                  value: 1
+              - column:
+                  name: review_id
+                  value: 0
+            tableName: feedback_review
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: feedback_id
+                  value: 2
+              - column:
+                  name: review_id
+                  value: 0
+            tableName: feedback_review
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: feedback_id
+                  value: 3
+              - column:
+                  name: review_id
+                  value: 0
+            tableName: feedback_review

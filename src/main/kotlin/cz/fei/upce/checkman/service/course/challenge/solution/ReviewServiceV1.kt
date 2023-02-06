@@ -2,10 +2,7 @@ package cz.fei.upce.checkman.service.course.challenge.solution
 
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.AppUser
-import cz.fei.upce.checkman.graphql.output.challenge.solution.ChallengeSolutionsQL
-import cz.fei.upce.checkman.graphql.output.challenge.solution.CoursesReviewListQL
-import cz.fei.upce.checkman.graphql.output.challenge.solution.SolutionQL
-import cz.fei.upce.checkman.repository.review.ReviewRepository
+import cz.fei.upce.checkman.graphql.output.challenge.solution.*
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
 import cz.fei.upce.checkman.service.course.challenge.ChallengeServiceV1
 import cz.fei.upce.checkman.service.course.security.CourseAuthorizationServiceV1
@@ -27,13 +24,18 @@ class ReviewServiceV1(
     fun findAllToReview(challengeId: Long?): Flux<SolutionQL> {
         return solutionService.findAllToReview(challengeId!!)
             .flatMap { solution ->
+                val review = solutionService.findReviewAsQL(solution.id!!)
+
                 appUserService.findById(solution.userId)
-                    .map { solution.toQL(null, it) }
-                    .switchIfEmpty(Mono.just(solution.toQL()))
+                    .flatMap { appUser ->
+                        review.map { review ->
+                            solution.toQL(review, appUser)
+                        }.switchIfEmpty(Mono.just(solution.toQL(author = appUser)))
+                    }.switchIfEmpty(Mono.just(solution.toQL()))
             }
     }
 
-    fun findAllToReview(courseId: Long, reviewer: AppUser) : Flux<CoursesReviewListQL> {
+    fun findAllToReview(courseId: Long, reviewer: AppUser): Flux<CoursesReviewListQL> {
         val courses = authorizationService.findAllCoursesWhereUserHasRoles(
             courseId,
             reviewer,
@@ -48,7 +50,13 @@ class ReviewServiceV1(
                         .map { solutions ->
                             ChallengeSolutionsQL(challenge, solutions)
                         }
-                }.map { CoursesReviewListQL(courseSemester.toQL(), it) }
+                }
+                .collectList()
+                .map { CoursesReviewListQL(courseSemester.toQL(), it) }
         }
+    }
+
+    fun removeFeedback(reviewId: Long, feedbackId: Long) {
+        TODO("Not yet implemented")
     }
 }

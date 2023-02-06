@@ -10,4 +10,9 @@ data class SolutionQL (
     var status: Solution.Status = Solution.Status.WAITING_TO_REVIEW,
     var review: ReviewQL? = null,
     var author: AppUser? = null
-)
+) {
+    fun withReview(review: ReviewQL): SolutionQL {
+        this.review = review
+        return this
+    }
+}

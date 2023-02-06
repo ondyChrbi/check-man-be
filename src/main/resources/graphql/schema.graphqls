@@ -117,7 +117,7 @@ type ChallengeSolutions {
 
 type CoursesReviewList{
     course: Semester,
-    reviews: ChallengeSolutions
+    reviews: [ChallengeSolutions!]!
 }
 
 type Solution {
@@ -128,10 +128,17 @@ type Solution {
     author: AppUser
 }
 
+type Feedback {
+    id: ID!,
+    description: String!
+    type: String!
+}
+
 type Review{
     id: ID!
     description: String!
     requirements: [ReviewedRequirement!]!
+    feedbacks: [Feedback!]!
 }
 
 input CourseInput {

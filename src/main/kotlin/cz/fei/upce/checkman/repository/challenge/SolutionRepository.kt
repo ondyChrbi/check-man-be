@@ -17,9 +17,9 @@ interface SolutionRepository : ReactiveCrudRepository<Solution, Long> {
         select s.* from solution s
         left outer join review r on s.id = r.solution_id
         left outer join challenge c on s.challenge_id = c.id
-        where r.id IS NULL and c.id = :challengeId
+        where c.id = :challengeId
     """)
-    fun findAllWithoutReview(challengeId: Long): Flux<Solution>
+    fun findAll(challengeId: Long): Flux<Solution>
 
     @Query("""
         select count(*) from solution s

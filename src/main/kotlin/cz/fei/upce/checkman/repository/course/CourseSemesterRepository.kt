@@ -49,7 +49,7 @@ interface CourseSemesterRepository : ReactiveCrudRepository<CourseSemester, Long
     @Query("""
         select cs.* from course_semester cs 
         inner join app_user_course_semester_role aucsr on cs.id = aucsr.course_semester_id
-        where cs.course_id = :courseId and aucsr.app_user_id = :userId and aucsr.course_semester_role_id in :rolesIds
+        where cs.course_id = :courseId and aucsr.app_user_id = :userId and aucsr.course_semester_role_id in (:rolesIds)
     """)
-    fun findAllByUserHasRolesInCourse(courseId: Long, userId: Long, rolesIds: List<Long>) : Flux<CourseSemester>
+    fun findAllByUserHasRolesInCourse(courseId: Long, userId: Long, rolesIds: Collection<Long>) : Flux<CourseSemester>
 }
