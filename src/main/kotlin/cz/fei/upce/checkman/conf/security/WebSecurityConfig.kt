@@ -51,6 +51,4 @@ class WebSecurityConfig(
 
         return conf.build()
     }
-
-
 }
