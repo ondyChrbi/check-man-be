@@ -3,6 +3,7 @@ package cz.fei.upce.checkman.service.course.challenge.solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.graphql.output.challenge.solution.*
+import cz.fei.upce.checkman.repository.review.ReviewRepository
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
 import cz.fei.upce.checkman.service.course.challenge.ChallengeServiceV1
 import cz.fei.upce.checkman.service.course.security.CourseAuthorizationServiceV1
@@ -16,6 +17,7 @@ class ReviewServiceV1(
     private val appUserService: AppUserServiceV1,
     private val authorizationService: CourseAuthorizationServiceV1,
     private val challengeService: ChallengeServiceV1,
+    private val reviewRepository: ReviewRepository,
 ) {
     fun countToReview(challengeId: Long?): Mono<Long> {
         return solutionService.countToReview(challengeId!!)
@@ -56,7 +58,11 @@ class ReviewServiceV1(
         }
     }
 
-    fun removeFeedback(reviewId: Long, feedbackId: Long) {
-        TODO("Not yet implemented")
+    fun unlinkFeedback(reviewId: Long, feedbackId: Long): Mono<Void> {
+        return reviewRepository.unlinkFeedback(reviewId, feedbackId)
+    }
+
+    fun linkFeedback(reviewId: Long, feedbackId: Long): Mono<Void> {
+        return reviewRepository.linkFeedback(reviewId, feedbackId)
     }
 }

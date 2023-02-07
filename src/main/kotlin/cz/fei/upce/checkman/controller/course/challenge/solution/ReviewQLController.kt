@@ -1,9 +1,12 @@
 package cz.fei.upce.checkman.controller.course.challenge.solution
 
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
+import cz.fei.upce.checkman.graphql.input.course.challenge.solution.FeedbackInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.CoursesReviewListQL
+import cz.fei.upce.checkman.graphql.output.challenge.solution.FeedbackQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.SolutionQL
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
+import cz.fei.upce.checkman.service.course.challenge.solution.FeedbackServiceV1
 import cz.fei.upce.checkman.service.course.challenge.solution.ReviewServiceV1
 import cz.fei.upce.checkman.service.course.security.annotation.ChallengeId
 import cz.fei.upce.checkman.service.course.security.annotation.CourseId
@@ -22,6 +25,7 @@ import reactor.core.publisher.Mono
 @Validated
 class ReviewQLController(
     private val reviewService: ReviewServiceV1,
+    private val feedbackService: FeedbackServiceV1,
     private val authenticationService: AuthenticationServiceV1
 ) {
     @QueryMapping
@@ -61,13 +65,26 @@ class ReviewQLController(
 
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
-    fun removeFeedbackFromReview(@ReviewId @Argument reviewId: Long, @Argument feedbackId: Long, authentication: Authentication) {
-        return reviewService.removeFeedback(reviewId, feedbackId)
+    fun removeFeedbackFromReview(@ReviewId @Argument reviewId: Long, @Argument feedbackId: Long, authentication: Authentication): Mono<Boolean> {
+        return reviewService.unlinkFeedback(reviewId, feedbackId)
+            .map { true }
     }
 
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
-    fun addFeedbackToReview(@ReviewId @Argument reviewId: Long, authentication: Authentication) {
+    fun addFeedbackToReview(@ReviewId @Argument reviewId: Long, @Argument feedbackId: Long, authentication: Authentication): Mono<Boolean> {
+        return reviewService.linkFeedback(reviewId, feedbackId)
+            .map { true }
+    }
 
+    @MutationMapping
+    @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
+    fun createFeedbackToReview(@ReviewId @Argument reviewId: Long, @Argument feedback: FeedbackInputQL,  authentication: Authentication): Mono<FeedbackQL> {
+        return feedbackService.create(feedback)
+            .flatMap { createFeedback ->
+                reviewService.linkFeedback(reviewId, createFeedback.id!!)
+                .map { createFeedback.toQL() }
+                .switchIfEmpty(Mono.just(createFeedback.toQL()))
+            }
     }
 }

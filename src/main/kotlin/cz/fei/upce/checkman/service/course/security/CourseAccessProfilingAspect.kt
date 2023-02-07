@@ -84,6 +84,17 @@ class CourseAccessProfilingAspect(
             return finishProcessing(joinPoint, result)
         }
 
+        val reviews = parameters.filter { it.annotations.filterIsInstance<ReviewId>().isNotEmpty() }
+        if (reviews.isNotEmpty()) {
+            val reviewId = joinPoint.args[parameters.indexOf(parameters.first())]
+            if (reviewId !is Long) {
+                return Mono.error<Void>(NotIdDataTypeException("reviewId", Long::class.java))
+            }
+
+            val result = checkBasedReview(reviewId, appUser, annotation)
+            return finishProcessing(joinPoint, result)
+        }
+
         return Mono.error(NoSemesterBasedIdInMethodArgumentsException(methodSignature, REQUIRED_ANNOTATIONS))
     }
 
@@ -95,15 +106,6 @@ class CourseAccessProfilingAspect(
         return courseSemesterRepository.findIdByChallengeId(challengeId)
             .switchIfEmpty(Mono.error(AuthorizeIdentificationNotFoundException(ChallengeId::class, challengeId)))
             .flatMap { semesterId -> authorizeService.hasCourseAccess(semesterId, appUser, annotation) }
-            .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
-    }
-
-    private fun checkBasedCourse(
-        semesterId: Long,
-        appUser: AppUser,
-        annotation: PreCourseSemesterAuthorize
-    ): Mono<Boolean> {
-        return authorizeService.hasCourseAccess(semesterId, appUser, annotation)
             .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
     }
 
@@ -134,6 +136,18 @@ class CourseAccessProfilingAspect(
     ): Mono<Boolean> {
         return courseSemesterRepository.findIdBySolutionId(solutionId)
             .switchIfEmpty(Mono.error(AuthorizeIdentificationNotFoundException(SolutionId::class, solutionId)))
+            .flatMap { semesterId -> authorizeService.hasCourseAccess(semesterId, appUser, annotation) }
+            .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
+    }
+
+
+    private fun checkBasedReview(
+        reviewId: Long,
+        appUser: AppUser,
+        annotation: PreCourseSemesterAuthorize
+    ): Mono<Boolean> {
+        return courseSemesterRepository.findIdByReviewId(reviewId)
+            .switchIfEmpty(Mono.error(AuthorizeIdentificationNotFoundException(ReviewId::class, reviewId)))
             .flatMap { semesterId -> authorizeService.hasCourseAccess(semesterId, appUser, annotation) }
             .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
     }

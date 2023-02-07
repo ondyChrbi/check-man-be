@@ -1276,6 +1276,13 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     nullable: false
+              - column:
+                  name: creation_date
+                  type: timestamptz
+        -  addDefaultValue:
+             columnName: creation_date
+             defaultValueComputed: now()
+             tableName:  feedback
 
         - addForeignKeyConstraint:
             baseColumnNames: feedback_type_id
@@ -1290,7 +1297,7 @@ databaseChangeLog:
             columnName: id
             generationType: ALWAYS
             incrementBy: 1
-            startWith: 0
+            startWith: 1000
             tableName: feedback
 
   - changeSet:
@@ -1337,5 +1344,5 @@ databaseChangeLog:
             columnName: id
             generationType: ALWAYS
             incrementBy: 1
-            startWith: 0
+            startWith: 1000
             tableName: feedback_review

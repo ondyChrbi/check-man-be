@@ -28,6 +28,10 @@ type Mutation {
     removeRequirement(requirementId: ID!): Requirement!
     createSemesterAccessRequest(semesterId: ID!): CourseSemesterAccessRequest!
     publishChallenge(challengeId: ID!): Boolean
+    createFeedback(feedback: FeedbackInput!): Feedback!
+    removeFeedbackFromReview(reviewId: ID!, feedbackId: ID!): Boolean
+    addFeedbackToReview(reviewId: ID!, feedbackId: ID!): Boolean
+    createFeedbackToReview(reviewId: ID!, feedback: FeedbackInput!): Feedback!
 }
 
 type AppUser{
@@ -168,4 +172,9 @@ input RequirementInput {
     description: String,
     minPoint: Int,
     maxPoint: Int
+}
+
+input FeedbackInput {
+    description: String!
+    type: String!
 }

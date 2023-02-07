@@ -8,18 +8,17 @@ import org.springframework.data.relational.core.mapping.Table
 data class Feedback(
     @Id var id: Long? = null,
     var description: String? = "",
-    var feedbackTypeId: Long = -1,
-    var reviewId: Long = -1
+    var feedbackTypeId: Long = -1
 ) {
     fun toQL(): FeedbackQL {
         return FeedbackQL(id, description, getById(feedbackTypeId).toString())
     }
 
-    enum class FeedbackType {
-        EXTREMELY_POSITIVE,
-        POSITIVE,
-        NEUTRAL,
-        NEGATIVE
+    enum class FeedbackType(val id: Long) {
+        EXTREMELY_POSITIVE(0L),
+        POSITIVE(1L),
+        NEUTRAL(2L),
+        NEGATIVE(3L);
     }
 
     companion object {
