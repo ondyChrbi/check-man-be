@@ -33,6 +33,8 @@ type Mutation {
     addFeedbackToReview(reviewId: ID!, feedbackId: ID!): Boolean
     createFeedbackToReview(reviewId: ID!, feedback: FeedbackInput!): Feedback!
     createReview(solutionId: ID! reviewInput: ReviewInput!): Review!
+    publishReview(id: ID!): Boolean!
+    editReview(id: ID!, input: ReviewInput!): Review!
 }
 
 type AppUser{

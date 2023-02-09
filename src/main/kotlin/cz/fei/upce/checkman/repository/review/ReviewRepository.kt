@@ -4,6 +4,7 @@ import cz.fei.upce.checkman.domain.review.Review
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Repository
@@ -21,4 +22,9 @@ interface ReviewRepository : ReactiveCrudRepository<Review, Long> {
         values (:feedbackId, :reviewId)
     """)
     fun linkFeedback(reviewId: Long, feedbackId: Long) : Mono<Void>
+
+    @Query("""
+        update review set published = true where id = :reviewId return *
+    """)
+    fun publish(reviewId: Long) : Flux<Review>
 }

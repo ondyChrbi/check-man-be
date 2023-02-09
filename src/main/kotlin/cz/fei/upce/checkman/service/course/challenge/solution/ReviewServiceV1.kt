@@ -3,10 +3,12 @@ package cz.fei.upce.checkman.service.course.challenge.solution
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
+import cz.fei.upce.checkman.domain.review.Review
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.graphql.input.course.challenge.ReviewInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.*
 import cz.fei.upce.checkman.repository.review.ReviewRepository
+import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
 import cz.fei.upce.checkman.service.course.challenge.ChallengeServiceV1
 import cz.fei.upce.checkman.service.course.security.CourseAuthorizationServiceV1
@@ -72,5 +74,18 @@ class ReviewServiceV1(
     fun create(solutionId: Long, reviewInput: ReviewInputQL, author: AppUser): Mono<ReviewQL> {
         return reviewRepository.save(reviewInput.toEntity(solutionId, author.id!!))
             .map { it.toQL() }
+    }
+
+    fun publish(reviewId: Long): Mono<Boolean> {
+        return reviewRepository.publish(reviewId)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .collectList()
+            .map { it.size > 0 }
+    }
+
+    fun edit(id: Long, reviewInput: ReviewInputQL): Mono<Review> {
+        return reviewRepository.findById(id)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .flatMap { reviewRepository.save(it.update(reviewInput)) }
     }
 }

@@ -63,7 +63,7 @@ class SolutionServiceV1(
         offset: Int = DEFAULT_OFFSET,
         size: Int = DEFAULT_SIZE
     ): Flux<Solution> {
-        return solutionRepository.findAllToReview(challengeId, PageRequest.of(offset, size))
+        return solutionRepository.findAllToReview(challengeId, (offset * size), size)
     }
 
     fun countToReview(challengeId: Long): Mono<Long> {

@@ -9,7 +9,7 @@ import org.springframework.data.r2dbc.config.EnableR2dbcAuditing
 class CheckManApplication {
 	companion object {
 		const val DEFAULT_OFFSET = 0
-		const val DEFAULT_SIZE = 5
+		const val DEFAULT_SIZE = 2
 	}
 }
 

@@ -1,5 +1,6 @@
 package cz.fei.upce.checkman.domain.review
 
+import cz.fei.upce.checkman.graphql.input.course.challenge.ReviewInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.requirement.ReviewedRequirementQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.FeedbackQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.ReviewQL
@@ -18,5 +19,10 @@ data class Review(
 ) {
     fun toQL(requirements: List<ReviewedRequirementQL> = listOf(), feedbacks: List<FeedbackQL> = listOf()): ReviewQL {
         return ReviewQL(id!!, description, requirements, feedbacks, active, published)
+    }
+
+    fun update(input: ReviewInputQL): Review {
+        description = input.description
+        return this
     }
 }
