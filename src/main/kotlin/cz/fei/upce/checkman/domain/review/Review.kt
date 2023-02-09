@@ -12,10 +12,11 @@ data class Review(
     var description: String? = "",
     var solutionId: Long? = -1L,
     var appUserId: Long? = -1L,
-    var feedbackId: Long? = -1L,
-    var reviewTemplateId: Long? = -1L,
+    var reviewTemplateId: Long? = null,
+    var active: Boolean = true,
+    var published: Boolean = false,
 ) {
     fun toQL(requirements: List<ReviewedRequirementQL> = listOf(), feedbacks: List<FeedbackQL> = listOf()): ReviewQL {
-        return ReviewQL(id!!, description, requirements, feedbacks)
+        return ReviewQL(id!!, description, requirements, feedbacks, active, published)
     }
 }

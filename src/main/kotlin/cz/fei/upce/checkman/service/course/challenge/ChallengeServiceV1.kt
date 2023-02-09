@@ -271,6 +271,18 @@ class ChallengeServiceV1(
             }.map { true }
     }
 
+    fun isPublished(challengeId: Long) : Mono<Boolean>{
+        return challengeRepository.findById(challengeId)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .map { it.published }
+    }
+
+    fun isPublishedByReview(reviewId: Long) : Mono<Boolean>{
+        return challengeRepository.findByReviewId(reviewId)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .map { it.published }
+    }
+
     companion object {
         val VIEW_PERMISSIONS = setOf(
             GlobalRole.ROLE_COURSE_MANAGE, GlobalRole.ROLE_COURSE_SEMESTER_MANAGE,

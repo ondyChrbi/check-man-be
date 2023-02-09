@@ -22,7 +22,8 @@ class SolutionQLController(
     ) {
     @QueryMapping
     @PreCourseSemesterAuthorize
-    fun solutions(@ChallengeId @Argument challengeId: Long, authentication: Authentication): Flux<SolutionQL> {
+    fun solutions(@ChallengeId @Argument challengeId: Long,
+                  authentication: Authentication): Flux<SolutionQL> {
         return solutionService.findAllByChallengeAndUser(challengeId, authenticationService.extractAuthenticateUser(authentication))
     }
 

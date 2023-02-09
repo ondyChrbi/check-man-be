@@ -904,11 +904,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: feedback_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
                   name: review_template_id
                   type: bigint
                   constraints:
@@ -917,6 +912,10 @@ databaseChangeLog:
                   name: active
                   type: boolean
                   defaultValue: true
+              - column:
+                  name: published
+                  type: boolean
+                  defaultValue: false
 
         - addForeignKeyConstraint:
             baseColumnNames: solution_id
@@ -932,14 +931,6 @@ databaseChangeLog:
             constraintName: review_app_user_id_fk
             referencedColumnNames: id
             referencedTableName: app_user
-            validate: true
-
-        - addForeignKeyConstraint:
-            baseColumnNames: feedback_id
-            baseTableName: review
-            constraintName: review_feedback_id_fk
-            referencedColumnNames: id
-            referencedTableName: feedback_type
             validate: true
 
         - addForeignKeyConstraint:
@@ -1235,7 +1226,8 @@ databaseChangeLog:
             columnName: id
             generationType: ALWAYS
             incrementBy: 1
-            startWith: 0
+            startWith: 1000
+            minvalue: 1000
             tableName: review
 
         - addAutoIncrement:

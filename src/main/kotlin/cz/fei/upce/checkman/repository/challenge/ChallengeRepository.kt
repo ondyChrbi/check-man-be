@@ -37,4 +37,11 @@ interface ChallengeRepository : ReactiveCrudRepository<Challenge, Long> {
         appUserId: Long,
         challengeKindsIds: Collection<Long>
     ): Flux<Challenge>
+
+    @Query("""
+        select ch.* from challenge ch
+        inner join requirement r on ch.id = r.challenge_id
+        where r.id = : requirementId limit 1
+    """)
+    fun findByReviewId(requirementId: Long): Mono<Challenge>
 }

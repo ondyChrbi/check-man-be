@@ -14,7 +14,7 @@ type Query {
     solutions(challengeId: ID!): [Solution!]!
     solution(id: ID!): Solution!
     countToReview(challengeId: ID!): Int!
-    solutionsToReview(challengeId: ID!): [Solution!]!
+    solutionsToReview(challengeId: ID!, offset: Int, size: Int): [Solution!]!
     allSolutionsToReview(courseId: ID!): [CoursesReviewList]
 }
 
@@ -32,6 +32,7 @@ type Mutation {
     removeFeedbackFromReview(reviewId: ID!, feedbackId: ID!): Boolean
     addFeedbackToReview(reviewId: ID!, feedbackId: ID!): Boolean
     createFeedbackToReview(reviewId: ID!, feedback: FeedbackInput!): Feedback!
+    createReview(solutionId: ID! reviewInput: ReviewInput!): Review!
 }
 
 type AppUser{
@@ -155,10 +156,14 @@ input CourseInput {
 
 input ChallengeInput {
     name: String!
-    description: String!
+    description: String
     deadlineDate: String
     startDate: String
     challengeKind: String!
+}
+
+input ReviewInput {
+    description: String!
 }
 
 input SemesterInput {

@@ -6,7 +6,12 @@ import org.springframework.data.r2dbc.config.EnableR2dbcAuditing
 
 @SpringBootApplication
 @EnableR2dbcAuditing
-class CheckManApplication
+class CheckManApplication {
+	companion object {
+		const val DEFAULT_OFFSET = 0
+		const val DEFAULT_SIZE = 5
+	}
+}
 
 fun main(args: Array<String>) {
 	runApplication<CheckManApplication>(*args)

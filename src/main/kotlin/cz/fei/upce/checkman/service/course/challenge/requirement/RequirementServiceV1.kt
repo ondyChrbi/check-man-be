@@ -11,6 +11,7 @@ import cz.fei.upce.checkman.repository.review.RequirementRepository
 import cz.fei.upce.checkman.repository.review.RequirementReviewRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.course.challenge.ChallengeLocation
+import cz.fei.upce.checkman.service.course.challenge.ChallengePublishedException
 import cz.fei.upce.checkman.service.course.challenge.ChallengeServiceV1
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.data.relational.core.query.Criteria
@@ -88,13 +89,30 @@ class RequirementServiceV1(
     }
 
     fun addAsQL(challengeId: Long, input: RequirementInputQL): Mono<RequirementQL> {
-        return requirementRepository.save(input.toEntity(challengeId))
-            .map { it.toQL() }
+        val isPublishedMono = challengeService.isPublished(challengeId)
+
+        return isPublishedMono.flatMap {
+            if (it)
+                Mono.error(ChallengePublishedException(challengeId))
+            else
+                requirementRepository.save(input.toEntity(challengeId))
+                    .map { it.toQL() }
+        }
     }
 
     fun editAsQL(requirementId: Long, input: RequirementInputQL): Mono<RequirementQL> {
+
         return requirementRepository.findById(requirementId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .flatMap { requirement ->
+                challengeService.isPublished(requirement.challengeId)
+                    .flatMap {
+                        if (it)
+                            Mono.error(ChallengePublishedException(requirement.challengeId))
+                        else
+                            Mono.just(requirement)
+                    }
+            }
             .map { input.toEntity(it.id!!, it.challengeId) }
             .flatMap { requirementRepository.save(it) }
             .map { it.toQL() }
@@ -126,9 +144,16 @@ class RequirementServiceV1(
     }
 
     fun removeAsQL(requirementId: Long): Mono<RequirementQL> {
-        return requirementRepository.disableRequirement(requirementId)
-            .map { it.toQL() }
-            .toMono()
+        val isPublished = challengeService.isPublishedByReview(requirementId)
+
+        return isPublished.flatMap {
+            if (it)
+                Mono.error(ChallengePublishedException("Challenge already published"))
+            else
+                requirementRepository.disableRequirement(requirementId)
+                    .map { it.toQL() }
+                    .toMono()
+        }
     }
 
     private fun update(

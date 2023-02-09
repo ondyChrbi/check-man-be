@@ -78,9 +78,6 @@ databaseChangeLog:
               - column:
                   name: app_user_id
                   value: 0
-              - column:
-                  name: feedback_id
-                  value: 0
             tableName: review
 
   - changeSet:

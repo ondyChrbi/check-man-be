@@ -6,5 +6,7 @@ data class ReviewQL (
     var id: Long,
     var description: String? = "",
     var requirements: List<ReviewedRequirementQL> = listOf(),
-    var feedbacks: List<FeedbackQL> = listOf()
+    var feedbacks: List<FeedbackQL> = listOf(),
+    var active: Boolean = true,
+    var published: Boolean = false,
 )

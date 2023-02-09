@@ -1,17 +1,18 @@
 package cz.fei.upce.checkman.controller.course.challenge.solution
 
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
+import cz.fei.upce.checkman.graphql.input.course.challenge.ReviewInputQL
 import cz.fei.upce.checkman.graphql.input.course.challenge.solution.FeedbackInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.CoursesReviewListQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.FeedbackQL
+import cz.fei.upce.checkman.graphql.output.challenge.solution.ReviewQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.SolutionQL
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import cz.fei.upce.checkman.service.course.challenge.solution.FeedbackServiceV1
 import cz.fei.upce.checkman.service.course.challenge.solution.ReviewServiceV1
-import cz.fei.upce.checkman.service.course.security.annotation.ChallengeId
-import cz.fei.upce.checkman.service.course.security.annotation.CourseId
-import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
-import cz.fei.upce.checkman.service.course.security.annotation.ReviewId
+import cz.fei.upce.checkman.service.course.security.annotation.*
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.graphql.data.method.annotation.QueryMapping
@@ -41,19 +42,22 @@ class ReviewQLController(
 
     @QueryMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
-    fun solutionsToReview(@ChallengeId @Argument challengeId: Long?, authentication: Authentication): Flux<SolutionQL> {
-        return reviewService.findAllToReview(challengeId)
+    fun solutionsToReview(@ChallengeId @Argument challengeId: Long?,
+                          @Argument offset: Int = DEFAULT_OFFSET,
+                          @Argument size: Int = DEFAULT_SIZE,
+                          authentication: Authentication): Flux<SolutionQL> {
+        return reviewService.findAllToReview(challengeId, offset, size)
     }
 
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
-    fun createReview(@ChallengeId @Argument challengeId: Long, solutionId: Long, authentication: Authentication) {
-
+    fun createReview(@SolutionId @Argument solutionId: Long, @Argument reviewInput: ReviewInputQL, authentication: Authentication): Mono<ReviewQL> {
+        return reviewService.create(solutionId, reviewInput, authenticationService.extractAuthenticateUser(authentication))
     }
 
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
-    fun editReview(@ReviewId reviewId: Long, @Argument solutionId: Long, authentication: Authentication) {
+    fun editReview(@ReviewId @Argument reviewId: Long, @Argument solutionId: Long, authentication: Authentication) {
 
     }
 

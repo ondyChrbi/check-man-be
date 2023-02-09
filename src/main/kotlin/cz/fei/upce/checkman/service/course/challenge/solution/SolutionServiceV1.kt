@@ -1,5 +1,7 @@
 package cz.fei.upce.checkman.service.course.challenge.solution
 
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.challenge.Solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Requirement
@@ -15,6 +17,7 @@ import cz.fei.upce.checkman.repository.review.ReviewRepository
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
 import cz.fei.upce.checkman.service.course.CourseServiceV1
 import cz.fei.upce.checkman.service.course.security.CourseAuthorizationServiceV1
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -55,8 +58,12 @@ class SolutionServiceV1(
             .flatMap { toSolutionQL(it) }
     }
 
-    fun findAllToReview(challengeId: Long): Flux<Solution> {
-        return solutionRepository.findAll(challengeId)
+    fun findAllToReview(
+        challengeId: Long,
+        offset: Int = DEFAULT_OFFSET,
+        size: Int = DEFAULT_SIZE
+    ): Flux<Solution> {
+        return solutionRepository.findAllToReview(challengeId, PageRequest.of(offset, size))
     }
 
     fun countToReview(challengeId: Long): Mono<Long> {

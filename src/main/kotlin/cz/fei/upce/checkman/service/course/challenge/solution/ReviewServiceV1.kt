@@ -1,7 +1,10 @@
 package cz.fei.upce.checkman.service.course.challenge.solution
 
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.AppUser
+import cz.fei.upce.checkman.graphql.input.course.challenge.ReviewInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.*
 import cz.fei.upce.checkman.repository.review.ReviewRepository
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
@@ -23,8 +26,8 @@ class ReviewServiceV1(
         return solutionService.countToReview(challengeId!!)
     }
 
-    fun findAllToReview(challengeId: Long?): Flux<SolutionQL> {
-        return solutionService.findAllToReview(challengeId!!)
+    fun findAllToReview(challengeId: Long?, offset: Int = DEFAULT_OFFSET, size: Int = DEFAULT_SIZE): Flux<SolutionQL> {
+        return solutionService.findAllToReview(challengeId!!, offset, size)
             .flatMap { solution ->
                 val review = solutionService.findReviewAsQL(solution.id!!)
 
@@ -64,5 +67,10 @@ class ReviewServiceV1(
 
     fun linkFeedback(reviewId: Long, feedbackId: Long): Mono<Void> {
         return reviewRepository.linkFeedback(reviewId, feedbackId)
+    }
+
+    fun create(solutionId: Long, reviewInput: ReviewInputQL, author: AppUser): Mono<ReviewQL> {
+        return reviewRepository.save(reviewInput.toEntity(solutionId, author.id!!))
+            .map { it.toQL() }
     }
 }
