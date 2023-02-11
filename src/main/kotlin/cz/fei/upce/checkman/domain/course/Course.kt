@@ -15,7 +15,7 @@ data class Course(
     var icon: String? = null,
     var template: String? = null
 ) {
-    fun toQL(semesters: List<CourseSemesterQL>) = CourseQL(
+    fun toQL(semesters: List<CourseSemesterQL> = listOf()) = CourseQL(
         id, stagId, name, dateCreation, icon, template, semesters
     )
 }

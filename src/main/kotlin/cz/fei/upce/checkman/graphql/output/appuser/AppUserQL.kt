@@ -1,5 +1,6 @@
 package cz.fei.upce.checkman.graphql.output.appuser
 
+import cz.fei.upce.checkman.graphql.output.course.CourseSemesterRoleQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterRolesQL
 import java.time.LocalDateTime
 
@@ -12,5 +13,6 @@ data class AppUserQL (
     val lastAccessDate: LocalDateTime = LocalDateTime.now(),
     val disabled: Boolean = false,
     val globalRoles: MutableList<GlobalRoleQL> = mutableListOf(),
-    val courseRoles: MutableList<CourseSemesterRolesQL> = mutableListOf()
+    val courseRoles: MutableList<CourseSemesterRolesQL> = mutableListOf(),
+    val roles: MutableList<CourseSemesterRoleQL> = mutableListOf()
 )

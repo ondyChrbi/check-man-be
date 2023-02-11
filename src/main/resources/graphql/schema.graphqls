@@ -47,6 +47,7 @@ type AppUser{
     disabled: Boolean!
     globalRoles: [GlobalRole!]!
     courseRoles: [CourseSemesterRoles!]!
+    roles(semesterId: ID!): [CourseSemesterRole!]!
 }
 
 type GlobalRole {
@@ -67,6 +68,7 @@ type Semester {
     note: String
     dateStart: String!
     dateEnd: String!
+    relatedUsers(offset: Int, size: Int): [AppUser!]!
 }
 
 type Challenge {

@@ -458,3 +458,30 @@ databaseChangeLog:
                   value: NEGATIVE
             tableName: feedback_type
 
+  - changeSet:
+      id: insert-28
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 7
+              - column:
+                  name: name
+                  value: MANAGE_USERS
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-29
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 8
+              - column:
+                  name: name
+                  value: VIEW_USERS
+            tableName: course_semester_role

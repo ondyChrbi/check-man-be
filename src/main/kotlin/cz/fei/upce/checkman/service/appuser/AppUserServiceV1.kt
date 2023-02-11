@@ -1,14 +1,18 @@
 package cz.fei.upce.checkman.service.appuser
 
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.appuser.AppUserResponseDtoV1
 import cz.fei.upce.checkman.dto.appuser.GlobalRoleResponseDtoV1
 import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
+import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.role.CourseSemesterRoleServiceV1
 import cz.fei.upce.checkman.service.role.GlobalRoleServiceV1
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 
@@ -88,5 +92,9 @@ class AppUserServiceV1(
                     appUserRepository.save(appUser)
                 }
             }
+    }
+
+    fun findAllRelatedToCourseByQL(semesterQL : CourseSemesterQL, offset: Int = DEFAULT_OFFSET, size: Int = DEFAULT_SIZE): Flux<AppUser> {
+        return appUserRepository.findAllByCourseSemester(semesterQL.id, offset, size)
     }
 }

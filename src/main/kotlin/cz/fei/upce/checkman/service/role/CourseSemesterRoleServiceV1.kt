@@ -4,6 +4,8 @@ import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.appuser.CourseSemesterRoleDtoV1
 import cz.fei.upce.checkman.dto.appuser.CourseSemesterRolesResponseDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterResponseDtoV1
+import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
+import cz.fei.upce.checkman.graphql.output.course.CourseSemesterRoleQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterRolesQL
 import cz.fei.upce.checkman.repository.course.AppUserCourseSemesterRoleRepository
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
@@ -19,6 +21,11 @@ class CourseSemesterRoleServiceV1(
     private val courseSemesterRoleRepository: CourseSemesterRoleRepository,
     private val courseSemesterRepository: CourseSemesterRepository
 ) {
+
+fun findAllRolesByUserAndCourseSemesterAsQL(appUser: AppUserQL, semesterId: Long): Flux<CourseSemesterRoleQL> {
+        return courseSemesterRoleRepository.findAllRelatedToUserAndCourseSemester(appUser.id!!, semesterId)
+            .map { it.toQL() }
+    }
 
     fun findAllSemestersAndRolesAsDto(appUser: AppUser): Flux<CourseSemesterRolesResponseDtoV1> {
         return appUserCourseSemesterRoleRepository.findOnlySemestersByAppUserIEquals(appUser.id!!)

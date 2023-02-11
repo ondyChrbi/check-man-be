@@ -36,7 +36,7 @@ class CourseServiceV1(
     private val courseSemesterRepository: CourseSemesterRepository,
     private val appUserCourseSemesterRoleRepository: AppUserCourseSemesterRoleRepository,
     private val entityTemplate: R2dbcEntityTemplate,
-    private val reactiveCriteriaRSQLSpecification: ReactiveCriteriaRSQLSpecification
+    private val reactiveCriteriaRSQLSpecification: ReactiveCriteriaRSQLSpecification,
 ) {
     fun search(search: String?): Flux<CourseResponseDtoV1> {
         val courses = if (search == null || search.isEmpty())
@@ -55,9 +55,8 @@ class CourseServiceV1(
     }
 
     fun findAllAsQL(): Flux<CourseQL> {
-        return courseRepository.findAll().flatMap {
-            assignSemesters(it)
-        }
+        return courseRepository.findAll()
+            .map { it.toQL() }
     }
 
     fun findAsDto(id: Long): Mono<CourseResponseDtoV1> {
@@ -246,7 +245,6 @@ class CourseServiceV1(
 
     companion object {
         val VIEW_PERMISSIONS = setOf(ROLE_COURSE_MANAGE, ROLE_COURSE_VIEW)
-        val MANAGE_PERMISSIONS = setOf(ROLE_COURSE_MANAGE)
 
         private fun checkCourseSemesterAssociation(courseId: Long, courseSemester: CourseSemester) =
             if (courseId != courseSemester.courseId)
