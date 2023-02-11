@@ -57,6 +57,17 @@ fun findAllRolesByUserAndCourseSemesterAsQL(appUser: AppUserQL, semesterId: Long
             .flatMap { courseSemesterRoleRepository.findById(it.courseSemesterRoleId) }
             .map { CourseSemesterRoleDtoV1.fromEntity(it) }
     }
+
+    fun addRole(appUserId: Long, roleId: Long, semesterId: Long) {
+       /*return appUserCourseSemesterRoleRepository.existsByAppUserIdEqualsAndCourseSemesterIdEquals(appUserId, roleId)
+           .flatMap {
+               if (it)
+                   Mono.error(RoleAlreadyAssignedException(appUserId, roleId))
+               else
+                   appUserCourseSemesterRoleRepository.save()
+           }*/
+    }
+
     private fun assignSemesterRolesAsDto(responseDto: CourseSemesterRolesResponseDtoV1, appUser: AppUser): Mono<CourseSemesterRolesResponseDtoV1> {
         return assignSemesterRolesAsDto(responseDto, appUser, responseDto.semester.id!!)
     }

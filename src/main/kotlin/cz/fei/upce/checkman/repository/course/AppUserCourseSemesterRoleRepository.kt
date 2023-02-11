@@ -16,6 +16,11 @@ interface AppUserCourseSemesterRoleRepository : ReactiveCrudRepository<AppUserCo
         courseSemesterId: Long
     ): Flux<AppUserCourseSemesterRole>
 
+    fun existsByAppUserIdEqualsAndCourseSemesterIdEquals(
+        appUserId: Long,
+        courseSemesterId: Long
+    ): Mono<Boolean>
+
     fun existsByAppUserIdEqualsAndCourseSemesterIdEqualsAndCourseSemesterRoleIdEquals(
         appUserId: Long,
         courseSemesterId: Long,

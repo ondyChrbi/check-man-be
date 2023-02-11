@@ -29,6 +29,11 @@ class AppUserServiceV1(
         return appUserRepository.findById(id)
     }
 
+    fun findByIdAsQL(id: Long): Mono<AppUserQL> {
+        return appUserRepository.findById(id)
+            .map { it.toQL() }
+    }
+
     fun updateLastAccessDate(appUser: AppUser): Mono<AppUser> {
         appUser.lastAccessDate = LocalDateTime.now()
         return appUserRepository.save(appUser)

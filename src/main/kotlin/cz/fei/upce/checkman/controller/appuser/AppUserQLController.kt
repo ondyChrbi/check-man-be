@@ -8,10 +8,12 @@ import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
 import cz.fei.upce.checkman.service.course.security.annotation.SemesterId
 import cz.fei.upce.checkman.service.role.CourseSemesterRoleServiceV1
 import org.springframework.graphql.data.method.annotation.Argument
+import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.graphql.data.method.annotation.SchemaMapping
 import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @Controller
 @Validated
@@ -31,5 +33,10 @@ class AppUserQLController(
     @SchemaMapping(typeName = "AppUser")
     fun roles (appUserQL: AppUserQL, @SemesterId @Argument semesterId: Long = -1L): Flux<CourseSemesterRoleQL> {
         return courseSemesterRoleService.findAllRolesByUserAndCourseSemesterAsQL(appUserQL, semesterId)
+    }
+
+    @QueryMapping
+    fun appUser(@Argument id: Long): Mono<AppUserQL> {
+        return appUserService.findByIdAsQL(id)
     }
 }

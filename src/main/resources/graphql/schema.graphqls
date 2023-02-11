@@ -8,6 +8,7 @@ type Query {
     semester(id: ID!): Semester
     challenge(id: ID!): Challenge
     me: AppUser!
+    appUser(id: ID!): AppUser!
     myCourses: [Course!]!
     availableCourses: [Course!]!
     courseRoles(id: ID!): [String!]!
