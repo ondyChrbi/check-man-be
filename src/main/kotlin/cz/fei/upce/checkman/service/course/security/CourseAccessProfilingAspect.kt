@@ -66,7 +66,7 @@ class CourseAccessProfilingAspect(
         if (requirements.isNotEmpty()) {
             val requirementId = joinPoint.args[parameters.indexOf(requirements.first())]
             if (requirementId !is Long) {
-                return Mono.error<Void>(NotIdDataTypeException("challengeId", Long::class.java))
+                return Mono.error<Void>(NotIdDataTypeException("requirementId", Long::class.java))
             }
 
             val result = checkBasedRequirement(requirementId, appUser, annotation)

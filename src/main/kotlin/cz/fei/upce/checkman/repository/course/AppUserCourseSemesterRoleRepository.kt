@@ -30,5 +30,9 @@ interface AppUserCourseSemesterRoleRepository : ReactiveCrudRepository<AppUserCo
     @Query("select distinct course_semester_id from app_user_course_semester_role where app_user_id = :appUserId")
     fun findOnlySemestersByAppUserIEquals(appUserId: Long): Flux<AppUserCourseSemesterRole>
 
-
+    fun deleteByAppUserIdEqualsAndCourseSemesterIdEqualsAndCourseSemesterRoleIdEquals(
+        appUserId: Long,
+        courseSemesterId: Long,
+        courseSemesterRoleId: Long
+    ): Mono<Boolean>
 }
