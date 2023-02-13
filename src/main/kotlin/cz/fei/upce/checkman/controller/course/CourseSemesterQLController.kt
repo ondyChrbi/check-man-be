@@ -5,6 +5,7 @@ import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.graphql.input.course.CourseInputQL
 import cz.fei.upce.checkman.graphql.output.course.CourseQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
+import cz.fei.upce.checkman.graphql.output.course.CourseSemesterRoleQL
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import cz.fei.upce.checkman.service.course.CourseServiceV1
 import cz.fei.upce.checkman.service.course.SemesterServiceV1
@@ -44,6 +45,11 @@ class CourseSemesterQLController(
     @PreCourseSemesterAuthorize
     fun semester(@SemesterId @Argument id: Long, authentication: Authentication): Mono<CourseSemesterQL> {
         return courseServiceV1.findSemesterAsQL(id)
+    }
+
+    @QueryMapping
+    fun allCourseRoles() : Flux<CourseSemesterRoleQL> {
+        return courseSemesterRoleService.findAllAsQL()
     }
 
     @MutationMapping

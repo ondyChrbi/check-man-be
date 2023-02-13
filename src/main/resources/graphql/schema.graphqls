@@ -12,6 +12,7 @@ type Query {
     myCourses: [Course!]!
     availableCourses: [Course!]!
     courseRoles(id: ID!): [String!]!
+    allCourseRoles: [CourseSemesterRole!]!
     solutions(challengeId: ID!): [Solution!]!
     solution(id: ID!): Solution!
     countToReview(challengeId: ID!): Int!

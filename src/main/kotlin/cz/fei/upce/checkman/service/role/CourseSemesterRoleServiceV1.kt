@@ -132,4 +132,9 @@ class CourseSemesterRoleServiceV1(
             .doOnNext { ql.roles.addAll(it) }
             .map { ql }
     }
+
+    fun findAllAsQL(): Flux<CourseSemesterRoleQL> {
+        return courseSemesterRoleRepository.findAll()
+            .map { it.toQL() }
+    }
 }
