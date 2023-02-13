@@ -23,11 +23,11 @@ data class Solution(
     fun toQL(review: ReviewQL? = null, author: AppUser? = null) =
         SolutionQL(id, uploadDate?.atOffset(ZoneOffset.UTC), getById(statusId), review, author)
 
-    enum class Status(approve: Boolean) {
-        APPROVED(true),
-        RETURN_TO_EDIT(false),
-        DENIED(false),
-        WAITING_TO_REVIEW(false)
+    enum class Status(val approve: Boolean, val id: Long) {
+        APPROVED(true, 0L),
+        RETURN_TO_EDIT(false, 1L),
+        DENIED(false, 2L),
+        WAITING_TO_REVIEW(false, 3L)
     }
 
     companion object {

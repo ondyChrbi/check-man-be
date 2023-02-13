@@ -4,6 +4,7 @@ import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.challenge.Solution
+import cz.fei.upce.checkman.domain.review.Review
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.r2dbc.repository.Query
@@ -43,4 +44,11 @@ interface SolutionRepository : ReactiveCrudRepository<Solution, Long> {
         where (r.id is null or r.published = false) and c.id = :challengeId
     """)
     fun countAllWithoutReview(challengeId: Long): Mono<Long>
+
+    @Query("""
+        select s.* from solution s 
+        inner join review r on s.id = r.solution_id
+        where r.id = :reviewId limit 1
+    """)
+    fun findByReview(reviewId: Long) : Mono<Solution>
 }

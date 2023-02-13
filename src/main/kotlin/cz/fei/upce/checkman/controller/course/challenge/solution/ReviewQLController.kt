@@ -2,6 +2,7 @@ package cz.fei.upce.checkman.controller.course.challenge.solution
 
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
+import cz.fei.upce.checkman.domain.challenge.Solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Review
 import cz.fei.upce.checkman.graphql.input.course.challenge.ReviewInputQL
@@ -58,8 +59,8 @@ class ReviewQLController(
 
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
-    fun publishReview(@ReviewId @Argument id: Long, authentication: Authentication): Mono<Boolean> {
-        return reviewService.publish(id)
+    fun publishReview(@ReviewId @Argument id: Long, @Argument status: Solution.Status = Solution.Status.APPROVED, authentication: Authentication): Mono<Boolean> {
+        return reviewService.publish(id, status)
     }
 
     @MutationMapping

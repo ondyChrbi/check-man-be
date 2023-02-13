@@ -24,7 +24,7 @@ interface ReviewRepository : ReactiveCrudRepository<Review, Long> {
     fun linkFeedback(reviewId: Long, feedbackId: Long) : Mono<Void>
 
     @Query("""
-        update review set published = true where id = :reviewId return *
+        update review set published = true where id = :reviewId returning *
     """)
     fun publish(reviewId: Long) : Flux<Review>
 }

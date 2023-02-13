@@ -2,6 +2,7 @@ package cz.fei.upce.checkman.service.course.challenge.solution
 
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
+import cz.fei.upce.checkman.domain.challenge.Solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Review
 import cz.fei.upce.checkman.domain.user.AppUser
@@ -76,11 +77,15 @@ class ReviewServiceV1(
             .map { it.toQL() }
     }
 
-    fun publish(reviewId: Long): Mono<Boolean> {
-        return reviewRepository.publish(reviewId)
-            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-            .collectList()
-            .map { it.size > 0 }
+    fun publish(reviewId: Long, status: Solution.Status = Solution.Status.APPROVED): Mono<Boolean> {
+        val solution = solutionService.updateStatus(reviewId, status)
+
+        return solution.flatMap {
+            reviewRepository.publish(reviewId)
+                .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+                .collectList()
+                .map { it.size > 0 }
+        }
     }
 
     fun edit(id: Long, reviewInput: ReviewInputQL): Mono<Review> {

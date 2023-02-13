@@ -35,7 +35,7 @@ type Mutation {
     addFeedbackToReview(reviewId: ID!, feedbackId: ID!): Boolean
     createFeedbackToReview(reviewId: ID!, feedback: FeedbackInput!): Feedback!
     createReview(solutionId: ID! reviewInput: ReviewInput!): Review!
-    publishReview(id: ID!): Boolean!
+    publishReview(id: ID!, status: String!): Boolean!
     editReview(id: ID!, input: ReviewInput!): Review!
     addCourseRole(appUserId: ID!, semesterId: ID!, roleId: ID!): Boolean
     removeCourseRole(appUserId: ID!, semesterId: ID!, roleId: ID!): Boolean

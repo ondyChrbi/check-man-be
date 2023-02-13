@@ -5,6 +5,7 @@ import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.challenge.Solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Requirement
+import cz.fei.upce.checkman.domain.review.Review
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.graphql.output.challenge.requirement.ReviewedRequirementQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.ReviewQL
@@ -14,6 +15,7 @@ import cz.fei.upce.checkman.repository.review.FeedbackRepository
 import cz.fei.upce.checkman.repository.review.RequirementRepository
 import cz.fei.upce.checkman.repository.review.RequirementReviewRepository
 import cz.fei.upce.checkman.repository.review.ReviewRepository
+import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
 import cz.fei.upce.checkman.service.course.CourseServiceV1
 import cz.fei.upce.checkman.service.course.security.CourseAuthorizationServiceV1
@@ -32,6 +34,11 @@ class SolutionServiceV1(
     private val appUserService: AppUserServiceV1,
     private val courseService: CourseServiceV1,
 ) {
+    fun findById(id: Long): Mono<Solution> {
+        return solutionRepository.findById(id)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+    }
+
     fun findById(id: Long, requester: AppUser): Mono<SolutionQL> {
         val hasReviewAccess = courseService.findBySolutionId(id)
             .flatMap {
@@ -50,6 +57,20 @@ class SolutionServiceV1(
                 solutionRepository.findFirstByIdEqualsAndUserIdEquals(id, requester.id!!)
         }
             .flatMap { toSolutionQL(it) }
+    }
+
+    fun findByReviewId(reviewId: Long): Mono<Solution> {
+        return solutionRepository.findByReview(reviewId)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+    }
+
+    fun updateStatus(reviewId: Long, status: Solution.Status): Mono<Solution> {
+        return solutionRepository.findByReview(reviewId)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .flatMap {
+                it.statusId = status.id
+                solutionRepository.save(it)
+            }
     }
 
     fun findAllByChallengeAndUser(challengeId: Long, requester: AppUser): Flux<SolutionQL> {
