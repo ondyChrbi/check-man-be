@@ -218,7 +218,7 @@ class ChallengeServiceV1(
     fun findByIdAsQL(id: Long): Mono<ChallengeQL> {
         return challengeRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-            .flatMap { assignRelatives(it) }
+            .map { it.toQL() }
     }
 
     private fun assignRelatives(challenge: Challenge): Mono<ChallengeQL> {

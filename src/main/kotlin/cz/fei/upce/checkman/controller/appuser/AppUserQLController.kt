@@ -2,6 +2,7 @@ package cz.fei.upce.checkman.controller.appuser
 
 import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
+import cz.fei.upce.checkman.graphql.output.challenge.ChallengeQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterRoleQL
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
@@ -33,6 +34,12 @@ class AppUserQLController(
     @SchemaMapping(typeName = "AppUser")
     fun roles (appUserQL: AppUserQL, @SemesterId @Argument semesterId: Long = -1L): Flux<CourseSemesterRoleQL> {
         return courseSemesterRoleService.findAllRolesByUserAndCourseSemesterAsQL(appUserQL, semesterId)
+    }
+
+    @SchemaMapping(typeName = "Challenge")
+    fun author(challenge: ChallengeQL): Mono<AppUserQL> {
+        return appUserService.findAuthor(challenge.id!!)
+            .map { it.toQL() }
     }
 
     @QueryMapping

@@ -21,4 +21,11 @@ interface AppUserRepository : ReactiveCrudRepository<AppUser, Long> {
         limit :size offset :offset
     """)
     fun findAllByCourseSemester(semesterId: Long, offset: Int = DEFAULT_OFFSET, size: Int = DEFAULT_SIZE): Flux<AppUser>
+
+    @Query("""
+        select au.* from app_user au
+        inner join challenge c on au.id = c.author_id
+        where c.id = :challengeId limit 1
+    """)
+    fun findAuthorByChallengeId(challengeId: Long) : Mono<AppUser>
 }

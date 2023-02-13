@@ -11,4 +11,6 @@ interface RequirementReviewRepository : ReactiveCrudRepository<RequirementReview
     fun findAllByReviewIdEquals(reviewId: Long) : Flux<RequirementReview>
 
     fun findFirstByReviewIdEqualsAndRequirementIdEquals(reviewId: Long, requirementId: Long) : Mono<RequirementReview>
+
+    fun existsByReviewIdEqualsAndRequirementIdEquals(reviewId: Long, requirementId: Long) : Mono<Boolean>
 }

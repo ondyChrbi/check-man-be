@@ -21,7 +21,7 @@ data class Challenge(
     var courseSemesterId: Long? = null,
     var challengeKindId: Long = 0
 ) {
-    fun toQL(author: AppUserQL, requirements: List<RequirementQL> = emptyList()) = ChallengeQL(
+    fun toQL(author: AppUserQL? = null, requirements: List<RequirementQL> = emptyList()) = ChallengeQL(
         id, name, description, deadlineDate?.atOffset(ZoneOffset.UTC), startDate?.atOffset(ZoneOffset.UTC), active, published, author, requirements, ChallengeKind.Value.IDS_MAP[challengeKindId].toString()
     )
 

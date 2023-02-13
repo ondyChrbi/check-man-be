@@ -102,4 +102,8 @@ class AppUserServiceV1(
     fun findAllRelatedToCourseByQL(semesterQL : CourseSemesterQL, offset: Int = DEFAULT_OFFSET, size: Int = DEFAULT_SIZE): Flux<AppUser> {
         return appUserRepository.findAllByCourseSemester(semesterQL.id, offset, size)
     }
+
+    fun findAuthor(challengeId: Long): Mono<AppUser> {
+        return appUserRepository.findAuthorByChallengeId(challengeId)
+    }
 }

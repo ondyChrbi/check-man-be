@@ -6,6 +6,7 @@ import cz.fei.upce.checkman.domain.review.RequirementReview
 import cz.fei.upce.checkman.dto.course.challenge.requirement.RequirementRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.requirement.RequirementResponseDtoV1
 import cz.fei.upce.checkman.graphql.input.course.RequirementInputQL
+import cz.fei.upce.checkman.graphql.input.course.challenge.solution.ReviewPointsInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.requirement.RequirementQL
 import cz.fei.upce.checkman.repository.review.RequirementRepository
 import cz.fei.upce.checkman.repository.review.RequirementReviewRepository
@@ -153,6 +154,18 @@ class RequirementServiceV1(
                 requirementRepository.disableRequirement(requirementId)
                     .map { it.toQL() }
                     .toMono()
+        }
+    }
+
+    fun add(reviewId: Long, requirementId: Long, reviewPoints: ReviewPointsInputQL): Mono<Boolean> {
+        val record = reviewPoints.toEntity(reviewId, requirementId)
+        val exists = requirementReviewRepository.existsByReviewIdEqualsAndRequirementIdEquals(reviewId, requirementId)
+
+        return exists.flatMap {
+            if (it)
+                Mono.error(RequirementPointsAlreadyAssignedException())
+            else
+                requirementReviewRepository.save(record).map { true }
         }
     }
 
