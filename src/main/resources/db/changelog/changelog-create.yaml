@@ -1243,7 +1243,7 @@ databaseChangeLog:
             columnName: id
             generationType: ALWAYS
             incrementBy: 1
-            startWith: 0
+            startWith: 1000
             tableName: requirement_review
 
   - changeSet:

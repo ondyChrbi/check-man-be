@@ -12,6 +12,10 @@ data class ReviewPointsInputQL(
     var points: Short
 ) {
     fun toEntity(reviewId: Long, requirementId: Long): RequirementReview {
-        return RequirementReview(point = points, requirementId = requirementId, reviewId = reviewId)
+        return toEntity(null, reviewId, requirementId)
+    }
+
+    fun toEntity(id: Long?, reviewId: Long, requirementId: Long): RequirementReview {
+        return RequirementReview(id = id, point = points, requirementId = requirementId, reviewId = reviewId)
     }
 }

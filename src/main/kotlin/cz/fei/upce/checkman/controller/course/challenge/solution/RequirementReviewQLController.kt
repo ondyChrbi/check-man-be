@@ -20,7 +20,7 @@ class RequirementReviewQLController(
 ) {
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
-    fun addReviewPoints(@ReviewId @Argument reviewId: Long, @RequirementId requirementId: Long, @Argument reviewPoints : ReviewPointsInputQL, authentication: Authentication): Mono<Boolean> {
-        return requirementService.add(reviewId, requirementId, reviewPoints)
+    fun editReviewPoints(@ReviewId @Argument reviewId: Long, @RequirementId @Argument requirementId: Long, @Argument reviewPointsInput : ReviewPointsInputQL, authentication: Authentication): Mono<Boolean> {
+        return requirementService.editReviewPoints(reviewId, requirementId, reviewPointsInput)
     }
 }

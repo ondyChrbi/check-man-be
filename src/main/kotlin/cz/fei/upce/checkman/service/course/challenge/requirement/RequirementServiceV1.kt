@@ -157,16 +157,40 @@ class RequirementServiceV1(
         }
     }
 
-    fun add(reviewId: Long, requirementId: Long, reviewPoints: ReviewPointsInputQL): Mono<Boolean> {
-        val record = reviewPoints.toEntity(reviewId, requirementId)
-        val exists = requirementReviewRepository.existsByReviewIdEqualsAndRequirementIdEquals(reviewId, requirementId)
+    fun editReviewPoints(reviewId: Long, requirementId: Long, reviewPoints: ReviewPointsInputQL): Mono<Boolean> {
+        val validationCheck = checkRequirementPoints(requirementId, reviewPoints)
+        val alreadyCreated = requirementReviewRepository.findByReviewIdEqualsAndRequirementIdEquals(reviewId, requirementId)
 
-        return exists.flatMap {
-            if (it)
-                Mono.error(RequirementPointsAlreadyAssignedException())
-            else
-                requirementReviewRepository.save(record).map { true }
-        }
+
+        return validationCheck.collectList()
+            .flatMap {
+                alreadyCreated
+                    .switchIfEmpty(Mono.just(reviewPoints.toEntity(reviewId, requirementId)))
+                    .doOnNext { it.point = reviewPoints.points }
+                    .flatMap { requirementReviewRepository.save(it) }
+                    .map { true }
+            }
+
+    }
+
+    private fun checkRequirementPoints(requirementId: Long, reviewPoints: ReviewPointsInputQL): Flux<Boolean> {
+        val points = reviewPoints.points
+
+        val minCheck = if (points > 0)
+            Mono.just(true)
+        else
+            Mono.error(NonPositiveRequirementPointsException(points))
+
+        val maxCheck = requirementRepository.findById(requirementId)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .flatMap {
+                if (points <= it.maxPoint)
+                    Mono.just(true)
+                else
+                    Mono.error(MaximumRequirementPointsReachedException(points, it.maxPoint))
+            }
+
+        return Flux.concat(minCheck, maxCheck)
     }
 
     private fun update(
