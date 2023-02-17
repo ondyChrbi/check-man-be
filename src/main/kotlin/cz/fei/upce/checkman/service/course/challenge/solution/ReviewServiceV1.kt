@@ -51,7 +51,10 @@ class ReviewServiceV1(
         )
 
         return courses.flatMap { courseSemester ->
-            challengeService.findAllBySemesterIdAsQL(courseSemester.id!!)
+            challengeService.findAllBySemesterIdAsQL(
+                courseSemester.id!!,
+                reviewer
+            )
                 .flatMap { challenge ->
                     findAllToReview(challenge.id!!)
                         .collectList()

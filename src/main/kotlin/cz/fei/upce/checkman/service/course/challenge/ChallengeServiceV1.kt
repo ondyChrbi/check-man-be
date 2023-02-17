@@ -5,6 +5,7 @@ import cz.fei.upce.checkman.domain.challenge.Challenge
 import cz.fei.upce.checkman.domain.challenge.ChallengeKind
 import cz.fei.upce.checkman.domain.challenge.PermittedAppUserChallenge
 import cz.fei.upce.checkman.domain.course.CourseSemester
+import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.domain.user.GlobalRole
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeRequestDtoV1
@@ -19,6 +20,7 @@ import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.repository.review.RequirementRepository
 import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
+import cz.fei.upce.checkman.service.course.security.CourseAuthorizationServiceV1
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -35,6 +37,7 @@ class ChallengeServiceV1(
     private val entityTemplate: R2dbcEntityTemplate,
     private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRSQLSpecification,
     private val requirementRepository: RequirementRepository,
+    private val courseAuthorizationService: CourseAuthorizationServiceV1,
 ) {
     fun search(search: String?, courseId: Long, semesterId: Long): Flux<ChallengeResponseDtoV1> {
         val challenges = if (search == null || search.isEmpty())
@@ -206,13 +209,20 @@ class ChallengeServiceV1(
                 }
             }
 
-    fun findAllBySemesterIdAsQL(semesterId: Long): Flux<ChallengeQL> {
-        return challengeRepository.findAllByCourseSemesterIdEqualsAndActive(semesterId)
-            .flatMap { assignRelatives(it) }
+    fun findAllBySemesterIdAsQL(semesterId: Long, requester: AppUser): Flux<ChallengeQL> {
+        val canSeeNotPublishedMono = courseAuthorizationService.hasCourseAccess(
+            semesterId, requester, listOf(CourseSemesterRole.Value.EDIT_CHALLENGE.id)
+        )
+        val findActive = true
+
+        return canSeeNotPublishedMono.flatMapMany { findNotPublished ->
+            challengeRepository.findAllByCourseSemesterIdEqualsAndActiveAndPublishedEquals(semesterId, findActive, !findNotPublished)
+                .flatMap { assignRelatives(it) }
+        }
     }
 
     fun findAllBySemesterId(semesterId: Long): Flux<Challenge> {
-        return challengeRepository.findAllByCourseSemesterIdEqualsAndActive(semesterId)
+        return challengeRepository.findAllByCourseSemesterIdEqualsAndActiveEquals(semesterId)
     }
 
     fun findByIdAsQL(id: Long): Mono<ChallengeQL> {

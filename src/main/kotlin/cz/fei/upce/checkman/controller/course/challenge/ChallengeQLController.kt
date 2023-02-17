@@ -26,7 +26,7 @@ class ChallengeQLController(
     @QueryMapping
     @PreCourseSemesterAuthorize
     fun challenges(@SemesterId @Argument semesterId: Long, authentication: Authentication) =
-        challengeService.findAllBySemesterIdAsQL(semesterId)
+        challengeService.findAllBySemesterIdAsQL(semesterId, authenticationService.extractAuthenticateUser(authentication))
 
     @QueryMapping
     @PreCourseSemesterAuthorize
