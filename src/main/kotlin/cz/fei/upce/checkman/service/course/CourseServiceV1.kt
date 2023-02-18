@@ -50,6 +50,10 @@ class CourseServiceV1(
             .flatMap { assignSemesters(it) }
     }
 
+    fun existById(id: Long): Mono<Boolean> {
+        return courseRepository.existsById(id)
+    }
+
     fun findBySolutionId(solutionId: Long) : Mono<Course> {
         return courseRepository.findFirstBySolutionId(solutionId)
     }

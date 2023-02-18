@@ -2,7 +2,7 @@ package cz.fei.upce.checkman.controller.course
 
 import cz.fei.upce.checkman.domain.course.CourseSemester
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
-import cz.fei.upce.checkman.graphql.input.course.CourseInputQL
+import cz.fei.upce.checkman.graphql.input.course.SemesterInputQL
 import cz.fei.upce.checkman.graphql.output.course.CourseQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterRoleQL
@@ -26,16 +26,14 @@ import reactor.core.publisher.Mono
 class CourseSemesterQLController(
     private val courseServiceV1: CourseServiceV1,
     private val courseSemesterRoleService: CourseSemesterRoleServiceV1,
-    private val semesterServiceV1: SemesterServiceV1,
-    private val courseAuthorizationServiceV1: CourseAuthorizationServiceV1,
+    private val semesterService: SemesterServiceV1,
+    private val courseAuthorizationService: CourseAuthorizationServiceV1,
     private val authenticationService: AuthenticationServiceV1
     ) {
-    @QueryMapping
-    fun courses() = courseServiceV1.findAllAsQL()
 
     @BatchMapping(typeName = "semesters")
     fun semesters(courses: List<CourseQL>): Flux<List<CourseSemester>> {
-        return semesterServiceV1.findAllByCoursesQL(courses)
+        return semesterService.findAllByCoursesQL(courses)
     }
 
     @QueryMapping
@@ -45,6 +43,11 @@ class CourseSemesterQLController(
     @PreCourseSemesterAuthorize
     fun semester(@SemesterId @Argument id: Long, authentication: Authentication): Mono<CourseSemesterQL> {
         return courseServiceV1.findSemesterAsQL(id)
+    }
+
+    @MutationMapping
+    fun createSemester(@Argument courseId : Long, @Argument input: SemesterInputQL, authentication: Authentication): Mono<CourseSemesterQL> {
+        return semesterService.add(courseId, input)
     }
 
     @QueryMapping
@@ -65,9 +68,6 @@ class CourseSemesterQLController(
     }
 
     @MutationMapping
-    fun createCourse(@Argument input: CourseInputQL) = courseServiceV1.add(input)
-
-    @MutationMapping
     fun createSemesterAccessRequest(@Argument semesterId: Long, authentication: Authentication) =
-        courseAuthorizationServiceV1.createCourseAccessRequest(authenticationService.extractAuthenticateUser(authentication), semesterId)
+        courseAuthorizationService.createCourseAccessRequest(authenticationService.extractAuthenticateUser(authentication), semesterId)
 }

@@ -22,6 +22,7 @@ type Query {
 
 type Mutation {
     createCourse(input: CourseInput!): Course!
+    createSemester(courseId: ID!, input: SemesterInput!): Semester!
     createChallenge(semesterId: ID!, input: ChallengeInput!): Challenge!
     editChallenge(challengeId: ID!, input: ChallengeInput!): Challenge!
     deleteChallenge(challengeId: ID!): Challenge!
