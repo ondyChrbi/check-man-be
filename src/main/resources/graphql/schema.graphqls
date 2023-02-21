@@ -178,8 +178,8 @@ input ReviewInput {
 
 input SemesterInput {
     note: String
-    dateStart: String
-    dateEnd: String
+    dateStart: DateTime
+    dateEnd: DateTime
 }
 
 input RequirementInput {

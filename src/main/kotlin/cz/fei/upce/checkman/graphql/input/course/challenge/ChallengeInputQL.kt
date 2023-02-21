@@ -25,8 +25,8 @@ data class ChallengeInputQL (
         return Challenge(
             name = name,
             description = description,
-            deadlineDate = if(deadlineDate != null) deadlineDate!!.toLocalDateTime() else null,
-            startDate = if(startDate != null) startDate!!.toLocalDateTime() else null,
+            deadlineDate = deadlineDate?.toLocalDateTime(),
+            startDate = startDate?.toLocalDateTime(),
             courseSemesterId = semesterId,
             challengeKindId = ChallengeKind.Value.valueOf(challengeKind).id,
             authorId = appUser.id!!
