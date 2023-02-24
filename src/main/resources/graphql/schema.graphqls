@@ -6,6 +6,7 @@ type Query {
     requirements(challengeId: ID!): [Requirement!]!
     course(id: ID!): Course
     semester(id: ID!): Semester
+    semesters(courseId: ID!, oderBy: SemesterOrderByField, sortOrder: SortOrder, pageSize: Int, page: Int): [Semester!]!
     challenge(id: ID!): Challenge
     me: AppUser!
     appUser(id: ID!): AppUser!
@@ -75,6 +76,9 @@ type Semester {
     dateStart: String!
     dateEnd: String!
     relatedUsers(offset: Int, size: Int): [AppUser!]!
+
+    page: Int
+    pageSize: Int
 }
 
 type Challenge {
@@ -122,7 +126,7 @@ type Course {
     dateCreation: String!
     icon: String
     template: String
-    semesters: [Semester!]!
+    semesters(semesterSortBy: SemesterOrderByField): [Semester!]!
 }
 
 type ChallengeSolutions {
@@ -196,4 +200,15 @@ input FeedbackInput {
 
 input ReviewPointsInput {
     points: Int!
+}
+
+enum SemesterOrderByField {
+    id,
+    dateStart,
+    dateEnd
+}
+
+enum SortOrder {
+    ASC,
+    DESC
 }

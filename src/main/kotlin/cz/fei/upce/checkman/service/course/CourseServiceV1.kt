@@ -71,8 +71,7 @@ class CourseServiceV1(
     }
 
     fun findAsQL(id: Long): Mono<CourseQL> {
-        return courseRepository.findById(id)
-            .flatMap { assignSemesters(it) }
+        return courseRepository.findById(id).map { it.toQL() }
     }
 
     fun add(courseDto: CourseRequestDtoV1): Mono<CourseResponseDtoV1> = add(courseDto.toResponseDto())

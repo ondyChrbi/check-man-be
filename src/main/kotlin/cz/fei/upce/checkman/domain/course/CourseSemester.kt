@@ -22,4 +22,10 @@ data class CourseSemester(
     fun isBeforeEnd(nowDate: LocalDateTime = LocalDateTime.now()) = dateEnd != null && nowDate.isBefore(dateEnd)
 
     fun isAfterEnd(nowDate: LocalDateTime = LocalDateTime.now()) = dateEnd != null && nowDate.isAfter(dateEnd)
+
+    enum class OrderByField {
+        id,
+        dateStart,
+        dateEnd
+    }
 }
