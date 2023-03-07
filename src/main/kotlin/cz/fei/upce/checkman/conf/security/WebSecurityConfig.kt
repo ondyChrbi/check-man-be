@@ -10,6 +10,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.web.server.SecurityWebFilterChain
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.reactive.CorsWebFilter
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource
 import reactor.core.publisher.Mono
 
 @EnableWebFluxSecurity
@@ -26,6 +29,15 @@ class WebSecurityConfig(
 
     @Value("\${spring.security.cors.enabled}")
     private var corsEnabled: Boolean = true
+
+    @Value("\${check-man.security.origins}")
+    private var allowedOrigins : Array<String> = arrayOf()
+
+    @Value("\${check-man.security.headers}")
+    private var allowedHeaders : String = ""
+
+    @Value("\${check-man.security.methods}")
+    private var allowedMethods : String = ""
 
     @Bean
     fun securityWebFilterChain(http : ServerHttpSecurity): SecurityWebFilterChain {
@@ -50,5 +62,19 @@ class WebSecurityConfig(
         if (sslEnabled) { conf = conf.redirectToHttps().and() }
 
         return conf.build()
+    }
+
+    @Bean
+    fun corsWebFilter(): CorsWebFilter {
+        val corsConfig = CorsConfiguration()
+        corsConfig.setAllowedOrigins(allowedOrigins.asList())
+        corsConfig.setMaxAge(8000L)
+        corsConfig.addAllowedMethod(allowedMethods)
+        corsConfig.addAllowedHeader(allowedHeaders)
+
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", corsConfig)
+
+        return CorsWebFilter(source)
     }
 }

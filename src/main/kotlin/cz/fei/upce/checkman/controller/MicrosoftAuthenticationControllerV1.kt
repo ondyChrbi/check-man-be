@@ -1,10 +1,12 @@
 package cz.fei.upce.checkman.controller
 
 import cz.fei.upce.checkman.doc.authentication.microsoft.MicrosoftAuthenticationExchangeEndpointV1
+import cz.fei.upce.checkman.dto.security.authentication.AuthenticationResponseDtoV1
 import cz.fei.upce.checkman.service.authentication.ExchangeRequestDtoV1
 import cz.fei.upce.checkman.service.authentication.microsoft.MicrosoftAuthenticationServiceV1
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
+import reactor.core.publisher.Mono
 
 @RestController
 @RequestMapping("/v1/authentication/microsoft")
@@ -13,6 +15,8 @@ class MicrosoftAuthenticationControllerV1(private val microsoftAuthenticationSer
     @CrossOrigin
     @PostMapping("/exchange")
     @MicrosoftAuthenticationExchangeEndpointV1
-    fun exchange(@RequestBody exchangeRequest: ExchangeRequestDtoV1) =
-        microsoftAuthenticationService.exchange(exchangeRequest)
+    fun exchange(@RequestBody exchangeRequest: ExchangeRequestDtoV1): Mono<AuthenticationResponseDtoV1> {
+        return microsoftAuthenticationService.exchange(exchangeRequest)
+    }
+
 }

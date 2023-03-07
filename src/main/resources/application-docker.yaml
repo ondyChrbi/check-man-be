@@ -5,7 +5,7 @@ spring:
   security:
     permit_paths: /v1/authentication/**, /v3/api-docs/**, /swagger-ui.html, /webjars/swagger-ui/**, /webjars/**, /graphiql
     cors:
-      enabled: false
+      enabled: true
   liquibase:
     change-log: classpath:db/changelog/environment/changelog-docker.yaml
     url: jdbc:postgresql://localhost:5432/checkman
@@ -20,11 +20,6 @@ spring:
   graphql:
     graphiql:
       enabled: true
-    cors:
-      allowed-origins: '*'
-      allowed-headers: '*'
-      allowed-methods: '*'
-      allowed-origin-patterns: '*'
 
 login:
   provider:
@@ -62,3 +57,7 @@ check-man:
   challenge:
     file-attachment:
       path: /tmp/check-man
+  security:
+    origins: http://localhost:3000, http://localhost:3001
+    headers: '*'
+    methods: '*'
