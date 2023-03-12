@@ -814,6 +814,29 @@ databaseChangeLog:
             sequenceName: status_id_seq
 
   - changeSet:
+      id: create-26
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: test_status
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: approved
+                  type: bool
+                  constraints:
+                    nullable: false
+                    defaultValue: false
+  - changeSet:
       id: create-19
       author: ondrej.chrbolka
       changes:
@@ -825,6 +848,11 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     primaryKey: true
+              - column:
+                  name: path
+                  type: text
+                  constraints:
+                    nullable: false
               - column:
                   name: upload_date
                   type: timestamptz
@@ -838,6 +866,11 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: status_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: test_status_id
                   type: bigint
                   constraints:
                     nullable: false
@@ -861,6 +894,14 @@ databaseChangeLog:
             constraintName: solution_status_id_fk
             referencedColumnNames: id
             referencedTableName: status
+            validate: true
+
+        - addForeignKeyConstraint:
+            baseColumnNames: test_status_id
+            baseTableName: solution
+            constraintName: solution_test_status_id_fk
+            referencedColumnNames: id
+            referencedTableName: test_status
             validate: true
 
         - addForeignKeyConstraint:

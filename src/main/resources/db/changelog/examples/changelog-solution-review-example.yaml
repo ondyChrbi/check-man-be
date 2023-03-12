@@ -9,6 +9,9 @@ databaseChangeLog:
                   name: id
                   value: 0
               - column:
+                  name: path
+                  value: /tmp/example.zip
+              - column:
                   name: upload_date
                   value: 2022-07-30 16:47:10.101896 +00:00
               - column:
@@ -16,6 +19,9 @@ databaseChangeLog:
                   value: 0
               - column:
                   name: status_id
+                  value: 0
+              - column:
+                  name: test_status_id
                   value: 0
               - column:
                   name: challenge_id
@@ -27,6 +33,9 @@ databaseChangeLog:
               - column:
                   name: id
                   value: 1
+              - column:
+                  name: path
+                  value: /tmp/example.zip
               - column:
                   name: upload_date
                   value: 2022-08-02 16:47:10.101896 +00:00
@@ -37,6 +46,9 @@ databaseChangeLog:
                   name: status_id
                   value: 1
               - column:
+                  name: test_status_id
+                  value: 0
+              - column:
                   name: challenge_id
                   value: 0
             tableName: solution
@@ -47,6 +59,9 @@ databaseChangeLog:
                   name: id
                   value: 2
               - column:
+                  name: path
+                  value: /tmp/example.zip
+              - column:
                   name: upload_date
                   value: 2022-08-05 16:47:10.101896 +00:00
               - column:
@@ -55,6 +70,9 @@ databaseChangeLog:
               - column:
                   name: status_id
                   value: 2
+              - column:
+                  name: test_status_id
+                  value: 0
               - column:
                   name: challenge_id
                   value: 0

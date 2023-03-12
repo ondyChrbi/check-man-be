@@ -11,6 +11,7 @@ import java.time.ZoneOffset
 @Table("solution")
 data class Solution(
     @Id var id: Long? = null,
+    var path: String = "",
     var uploadDate: LocalDateTime? = null,
     var userId: Long = -1L,
     var statusId: Long = -1L,

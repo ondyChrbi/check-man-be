@@ -485,3 +485,57 @@ databaseChangeLog:
                   name: name
                   value: VIEW_USERS
             tableName: course_semester_role
+
+
+  - changeSet:
+      id: insert-30
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: name
+                  value: WAITING_TO_TEST
+              - column:
+                  name: approved
+                  value: true
+            tableName: test_status
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: RUNNING
+              - column:
+                  name: approved
+                  value: false
+            tableName: test_status
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: FINISHED
+              - column:
+                  name: approved
+                  value: false
+            tableName: test_status
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: name
+                  value: ERROR
+              - column:
+                  name: approved
+                  value: false
+            tableName: test_status
