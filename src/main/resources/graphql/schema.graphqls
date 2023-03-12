@@ -1,4 +1,5 @@
 scalar DateTime
+scalar JSON
 
 type Query {
     courses: [Course!]!
@@ -75,6 +76,7 @@ type Semester {
     note: String
     dateStart: String!
     dateEnd: String!
+    fulfillmentConditions: JSON
     relatedUsers(offset: Int, size: Int): [AppUser!]!
 
     page: Int

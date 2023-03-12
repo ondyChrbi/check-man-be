@@ -1,5 +1,6 @@
 package cz.fei.upce.checkman.service.course
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRSQLSpecification
 import cz.fei.upce.checkman.domain.course.Course
 import cz.fei.upce.checkman.domain.course.CourseSemester
@@ -37,6 +38,7 @@ class CourseServiceV1(
     private val appUserCourseSemesterRoleRepository: AppUserCourseSemesterRoleRepository,
     private val entityTemplate: R2dbcEntityTemplate,
     private val reactiveCriteriaRSQLSpecification: ReactiveCriteriaRSQLSpecification,
+    private val objectMapper: ObjectMapper
 ) {
     fun search(search: String?): Flux<CourseResponseDtoV1> {
         val courses = if (search == null || search.isEmpty())
@@ -81,7 +83,7 @@ class CourseServiceV1(
             .flatMap { course ->
                 courseSemesterRepository.saveAll(input.semesters.map { it.toEntity(course.id!!) })
                     .collectList()
-                    .map { semester -> course.toQL(semester.map { it.toQL() }) }
+                    .map { semester -> course.toQL(semester.map { it.toQL(objectMapper) }) }
             }
     }
 
@@ -216,7 +218,7 @@ class CourseServiceV1(
     ): Mono<CourseQL> {
         return courseSemesters.flatMap { semesters ->
             courseRepository.findById(courseId)
-                .map { course -> course.toQL(semesters.map { it.toQL() }) }
+                .map { course -> course.toQL(semesters.map { it.toQL(objectMapper) }) }
         }
     }
 
@@ -229,7 +231,7 @@ class CourseServiceV1(
 
     private fun assignSemesters(course: Course): Mono<CourseQL> {
         return courseSemesterRepository.findAllByCourseIdEquals(course.id!!)
-            .map { it.toQL() }
+            .map { it.toQL(objectMapper) }
             .collectList()
             .map { course.toQL(it) }
     }
@@ -243,7 +245,7 @@ class CourseServiceV1(
     fun findSemesterAsQL(id: Long): Mono<CourseSemesterQL> {
         return courseSemesterRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-            .map { it.toQL() }
+            .map { it.toQL(objectMapper) }
     }
 
     companion object {

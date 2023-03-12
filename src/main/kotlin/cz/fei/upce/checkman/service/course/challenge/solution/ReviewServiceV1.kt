@@ -1,5 +1,6 @@
 package cz.fei.upce.checkman.service.course.challenge.solution
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.challenge.Solution
@@ -24,6 +25,7 @@ class ReviewServiceV1(
     private val authorizationService: CourseAuthorizationServiceV1,
     private val challengeService: ChallengeServiceV1,
     private val reviewRepository: ReviewRepository,
+    private val objectMapper: ObjectMapper
 ) {
     fun countToReview(challengeId: Long?): Mono<Long> {
         return solutionService.countToReview(challengeId!!)
@@ -63,7 +65,7 @@ class ReviewServiceV1(
                         }
                 }
                 .collectList()
-                .map { CoursesReviewListQL(courseSemester.toQL(), it) }
+                .map { CoursesReviewListQL(courseSemester.toQL(objectMapper), it) }
         }
     }
 

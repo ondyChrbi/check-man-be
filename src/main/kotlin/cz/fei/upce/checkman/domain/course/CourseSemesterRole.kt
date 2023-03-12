@@ -20,7 +20,8 @@ data class CourseSemesterRole(
         REVIEW_CHALLENGE(5),
         VIEW_SOLUTIONS(6),
         MANAGE_USERS(7),
-        VIEW_USERS(8);
+        VIEW_USERS(8),
+        EDIT_COURSE(9);
 
 
         fun toEntity() = CourseSemesterRole(id, this.toString())
@@ -35,7 +36,8 @@ data class CourseSemesterRole(
                 5L to REVIEW_CHALLENGE,
                 6L to VIEW_SOLUTIONS,
                 7L to MANAGE_USERS,
-                8L to VIEW_USERS
+                8L to VIEW_USERS,
+                9L to EDIT_COURSE
             )
         }
     }

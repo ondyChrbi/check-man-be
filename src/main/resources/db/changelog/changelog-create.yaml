@@ -387,6 +387,9 @@ databaseChangeLog:
                   name: date_end
                   type: timestamptz
               - column:
+                  name: fulfillment_conditions
+                  type: jsonb
+              - column:
                   name: course_id
                   type: bigint
 

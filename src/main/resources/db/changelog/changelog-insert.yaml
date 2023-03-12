@@ -539,3 +539,17 @@ databaseChangeLog:
                   name: approved
                   value: false
             tableName: test_status
+
+  - changeSet:
+      id: insert-31
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 9
+              - column:
+                  name: name
+                  value: EDIT_COURSE
+            tableName: course_semester_role

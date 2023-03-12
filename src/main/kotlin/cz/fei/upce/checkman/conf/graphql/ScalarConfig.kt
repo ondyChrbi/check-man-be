@@ -11,7 +11,9 @@ class ScalarConfig {
     @Bean
     fun configurer() : RuntimeWiringConfigurer {
         return RuntimeWiringConfigurer {
-                c -> c.scalar(ExtendedScalars.DateTime)
+                c ->
+                    c.scalar(ExtendedScalars.DateTime)
+                    c.scalar(ExtendedScalars.Json)
         }
     }
 }

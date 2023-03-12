@@ -1,5 +1,6 @@
 package cz.fei.upce.checkman.service.role
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import cz.fei.upce.checkman.domain.course.AppUserCourseSemesterRole
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.appuser.CourseSemesterRoleDtoV1
@@ -20,7 +21,8 @@ import reactor.core.publisher.Mono
 class CourseSemesterRoleServiceV1(
     private val appUserCourseSemesterRoleRepository: AppUserCourseSemesterRoleRepository,
     private val courseSemesterRoleRepository: CourseSemesterRoleRepository,
-    private val courseSemesterRepository: CourseSemesterRepository
+    private val courseSemesterRepository: CourseSemesterRepository,
+    private val objectMapper: ObjectMapper
 ) {
 
     fun findAllRolesByUserAndCourseSemesterAsQL(appUser: AppUserQL, semesterId: Long): Flux<CourseSemesterRoleQL> {
@@ -48,7 +50,7 @@ class CourseSemesterRoleServiceV1(
     fun findSemesterAndRolesAsQL(appUser: AppUser, semesterId: Long): Mono<CourseSemesterRolesQL> {
         return courseSemesterRepository.findById(semesterId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-            .map { CourseSemesterRolesQL(it.toQL()) }
+            .map { CourseSemesterRolesQL(it.toQL(objectMapper)) }
             .flatMap { assignSemesterRolesAsQL(it, appUser) }
     }
 
