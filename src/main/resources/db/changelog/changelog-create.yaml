@@ -1382,3 +1382,58 @@ databaseChangeLog:
             incrementBy: 1
             startWith: 1000
             tableName: feedback_review
+
+  - changeSet:
+      id: create-28
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: test_configuration
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: template_path
+                  type: text
+              - column:
+                  name: docker_file_path
+                  type: text
+              - column:
+                  name: active
+                  type: boolean
+                  defaultValue: true
+              - column:
+                  name: creation_date
+                  type: timestamptz
+                  constraints:
+                    defaultValue: now()
+                    nullable: false
+              - column:
+                  name: update_date
+                  type: timestamptz
+              - column:
+                  name: challenge_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: challenge_id
+            baseTableName: test_configuration
+            constraintName: test_configuration_challenge_id_fk
+            referencedColumnNames: id
+            referencedTableName: challenge
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 1000
+            tableName: test_configuration
