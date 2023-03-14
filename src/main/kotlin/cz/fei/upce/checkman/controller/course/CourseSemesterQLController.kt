@@ -4,8 +4,10 @@ import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.course.CourseSemester
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
+import cz.fei.upce.checkman.graphql.input.course.CourseRequirementsInputQL
 import cz.fei.upce.checkman.graphql.input.course.SemesterInputQL
 import cz.fei.upce.checkman.graphql.output.course.CourseQL
+import cz.fei.upce.checkman.graphql.output.course.CourseRequirementsQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterRoleQL
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
@@ -16,10 +18,7 @@ import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemester
 import cz.fei.upce.checkman.service.course.security.annotation.SemesterId
 import cz.fei.upce.checkman.service.role.CourseSemesterRoleServiceV1
 import org.springframework.data.domain.Sort
-import org.springframework.graphql.data.method.annotation.Argument
-import org.springframework.graphql.data.method.annotation.BatchMapping
-import org.springframework.graphql.data.method.annotation.MutationMapping
-import org.springframework.graphql.data.method.annotation.QueryMapping
+import org.springframework.graphql.data.method.annotation.*
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Controller
 import reactor.core.publisher.Flux
@@ -27,7 +26,7 @@ import reactor.core.publisher.Mono
 
 @Controller
 class CourseSemesterQLController(
-    private val courseServiceV1: CourseServiceV1,
+    private val courseService: CourseServiceV1,
     private val courseSemesterRoleService: CourseSemesterRoleServiceV1,
     private val semesterService: SemesterServiceV1,
     private val courseAuthorizationService: CourseAuthorizationServiceV1,
@@ -36,7 +35,7 @@ class CourseSemesterQLController(
 
     @QueryMapping
     fun course(@Argument id: Long): Mono<CourseQL> {
-        return courseServiceV1.findAsQL(id)
+        return courseService.findAsQL(id)
     }
 
     @BatchMapping(typeName = "Course")
@@ -47,7 +46,7 @@ class CourseSemesterQLController(
     @QueryMapping
     @PreCourseSemesterAuthorize
     fun semester(@SemesterId @Argument id: Long, authentication: Authentication): Mono<CourseSemesterQL> {
-        return courseServiceV1.findSemesterAsQL(id)
+        return courseService.findSemesterAsQL(id)
     }
 
     @QueryMapping("semesters")
@@ -104,4 +103,15 @@ class CourseSemesterQLController(
                 authentication
             ), semesterId
         )
+
+    @MutationMapping
+    @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.EDIT_COURSE])
+    fun editSemesterRequirements(@Argument @SemesterId semesterId: Long, @Argument input : CourseRequirementsInputQL, authentication: Authentication): Mono<CourseSemesterQL> {
+        return courseService.editRequirementsAsQL(semesterId, input)
+    }
+
+    @SchemaMapping(typeName = "Semester")
+    fun fulfillmentConditions (semestersQL: CourseSemesterQL): Mono<CourseRequirementsQL> {
+        return courseService.findSemesterRequirements(semestersQL.id)
+    }
 }

@@ -65,7 +65,7 @@ class ReviewServiceV1(
                         }
                 }
                 .collectList()
-                .map { CoursesReviewListQL(courseSemester.toQL(objectMapper), it) }
+                .map { CoursesReviewListQL(courseSemester.toQL(), it) }
         }
     }
 

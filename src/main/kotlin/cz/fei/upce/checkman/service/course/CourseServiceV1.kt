@@ -1,6 +1,5 @@
 package cz.fei.upce.checkman.service.course
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRSQLSpecification
 import cz.fei.upce.checkman.domain.course.Course
 import cz.fei.upce.checkman.domain.course.CourseSemester
@@ -13,10 +12,13 @@ import cz.fei.upce.checkman.dto.course.CourseResponseDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterRequestDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterResponseDtoV1
 import cz.fei.upce.checkman.graphql.input.course.CourseInputQL
+import cz.fei.upce.checkman.graphql.input.course.CourseRequirementsInputQL
 import cz.fei.upce.checkman.graphql.output.course.CourseQL
+import cz.fei.upce.checkman.graphql.output.course.CourseRequirementsQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.repository.course.AppUserCourseSemesterRoleRepository
 import cz.fei.upce.checkman.repository.course.CourseRepository
+import cz.fei.upce.checkman.repository.course.CourseRequirementsRepository
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import org.springframework.data.domain.Sort.Order.desc
@@ -35,10 +37,10 @@ import org.springframework.data.domain.Sort.by
 class CourseServiceV1(
     private val courseRepository: CourseRepository,
     private val courseSemesterRepository: CourseSemesterRepository,
+    private val courseRequirementsRepository: CourseRequirementsRepository,
     private val appUserCourseSemesterRoleRepository: AppUserCourseSemesterRoleRepository,
     private val entityTemplate: R2dbcEntityTemplate,
-    private val reactiveCriteriaRSQLSpecification: ReactiveCriteriaRSQLSpecification,
-    private val objectMapper: ObjectMapper
+    private val reactiveCriteriaRSQLSpecification: ReactiveCriteriaRSQLSpecification
 ) {
     fun search(search: String?): Flux<CourseResponseDtoV1> {
         val courses = if (search == null || search.isEmpty())
@@ -83,7 +85,7 @@ class CourseServiceV1(
             .flatMap { course ->
                 courseSemesterRepository.saveAll(input.semesters.map { it.toEntity(course.id!!) })
                     .collectList()
-                    .map { semester -> course.toQL(semester.map { it.toQL(objectMapper) }) }
+                    .map { semester -> course.toQL(semester.map { it.toQL() }) }
             }
     }
 
@@ -154,12 +156,6 @@ class CourseServiceV1(
             .map { courseSemesterDto.withId(it.id) }
     }
 
-    private fun saveSemesters(courseDto: CourseResponseDtoV1): Mono<MutableList<CourseSemesterResponseDtoV1>> {
-        return courseSemesterRepository.saveAll(
-            courseDto.semesters.map { it.toEntity(courseDto) }
-        ).map { CourseSemesterResponseDtoV1.fromEntity(it) }.collectList()
-    }
-
     fun deleteSemester(courseId: Long, semesterId: Long): Mono<Void> {
         return courseSemesterRepository.findFirstByIdEqualsAndCourseIdEquals(semesterId, courseId)
             .switchIfEmpty(Mono.error(NotAssociatedSemesterWithCourseException(semesterId, courseId)))
@@ -186,6 +182,24 @@ class CourseServiceV1(
         return this.findAllAvailableToAppUser(appUser, LocalDateTime.now())
             .groupBy { it.courseId!! }
             .flatMap { groupSemestersByCourseAsQL(it.key(), it.collectList()) }
+    }
+
+    fun findSemesterAsQL(id: Long): Mono<CourseSemesterQL> {
+        return courseSemesterRepository.findById(id)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .map { it.toQL() }
+    }
+
+    fun editRequirementsAsQL(semesterId: Long, input: CourseRequirementsInputQL) : Mono<CourseSemesterQL> {
+        return courseSemesterRepository.findById(semesterId)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .flatMap { courseSemester -> saveCourseSemesterRequirements(semesterId, input, courseSemester) }
+            .map { it.toQL() }
+    }
+
+    fun findSemesterRequirements(semesterId: Long): Mono<CourseRequirementsQL> {
+        return courseRequirementsRepository.findFirstByCourseSemesterIdEquals(semesterId)
+            .map { it.toDto() }
     }
 
     private fun findAllAvailableToAppUser(appUser: AppUser, currentDateTime: LocalDateTime): Flux<CourseSemester> {
@@ -218,7 +232,7 @@ class CourseServiceV1(
     ): Mono<CourseQL> {
         return courseSemesters.flatMap { semesters ->
             courseRepository.findById(courseId)
-                .map { course -> course.toQL(semesters.map { it.toQL(objectMapper) }) }
+                .map { course -> course.toQL(semesters.map { it.toQL() }) }
         }
     }
 
@@ -231,7 +245,7 @@ class CourseServiceV1(
 
     private fun assignSemesters(course: Course): Mono<CourseQL> {
         return courseSemesterRepository.findAllByCourseIdEquals(course.id!!)
-            .map { it.toQL(objectMapper) }
+            .map { it.toQL() }
             .collectList()
             .map { course.toQL(it) }
     }
@@ -242,10 +256,15 @@ class CourseServiceV1(
             .groupBy { it.courseId!! }
     }
 
-    fun findSemesterAsQL(id: Long): Mono<CourseSemesterQL> {
-        return courseSemesterRepository.findById(id)
-            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-            .map { it.toQL(objectMapper) }
+    private fun saveCourseSemesterRequirements(semesterId: Long, input: CourseRequirementsInputQL, courseSemester: CourseSemester?): Mono<CourseSemester> =
+        courseRequirementsRepository.deleteAllByCourseSemesterIdEquals(semesterId)
+            .flatMap { courseRequirementsRepository.save(input.toEntity(semesterId)) }
+            .mapNotNull { courseSemester }
+
+    private fun saveSemesters(courseDto: CourseResponseDtoV1): Mono<MutableList<CourseSemesterResponseDtoV1>> {
+        return courseSemesterRepository.saveAll(
+            courseDto.semesters.map { it.toEntity(courseDto) }
+        ).map { CourseSemesterResponseDtoV1.fromEntity(it) }.collectList()
     }
 
     companion object {

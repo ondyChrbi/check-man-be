@@ -32,6 +32,7 @@ type Mutation {
     editRequirement(requirementId: ID!, input: RequirementInput!): Requirement!
     removeRequirement(requirementId: ID!): Requirement!
     createSemesterAccessRequest(semesterId: ID!): CourseSemesterAccessRequest!
+    editSemesterRequirements(semesterId: ID!, input: CourseSemesterRequirementsInput!): Semester!
     publishChallenge(challengeId: ID!): Boolean
     createFeedback(feedback: FeedbackInput!): Feedback!
     removeFeedbackFromReview(reviewId: ID!, feedbackId: ID!): Boolean
@@ -76,11 +77,17 @@ type Semester {
     note: String
     dateStart: String!
     dateEnd: String!
-    fulfillmentConditions: JSON
+    fulfillmentConditions: CourseSemesterRequirements
     relatedUsers(offset: Int, size: Int): [AppUser!]!
-
     page: Int
     pageSize: Int
+}
+
+type CourseSemesterRequirements {
+    minOptional: Int!,
+    minMandatory: Int!,
+    minCredit: Int!,
+    minExam: Int!,
 }
 
 type Challenge {
@@ -202,6 +209,13 @@ input FeedbackInput {
 
 input ReviewPointsInput {
     points: Int!
+}
+
+input CourseSemesterRequirementsInput {
+    minOptional: Int!,
+    minMandatory: Int!,
+    minCredit: Int!,
+    minExam: Int!,
 }
 
 enum SemesterOrderByField {

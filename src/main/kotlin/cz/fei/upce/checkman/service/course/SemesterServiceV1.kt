@@ -1,6 +1,5 @@
 package cz.fei.upce.checkman.service.course
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.course.CourseSemester
@@ -18,8 +17,7 @@ import reactor.core.publisher.Mono
 @Service
 class SemesterServiceV1(
     private val courseService: CourseServiceV1,
-    private val courseSemesterRepository: CourseSemesterRepository,
-    private val objectMapper: ObjectMapper
+    private val courseSemesterRepository: CourseSemesterRepository
 ) {
     fun findAllByCoursesQL(
         coursesQL: List<CourseQL>,
@@ -59,6 +57,6 @@ class SemesterServiceV1(
 
         return courseExistMono.flatMap {
             courseSemesterRepository.save(input.toEntity(courseId))
-        }.map { it.toQL(objectMapper) }
+        }.map { it.toQL() }
     }
 }
