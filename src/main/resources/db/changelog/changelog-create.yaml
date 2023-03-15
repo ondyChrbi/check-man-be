@@ -98,6 +98,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
 
         - createSequence:
             dataType: bigint
@@ -191,7 +193,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - addForeignKeyConstraint:
             baseColumnNames: global_role_id
             baseTableName: app_user_global_role
@@ -199,7 +202,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: global_role
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - createSequence:
             dataType: bigint
             incrementBy: 1
@@ -283,7 +287,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - addForeignKeyConstraint:
             baseColumnNames: team_id
             baseTableName: app_user_team
@@ -291,7 +296,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: team
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - createSequence:
             dataType: bigint
             incrementBy: 1
@@ -442,7 +448,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - addForeignKeyConstraint:
             baseColumnNames: course_semester_role_id
             baseTableName: app_user_course_semester_role
@@ -557,7 +564,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - addForeignKeyConstraint:
             baseColumnNames: course_semester_id
             baseTableName: challenge
@@ -575,7 +583,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: challenge_kind
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - createSequence:
             dataType: bigint
             incrementBy: 1
@@ -631,7 +640,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - createSequence:
             dataType: bigint
             incrementBy: 1
@@ -722,7 +732,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - addForeignKeyConstraint:
             baseColumnNames: challenge_id
             baseTableName: permitted_app_user_challenge
@@ -887,7 +898,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - addForeignKeyConstraint:
             baseColumnNames: status_id
             baseTableName: solution
@@ -895,7 +907,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: status
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - addForeignKeyConstraint:
             baseColumnNames: test_status_id
             baseTableName: solution
@@ -903,7 +916,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: test_status
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - addForeignKeyConstraint:
             baseColumnNames: challenge_id
             baseTableName: solution
@@ -911,7 +925,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: challenge
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - createSequence:
             dataType: bigint
             incrementBy: 1
@@ -965,7 +980,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: solution
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - addForeignKeyConstraint:
             baseColumnNames: app_user_id
             baseTableName: review
@@ -973,7 +989,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: app_user
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - addForeignKeyConstraint:
             baseColumnNames: review_template_id
             baseTableName: review
@@ -981,7 +998,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: review_template
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - createSequence:
             dataType: bigint
             incrementBy: 1
@@ -1038,7 +1056,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: challenge
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - createSequence:
             dataType: bigint
             incrementBy: 1
@@ -1082,7 +1101,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: requirement
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - addForeignKeyConstraint:
             baseColumnNames: review_id
             baseTableName: requirement_review
@@ -1090,7 +1110,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: review
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - createSequence:
             dataType: bigint
             incrementBy: 1
@@ -1324,7 +1345,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: feedback_type
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - addAutoIncrement:
             columnDataType: bigint
             columnName: id
@@ -1363,7 +1385,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: feedback
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - addForeignKeyConstraint:
             baseColumnNames: review_id
             baseTableName: feedback_review
@@ -1371,7 +1394,8 @@ databaseChangeLog:
             referencedColumnNames: id
             referencedTableName: review
             validate: true
-
+            onDelete: CASCADE
+            onUpdate: RESTRICT
         - addAutoIncrement:
             columnDataType: bigint
             columnName: id
@@ -1476,6 +1500,63 @@ databaseChangeLog:
             constraintName: course_requirements_course_semester_id_fk
             referencedColumnNames: id
             referencedTableName: course_semester
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+  - changeSet:
+      id: create-30
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: test_result
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: log
+                  type: text
+                  defaultValueNumeric: 0
+              - column:
+                  name: creation_date
+                  type: timestamptz
+                  constraints:
+                    defaultValue: now()
+                    nullable: false
+              - column:
+                  name: update_date
+                  type: timestamptz
+              - column:
+                  name: test_status_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: solution_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+
+        - addForeignKeyConstraint:
+            baseColumnNames: solution_id
+            baseTableName: test_result
+            constraintName: test_result_solution_id_fk
+            referencedColumnNames: id
+            referencedTableName: solution
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - addForeignKeyConstraint:
+            baseColumnNames: test_status_id
+            baseTableName: test_result
+            constraintName: test_result_test_status_id_fk
+            referencedColumnNames: id
+            referencedTableName: test_status
             validate: true
             onDelete: CASCADE
             onUpdate: RESTRICT
