@@ -957,8 +957,6 @@ databaseChangeLog:
               - column:
                   name: app_user_id
                   type: bigint
-                  constraints:
-                    nullable: false
               - column:
                   name: review_template_id
                   type: bigint
