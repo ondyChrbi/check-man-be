@@ -5,12 +5,13 @@ import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.challenge.Solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Requirement
-import cz.fei.upce.checkman.domain.review.Review
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.graphql.output.challenge.requirement.ReviewedRequirementQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.ReviewQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.SolutionQL
+import cz.fei.upce.checkman.graphql.output.challenge.solution.TestResultQL
 import cz.fei.upce.checkman.repository.challenge.SolutionRepository
+import cz.fei.upce.checkman.repository.challenge.TestResultRepository
 import cz.fei.upce.checkman.repository.review.FeedbackRepository
 import cz.fei.upce.checkman.repository.review.RequirementRepository
 import cz.fei.upce.checkman.repository.review.RequirementReviewRepository
@@ -30,6 +31,7 @@ class SolutionServiceV1(
     private val requirementRepository: RequirementRepository,
     private val reviewRepository: ReviewRepository,
     private val feedbackRepository: FeedbackRepository,
+    private val testResultRepository: TestResultRepository,
     private val authorizationService: CourseAuthorizationServiceV1,
     private val appUserService: AppUserServiceV1,
     private val courseService: CourseServiceV1,
@@ -125,6 +127,16 @@ class SolutionServiceV1(
             }
     }
 
+
+    fun findTestResultsAsQL(solutionId: Long?): Mono<TestResultQL> {
+        if (solutionId == null) {
+            return Mono.empty()
+        }
+
+        return testResultRepository.findFirstBySolutionIdEquals(solutionId)
+            .map { it.toDto() }
+    }
+
     private fun findAllRequirementsByChallengeId(challengeId: Long): Flux<Requirement> {
         return requirementRepository.findAllByChallengeIdEquals(challengeId)
     }
@@ -135,4 +147,5 @@ class SolutionServiceV1(
             requirement.id!!
         ).map { it.toReviewedRequirementQL(requirement.toQL()) }
     }
+
 }

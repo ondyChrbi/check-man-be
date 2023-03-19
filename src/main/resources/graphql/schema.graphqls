@@ -153,7 +153,8 @@ type Solution {
     uploadDate: DateTime!
     status: String!
     review: Review,
-    author: AppUser
+    author: AppUser,
+    testResult: TestResult,
 }
 
 type Feedback {
@@ -167,6 +168,21 @@ type Review{
     description: String!
     requirements: [ReviewedRequirement!]!
     feedbacks: [Feedback!]!
+}
+
+type TestResult {
+    id: ID
+    log: String
+    creationDate: DateTime
+    updateDate: DateTime
+    status: TestStatus
+}
+
+enum TestStatus {
+    WAITING_TO_TEST,
+    RUNNING,
+    FINISHED,
+    ERROR
 }
 
 input CourseInput {
