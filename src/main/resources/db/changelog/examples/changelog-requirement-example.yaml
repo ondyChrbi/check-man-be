@@ -6,6 +6,9 @@ databaseChangeLog:
         - insert:
             columns:
               - column:
+                  name: id
+                  value: 100
+              - column:
                   name: name
                   value: Example requirement no. 1.1
               - column:
@@ -22,11 +25,14 @@ databaseChangeLog:
                   value: false
               - column:
                   name: challenge_id
-                  value: 0
+                  value: 100
             tableName: requirement
 
         - insert:
             columns:
+              - column:
+                  name: id
+                  value: 101
               - column:
                   name: name
                   value: Example requirement no. 1.2
@@ -44,11 +50,14 @@ databaseChangeLog:
                   value: false
               - column:
                   name: challenge_id
-                  value: 0
+                  value: 100
             tableName: requirement
 
         - insert:
             columns:
+              - column:
+                  name: id
+                  value: 102
               - column:
                   name: name
                   value: Example requirement no. 1.3
@@ -66,5 +75,5 @@ databaseChangeLog:
                   value: false
               - column:
                   name: challenge_id
-                  value: 0
+                  value: 100
             tableName: requirement

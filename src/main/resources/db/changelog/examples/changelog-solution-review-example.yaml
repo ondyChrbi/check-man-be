@@ -7,7 +7,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 0
+                  value: 100
               - column:
                   name: path
                   value: /tmp/check-man/solution/a2f8dee6-c114-4b73-bb9c-8b80a1946b7c.zip
@@ -16,23 +16,23 @@ databaseChangeLog:
                   value: 2022-07-30 16:47:10.101896 +00:00
               - column:
                   name: user_id
-                  value: 0
+                  value: 100
               - column:
                   name: status_id
-                  value: 0
+                  value: 1
               - column:
                   name: test_status_id
                   value: 0
               - column:
                   name: challenge_id
-                  value: 0
+                  value: 100
             tableName: solution
 
         - insert:
             columns:
               - column:
                   name: id
-                  value: 1
+                  value: 101
               - column:
                   name: path
                   value: /tmp/check-man/solution/0c0321b6-7f1c-41d4-9afc-b473bb420598.zip
@@ -41,7 +41,7 @@ databaseChangeLog:
                   value: 2022-08-02 16:47:10.101896 +00:00
               - column:
                   name: user_id
-                  value: 0
+                  value: 100
               - column:
                   name: status_id
                   value: 1
@@ -50,14 +50,14 @@ databaseChangeLog:
                   value: 0
               - column:
                   name: challenge_id
-                  value: 0
+                  value: 100
             tableName: solution
 
         - insert:
             columns:
               - column:
                   name: id
-                  value: 2
+                  value: 102
               - column:
                   name: path
                   value: /tmp/check-man/solution/fc55ac7a-5d68-49cb-abf3-7d00dc55e06a.zip
@@ -66,7 +66,7 @@ databaseChangeLog:
                   value: 2022-08-05 16:47:10.101896 +00:00
               - column:
                   name: user_id
-                  value: 0
+                  value: 100
               - column:
                   name: status_id
                   value: 2
@@ -75,7 +75,7 @@ databaseChangeLog:
                   value: 0
               - column:
                   name: challenge_id
-                  value: 0
+                  value: 100
             tableName: solution
 
   - changeSet:
@@ -86,16 +86,16 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 0
+                  value: 100
               - column:
                   name: description
                   value: Requirement description N 0
               - column:
                   name: solution_id
-                  value: 0
+                  value: 100
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
             tableName: review
 
   - changeSet:
@@ -106,7 +106,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 0
+                  value: 100
               - column:
                   name: point
                   value: 3
@@ -115,16 +115,16 @@ databaseChangeLog:
                   value: Some D to R 0
               - column:
                   name: requirement_id
-                  value: 0
+                  value: 100
               - column:
                   name: review_id
-                  value: 0
+                  value: 100
             tableName: requirement_review
         - insert:
             columns:
               - column:
                   name: id
-                  value: 1
+                  value: 101
               - column:
                   name: point
                   value: 0
@@ -133,16 +133,16 @@ databaseChangeLog:
                   value: Some D to R 1
               - column:
                   name: requirement_id
-                  value: 1
+                  value: 101
               - column:
                   name: review_id
-                  value: 0
+                  value: 100
             tableName: requirement_review
         - insert:
             columns:
               - column:
                   name: id
-                  value: 2
+                  value: 102
               - column:
                   name: point
                   value: 7
@@ -151,10 +151,10 @@ databaseChangeLog:
                   value: Some D to R 2
               - column:
                   name: requirement_id
-                  value: 2
+                  value: 102
               - column:
                   name: review_id
-                  value: 0
+                  value: 100
             tableName: requirement_review
 
   - changeSet:
@@ -165,7 +165,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 0
+                  value: 100
               - column:
                   name: description
                   value: The classes are missing interfaces
@@ -177,7 +177,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 1
+                  value: 101
               - column:
                   name: description
                   value: Code could be more refactored
@@ -189,7 +189,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 2
+                  value: 102
               - column:
                   name: description
                   value: All methods with inner class logic has private access
@@ -201,7 +201,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 3
+                  value: 103
               - column:
                   name: description
                   value: Performance of algorithm is one of the best
@@ -218,49 +218,49 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 0
+                  value: 100
               - column:
                   name: feedback_id
-                  value: 0
+                  value: 100
               - column:
                   name: review_id
-                  value: 0
+                  value: 100
             tableName: feedback_review
         - insert:
             columns:
               - column:
                   name: id
-                  value: 1
+                  value: 101
               - column:
                   name: feedback_id
-                  value: 1
+                  value: 101
               - column:
                   name: review_id
-                  value: 0
+                  value: 100
             tableName: feedback_review
         - insert:
             columns:
               - column:
                   name: id
-                  value: 2
+                  value: 102
               - column:
                   name: feedback_id
-                  value: 2
+                  value: 102
               - column:
                   name: review_id
-                  value: 0
+                  value: 100
             tableName: feedback_review
         - insert:
             columns:
               - column:
                   name: id
-                  value: 3
+                  value: 103
               - column:
                   name: feedback_id
-                  value: 3
+                  value: 103
               - column:
                   name: review_id
-                  value: 0
+                  value: 100
             tableName: feedback_review
 
   - changeSet:
@@ -290,4 +290,4 @@ databaseChangeLog:
                   value: 2022-07-30 16:47:10.227843 +00:00
               - column:
                   name: challenge_id
-                  valueNumeric: 0
+                  valueNumeric: 100

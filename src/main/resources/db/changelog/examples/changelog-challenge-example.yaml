@@ -6,6 +6,9 @@ databaseChangeLog:
         - insert:
             columns:
               - column:
+                  name: id
+                  value: 100
+              - column:
                   name: name
                   value: Example challenge no. 1
               - column:
@@ -13,16 +16,19 @@ databaseChangeLog:
                   value: Some description about this challenge taller than some limit.
               - column:
                   name: author_id
-                  value: 0
+                  value: 100
               - column:
                   name: course_semester_id
-                  value: 0
+                  value: 100
               - column:
                   name: challenge_kind_id
                   value: 0
             tableName: challenge
         - insert:
             columns:
+              - column:
+                  name: id
+                  value: 101
               - column:
                   name: name
                   value: Example challenge no. 2
@@ -31,16 +37,19 @@ databaseChangeLog:
                   value: Some description about this challenge taller than some limit.
               - column:
                   name: author_id
-                  value: 0
+                  value: 100
               - column:
                   name: course_semester_id
-                  value: 0
+                  value: 100
               - column:
                   name: challenge_kind_id
                   value: 1
             tableName: challenge
         - insert:
             columns:
+              - column:
+                  name: id
+                  value: 102
               - column:
                   name: name
                   value: Example challenge no. 3
@@ -49,16 +58,19 @@ databaseChangeLog:
                   value: Some description about this challenge taller than some limit.
               - column:
                   name: author_id
-                  value: 0
+                  value: 100
               - column:
                   name: course_semester_id
-                  value: 0
+                  value: 100
               - column:
                   name: challenge_kind_id
                   value: 2
             tableName: challenge
         - insert:
             columns:
+              - column:
+                  name: id
+                  value: 103
               - column:
                   name: name
                   value: Example challenge no. 4
@@ -67,10 +79,10 @@ databaseChangeLog:
                   value: Some description about this challenge taller than some limit.
               - column:
                   name: author_id
-                  value: 0
+                  value: 100
               - column:
                   name: course_semester_id
-                  value: 0
+                  value: 100
               - column:
                   name: challenge_kind_id
                   value: 3

@@ -7,117 +7,117 @@ databaseChangeLog:
             columns:
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: course_semester_role_id
                   value: 0
               - column:
                   name: course_semester_id
-                  value: 0
+                  value: 100
             tableName: app_user_course_semester_role
 
         - insert:
             columns:
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: course_semester_role_id
                   value: 1
               - column:
                   name: course_semester_id
-                  value: 0
+                  value: 100
             tableName: app_user_course_semester_role
 
         - insert:
             columns:
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: course_semester_role_id
                   value: 2
               - column:
                   name: course_semester_id
-                  value: 0
+                  value: 100
             tableName: app_user_course_semester_role
 
         - insert:
             columns:
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: course_semester_role_id
                   value: 3
               - column:
                   name: course_semester_id
-                  value: 0
+                  value: 100
             tableName: app_user_course_semester_role
 
         - insert:
             columns:
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: course_semester_role_id
                   value: 4
               - column:
                   name: course_semester_id
-                  value: 0
+                  value: 100
             tableName: app_user_course_semester_role
 
         - insert:
             columns:
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: course_semester_role_id
                   value: 5
               - column:
                   name: course_semester_id
-                  value: 0
+                  value: 100
             tableName: app_user_course_semester_role
 
         - insert:
             columns:
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: course_semester_role_id
                   value: 6
               - column:
                   name: course_semester_id
-                  value: 0
+                  value: 100
             tableName: app_user_course_semester_role
 
         - insert:
             columns:
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: course_semester_role_id
                   value: 7
               - column:
                   name: course_semester_id
-                  value: 0
+                  value: 100
             tableName: app_user_course_semester_role
 
         - insert:
             columns:
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: course_semester_role_id
                   value: 8
               - column:
                   name: course_semester_id
-                  value: 0
+                  value: 100
             tableName: app_user_course_semester_role
 
   - changeSet:
@@ -128,11 +128,11 @@ databaseChangeLog:
             columns:
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: course_semester_role_id
                   value: 9
               - column:
                   name: course_semester_id
-                  value: 0
+                  value: 100
             tableName: app_user_course_semester_role

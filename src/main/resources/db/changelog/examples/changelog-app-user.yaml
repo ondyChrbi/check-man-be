@@ -7,7 +7,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 0
+                  value: 100
               - column:
                   name: stag_id
                   value: st55774
@@ -31,7 +31,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 0
+                  value: 100
               - column:
                   name: name
                   value: st55774_check-man.team.private.post-fix
@@ -57,10 +57,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 0
+                  value: 100
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: global_role_id
                   value: 0
@@ -74,10 +74,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 1
+                  value: 101
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: global_role_id
                   value: 1
@@ -91,10 +91,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 14
+                  value: 1014
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: global_role_id
                   value: 1
@@ -108,10 +108,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 2
+                  value: 102
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: global_role_id
                   value: 2
@@ -125,10 +125,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 3
+                  value: 103
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: global_role_id
                   value: 3
@@ -142,10 +142,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 4
+                  value: 104
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: global_role_id
                   value: 4
@@ -159,10 +159,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 5
+                  value: 105
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: global_role_id
                   value: 5
@@ -176,10 +176,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 6
+                  value: 106
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: global_role_id
                   value: 6
@@ -193,10 +193,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 7
+                  value: 107
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: global_role_id
                   value: 7
@@ -210,10 +210,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 8
+                  value: 108
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: global_role_id
                   value: 8
@@ -227,10 +227,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 9
+                  value: 109
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: global_role_id
                   value: 9
@@ -244,10 +244,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 10
+                  value: 1010
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: global_role_id
                   value: 10
@@ -261,10 +261,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 11
+                  value: 1011
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: global_role_id
                   value: 11
@@ -278,10 +278,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 12
+                  value: 1012
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: global_role_id
                   value: 12
@@ -295,10 +295,10 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 13
+                  value: 1013
               - column:
                   name: app_user_id
-                  value: 0
+                  value: 100
               - column:
                   name: global_role_id
                   value: 13
