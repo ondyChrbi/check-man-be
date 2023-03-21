@@ -62,6 +62,18 @@ interface CourseSemesterRepository : ReactiveSortingRepository<CourseSemester, L
 
     @Query(
         """
+        select cs.id
+        from course_semester cs
+        inner join challenge ch on cs.id = ch.course_semester_id
+        inner join solution s on ch.id = s.challenge_id
+        inner join test_result tr on s.id = tr.solution_id
+        where tr.id = :testResultId
+    """
+    )
+    fun findIdByTestResultId(testResultId: Long): Mono<Long>
+
+    @Query(
+        """
         select cs.* from course_semester cs
         where :currentDate between cs.date_start and cs.date_end
         """

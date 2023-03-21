@@ -9,6 +9,7 @@ type Query {
     semester(id: ID!): Semester
     semesters(courseId: ID!, oderBy: SemesterOrderByField, sortOrder: SortOrder, pageSize: Int, page: Int): [Semester!]!
     challenge(id: ID!): Challenge
+    testResult(id: ID!): TestResult
     me: AppUser!
     appUser(id: ID!): AppUser!
     myCourses: [Course!]!

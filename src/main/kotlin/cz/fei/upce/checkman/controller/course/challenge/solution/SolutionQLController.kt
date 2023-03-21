@@ -1,7 +1,6 @@
 package cz.fei.upce.checkman.controller.course.challenge.solution
 
 import cz.fei.upce.checkman.graphql.output.challenge.solution.SolutionQL
-import cz.fei.upce.checkman.graphql.output.challenge.solution.TestResultQL
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import cz.fei.upce.checkman.service.course.challenge.solution.SolutionServiceV1
 import cz.fei.upce.checkman.service.course.security.annotation.ChallengeId
@@ -9,7 +8,6 @@ import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemester
 import cz.fei.upce.checkman.service.course.security.annotation.SolutionId
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.QueryMapping
-import org.springframework.graphql.data.method.annotation.SchemaMapping
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
@@ -33,10 +31,5 @@ class SolutionQLController(
     @PreCourseSemesterAuthorize
     fun solution(@SolutionId @Argument id: Long, authentication: Authentication): Mono<SolutionQL> {
         return solutionService.findById(id, authenticationService.extractAuthenticateUser(authentication))
-    }
-
-    @SchemaMapping(typeName = "Solution")
-    fun testResult(solution: SolutionQL?, authentication: Authentication): Mono<TestResultQL> {
-        return solutionService.findTestResultsAsQL(solution?.id)
     }
 }

@@ -136,3 +136,20 @@ databaseChangeLog:
                   name: course_semester_id
                   value: 100
             tableName: app_user_course_semester_role
+
+  - changeSet:
+      id: changelog-app_user_course_semester_role-3
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: app_user_id
+                  value: 100
+              - column:
+                  name: course_semester_role_id
+                  value: 10
+              - column:
+                  name: course_semester_id
+                  value: 100
+            tableName: app_user_course_semester_role

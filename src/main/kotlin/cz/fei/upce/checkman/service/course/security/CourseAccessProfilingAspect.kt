@@ -95,6 +95,17 @@ class CourseAccessProfilingAspect(
             return finishProcessing(joinPoint, result)
         }
 
+        val testResults = parameters.filter { it.annotations.filterIsInstance<TestResultId>().isNotEmpty() }
+        if (testResults.isNotEmpty()) {
+            val testReviewId = joinPoint.args[parameters.indexOf(parameters.first())]
+            if (testReviewId !is Long) {
+                return Mono.error<Void>(NotIdDataTypeException("testResultId", Long::class.java))
+            }
+
+            val result = checkBasedTestResult(testReviewId, appUser, annotation)
+            return finishProcessing(joinPoint, result)
+        }
+
         return Mono.error(NoSemesterBasedIdInMethodArgumentsException(methodSignature, REQUIRED_ANNOTATIONS))
     }
 
@@ -140,13 +151,23 @@ class CourseAccessProfilingAspect(
             .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
     }
 
-
     private fun checkBasedReview(
         reviewId: Long,
         appUser: AppUser,
         annotation: PreCourseSemesterAuthorize
     ): Mono<Boolean> {
         return courseSemesterRepository.findIdByReviewId(reviewId)
+            .switchIfEmpty(Mono.error(AuthorizeIdentificationNotFoundException(ReviewId::class, reviewId)))
+            .flatMap { semesterId -> authorizeService.hasCourseAccess(semesterId, appUser, annotation) }
+            .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
+    }
+
+    private fun checkBasedTestResult(
+        reviewId: Long,
+        appUser: AppUser,
+        annotation: PreCourseSemesterAuthorize
+    ): Mono<Boolean> {
+        return courseSemesterRepository.findIdByTestResultId(reviewId)
             .switchIfEmpty(Mono.error(AuthorizeIdentificationNotFoundException(ReviewId::class, reviewId)))
             .flatMap { semesterId -> authorizeService.hasCourseAccess(semesterId, appUser, annotation) }
             .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
