@@ -176,7 +176,8 @@ type TestResult {
     log: String
     creationDate: DateTime
     updateDate: DateTime
-    status: TestStatus
+    status: TestStatus,
+    feedbacks: [Feedback!]
 }
 
 enum TestStatus {
