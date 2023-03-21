@@ -6,6 +6,7 @@ import cz.fei.upce.checkman.domain.course.CourseSemester
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.graphql.input.course.CourseRequirementsInputQL
 import cz.fei.upce.checkman.graphql.input.course.SemesterInputQL
+import cz.fei.upce.checkman.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL
 import cz.fei.upce.checkman.graphql.output.course.CourseQL
 import cz.fei.upce.checkman.graphql.output.course.CourseRequirementsQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
@@ -113,5 +114,10 @@ class CourseSemesterQLController(
     @SchemaMapping(typeName = "Semester")
     fun fulfillmentConditions (semestersQL: CourseSemesterQL): Mono<CourseRequirementsQL> {
         return courseService.findSemesterRequirements(semestersQL.id)
+    }
+
+    @SchemaMapping(typeName = "Semester")
+    fun statistic(semestersQL: CourseSemesterQL): Flux<FeedbackStatisticsQL> {
+        return semesterService.makeStatistic(semestersQL)
     }
 }

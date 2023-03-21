@@ -4,9 +4,11 @@ import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.course.CourseSemester
 import cz.fei.upce.checkman.graphql.input.course.SemesterInputQL
+import cz.fei.upce.checkman.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL
 import cz.fei.upce.checkman.graphql.output.course.CourseQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
+import cz.fei.upce.checkman.repository.review.statistic.FeedbackStatisticsRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -17,7 +19,8 @@ import reactor.core.publisher.Mono
 @Service
 class SemesterServiceV1(
     private val courseService: CourseServiceV1,
-    private val courseSemesterRepository: CourseSemesterRepository
+    private val courseSemesterRepository: CourseSemesterRepository,
+    private val feedbackStatisticsRepository: FeedbackStatisticsRepository
 ) {
     fun findAllByCoursesQL(
         coursesQL: List<CourseQL>,
@@ -58,5 +61,10 @@ class SemesterServiceV1(
         return courseExistMono.flatMap {
             courseSemesterRepository.save(input.toEntity(courseId))
         }.map { it.toQL() }
+    }
+
+    fun makeStatistic(semesters: CourseSemesterQL): Flux<FeedbackStatisticsQL> {
+        return feedbackStatisticsRepository.findAllBySemesterIdEquals(semesters.id)
+            .map { it.toQL() }
     }
 }
