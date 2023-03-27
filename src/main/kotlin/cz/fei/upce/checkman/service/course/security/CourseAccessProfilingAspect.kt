@@ -30,12 +30,17 @@ class CourseAccessProfilingAspect(
         val returnType = methodSignature.returnType
 
         if (isNotReactiveReturnType(returnType)) {
-            return Mono.error(NotReactiveReturnTypeException(methodSignature))
+            throw NotReactiveReturnTypeException(methodSignature)
         }
 
-        val authentication = joinPoint.args.first { it is Authentication }
-            ?: throw MissingAuthenticationArgumentException(methodSignature)
-        val appUser = authenticationService.extractAuthenticateUser(authentication as Authentication)
+        val authentication : Authentication?
+        try {
+            authentication = joinPoint.args.first { it is Authentication } as Authentication
+        } catch (e: NoSuchElementException) {
+            throw MissingAuthenticationArgumentException(methodSignature)
+        }
+
+        val appUser = authenticationService.extractAuthenticateUser(authentication)
 
         val annotation = methodSignature.method.getAnnotation(PreCourseSemesterAuthorize::class.java)
         val parameters = methodSignature.method.parameters
@@ -44,7 +49,7 @@ class CourseAccessProfilingAspect(
         if (semesters.isNotEmpty()) {
             val semesterId = joinPoint.args[parameters.indexOf(semesters.first())]
             if (semesterId !is Long) {
-                return Mono.error<Void>(NotIdDataTypeException("semesterId", Long::class.java))
+                throw NotIdDataTypeException("semesterId", Long::class.java)
             }
 
             val result = checkBasedCourseSemester(semesterId, appUser, annotation)
@@ -55,7 +60,7 @@ class CourseAccessProfilingAspect(
         if (challenges.isNotEmpty()) {
             val challengeId = joinPoint.args[parameters.indexOf(challenges.first())]
             if (challengeId !is Long) {
-                return Mono.error<Void>(NotIdDataTypeException("challengeId", Long::class.java))
+                throw NotIdDataTypeException("challengeId", Long::class.java)
             }
 
             val result = checkBasedChallenge(challengeId, appUser, annotation)
@@ -66,7 +71,7 @@ class CourseAccessProfilingAspect(
         if (requirements.isNotEmpty()) {
             val requirementId = joinPoint.args[parameters.indexOf(requirements.first())]
             if (requirementId !is Long) {
-                return Mono.error<Void>(NotIdDataTypeException("requirementId", Long::class.java))
+                throw NotIdDataTypeException("requirementId", Long::class.java)
             }
 
             val result = checkBasedRequirement(requirementId, appUser, annotation)
@@ -77,7 +82,7 @@ class CourseAccessProfilingAspect(
         if (solutions.isNotEmpty()) {
             val solutionId = joinPoint.args[parameters.indexOf(solutions.first())]
             if (solutionId !is Long) {
-                return Mono.error<Void>(NotIdDataTypeException("solutionId", Long::class.java))
+                throw NotIdDataTypeException("solutionId", Long::class.java)
             }
 
             val result = checkBasedSolution(solutionId, appUser, annotation)
@@ -88,7 +93,7 @@ class CourseAccessProfilingAspect(
         if (reviews.isNotEmpty()) {
             val reviewId = joinPoint.args[parameters.indexOf(parameters.first())]
             if (reviewId !is Long) {
-                return Mono.error<Void>(NotIdDataTypeException("reviewId", Long::class.java))
+                throw NotIdDataTypeException("reviewId", Long::class.java)
             }
 
             val result = checkBasedReview(reviewId, appUser, annotation)
@@ -99,7 +104,7 @@ class CourseAccessProfilingAspect(
         if (testResults.isNotEmpty()) {
             val testReviewId = joinPoint.args[parameters.indexOf(parameters.first())]
             if (testReviewId !is Long) {
-                return Mono.error<Void>(NotIdDataTypeException("testResultId", Long::class.java))
+                throw NotIdDataTypeException("testResultId", Long::class.java)
             }
 
             val result = checkBasedTestResult(testReviewId, appUser, annotation)

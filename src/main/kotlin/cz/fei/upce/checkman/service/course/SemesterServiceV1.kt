@@ -9,6 +9,8 @@ import cz.fei.upce.checkman.graphql.output.course.CourseQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.repository.review.statistic.FeedbackStatisticsRepository
+import cz.fei.upce.checkman.repository.review.statistic.FeedbackStatisticsRepository.Companion.DEFAULT_PAGEABLE
+import cz.fei.upce.checkman.repository.review.statistic.FeedbackStatisticsRepository.Companion.DEFAULT_SORT
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -66,5 +68,17 @@ class SemesterServiceV1(
     fun makeStatistic(semesters: CourseSemesterQL): Flux<FeedbackStatisticsQL> {
         return feedbackStatisticsRepository.findAllBySemesterIdEquals(semesters.id)
             .map { it.toQL() }
+    }
+
+    fun findAllStatistics(semesterId: Long, order: Sort.Direction? = Sort.Direction.ASC, limit: Int? = DEFAULT_LIMIT): Flux<FeedbackStatisticsQL> {
+        val sort = if (order != null) Sort.by(order, "count") else DEFAULT_SORT
+        val pageable = if (limit != null) PageRequest.of(0, limit) else DEFAULT_PAGEABLE
+
+        return feedbackStatisticsRepository.findAllBySemesterIdEquals(semesterId, sort, pageable)
+            .map { it.toQL() }
+    }
+
+    private companion object {
+        const val DEFAULT_LIMIT = 5
     }
 }

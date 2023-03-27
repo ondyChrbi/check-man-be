@@ -8,6 +8,7 @@ type Query {
     course(id: ID!): Course
     semester(id: ID!): Semester
     semesters(courseId: ID!, oderBy: SemesterOrderByField, sortOrder: SortOrder, pageSize: Int, page: Int): [Semester!]!
+    statistic(semesterId: ID!, direction: Order, limit: Int): [FeedbackStatistics!]!
     challenge(id: ID!): Challenge
     testResult(id: ID!): TestResult
     me: AppUser!
@@ -194,6 +195,11 @@ enum TestStatus {
     RUNNING,
     FINISHED,
     ERROR
+}
+
+enum Order {
+    ASC,
+    DESC,
 }
 
 input CourseInput {

@@ -17,3 +17,15 @@ databaseChangeLog:
 
   - include:
       file: classpath:db/changelog/examples/changelog-solution-review-example.yaml
+
+  - include:
+      file: classpath:db/changelog/examples/changelog-feedback-example.yaml
+
+  - include:
+      file: classpath:db/changelog/examples/changelog-solution-example.yaml
+
+  - include:
+      file: classpath:db/changelog/examples/changelog-review-example.yaml
+
+  - include:
+      file: classpath:db/changelog/examples/changelog-feedback-review-example.yaml
