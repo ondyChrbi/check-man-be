@@ -9,7 +9,18 @@ import reactor.core.publisher.Flux
 
 @Repository
 interface FeedbackStatisticsRepository : ReactiveCrudRepository<FeedbackStatistics, Long> {
-    fun findAllBySemesterIdEquals(semesterId: Long, sort: Sort = DEFAULT_SORT, pageable: PageRequest = DEFAULT_PAGEABLE) : Flux<FeedbackStatistics>
+    fun findDistinctBySemesterIdEquals(
+        semesterId: Long,
+        sort: Sort = DEFAULT_SORT,
+        pageable: PageRequest = DEFAULT_PAGEABLE,
+    ): Flux<FeedbackStatistics>
+
+    fun findDistinctBySemesterIdEqualsAndDescriptionContainingIgnoreCase(
+        semesterId: Long,
+        description: String,
+        sort: Sort = DEFAULT_SORT,
+        pageable: PageRequest = DEFAULT_PAGEABLE,
+    ): Flux<FeedbackStatistics>
 
     companion object {
         val DEFAULT_SORT = Sort.by(Sort.Direction.ASC, "count")

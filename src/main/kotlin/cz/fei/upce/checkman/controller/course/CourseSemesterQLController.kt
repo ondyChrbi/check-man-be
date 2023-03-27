@@ -123,8 +123,10 @@ class CourseSemesterQLController(
 
     @QueryMapping("statistic")
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.VIEW_STATISTICS])
-    fun statisticQuery(@Argument @SemesterId semesterId: Long, @Argument direction : Sort.Direction?, @Argument limit: Int?, authentication: Authentication): Flux<FeedbackStatisticsQL> {
-        return semesterService.findAllStatistics(semesterId, direction, limit)
+    fun statisticQuery(@Argument @SemesterId semesterId: Long, @Argument direction : Sort.Direction?,
+                       @Argument limit: Int?, @Argument description: String?,
+                       authentication: Authentication): Flux<FeedbackStatisticsQL> {
+        return semesterService.findAllStatistics(semesterId, direction, limit, description)
     }
 
 }

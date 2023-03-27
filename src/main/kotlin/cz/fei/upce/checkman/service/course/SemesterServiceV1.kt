@@ -22,11 +22,11 @@ import reactor.core.publisher.Mono
 class SemesterServiceV1(
     private val courseService: CourseServiceV1,
     private val courseSemesterRepository: CourseSemesterRepository,
-    private val feedbackStatisticsRepository: FeedbackStatisticsRepository
+    private val feedbackStatisticsRepository: FeedbackStatisticsRepository,
 ) {
     fun findAllByCoursesQL(
         coursesQL: List<CourseQL>,
-        sortBy: CourseSemester.OrderByField = CourseSemester.OrderByField.id
+        sortBy: CourseSemester.OrderByField = CourseSemester.OrderByField.id,
     ): Flux<List<CourseSemester>> {
         val sort = Sort.by(sortBy.toString())
 
@@ -37,12 +37,13 @@ class SemesterServiceV1(
                     .defaultIfEmpty(listOf<CourseSemester>())
             }
     }
+
     fun findAllByCoursesQL(
         courseId: Long,
         oderBy: CourseSemester.OrderByField? = CourseSemester.OrderByField.id,
         sortOrder: Sort.Direction? = Sort.Direction.ASC,
         pageSize: Int? = DEFAULT_SIZE,
-        page: Int? = DEFAULT_OFFSET
+        page: Int? = DEFAULT_OFFSET,
     ): Flux<CourseSemester> {
         val sortField = oderBy ?: CourseSemester.OrderByField.id
         val sort = Sort.by(Sort.Order(sortOrder ?: Sort.Direction.ASC, sortField.toString()))
@@ -66,16 +67,30 @@ class SemesterServiceV1(
     }
 
     fun makeStatistic(semesters: CourseSemesterQL): Flux<FeedbackStatisticsQL> {
-        return feedbackStatisticsRepository.findAllBySemesterIdEquals(semesters.id)
+        return feedbackStatisticsRepository.findDistinctBySemesterIdEquals(semesters.id)
             .map { it.toQL() }
     }
 
-    fun findAllStatistics(semesterId: Long, order: Sort.Direction? = Sort.Direction.ASC, limit: Int? = DEFAULT_LIMIT): Flux<FeedbackStatisticsQL> {
+    fun findAllStatistics(
+        semesterId: Long,
+        order: Sort.Direction? = Sort.Direction.ASC,
+        limit: Int? = DEFAULT_LIMIT,
+        description: String?,
+    ): Flux<FeedbackStatisticsQL> {
         val sort = if (order != null) Sort.by(order, "count") else DEFAULT_SORT
         val pageable = if (limit != null) PageRequest.of(0, limit) else DEFAULT_PAGEABLE
 
-        return feedbackStatisticsRepository.findAllBySemesterIdEquals(semesterId, sort, pageable)
-            .map { it.toQL() }
+        val resultFlux = if (description == null)
+            feedbackStatisticsRepository.findDistinctBySemesterIdEquals(semesterId, sort, pageable)
+        else
+            feedbackStatisticsRepository.findDistinctBySemesterIdEqualsAndDescriptionContainingIgnoreCase(
+                semesterId,
+                description,
+                sort,
+                pageable
+            )
+
+        return resultFlux.map { it.toQL() }
     }
 
     private companion object {

@@ -1566,12 +1566,13 @@ databaseChangeLog:
         - createView:
             viewName: feedback_statistics
             selectQuery: >
-              select cs.id as semester_id, c.id as challenge_id, f.description, f.feedback_type_id, count(*) as count
+              select cs.id as semester_id, c.id as challenge_id, f.description, f.feedback_type_id, ft.name as feedback_name, count(*) as count
               from feedback f
               inner join feedback_review fr on f.id = fr.feedback_id
               inner join review r on fr.review_id = r.id
               inner join solution s on r.solution_id = s.id
               inner join challenge c on s.challenge_id = c.id
               inner join course_semester cs on c.course_semester_id = cs.id
-              group by f.description, cs.id, c.id, f.feedback_type_id
+              inner join feedback_type ft on f.feedback_type_id = ft.id
+              group by f.description, cs.id, c.id, f.feedback_type_id, ft.name
               order by count desc

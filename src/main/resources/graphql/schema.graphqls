@@ -8,7 +8,7 @@ type Query {
     course(id: ID!): Course
     semester(id: ID!): Semester
     semesters(courseId: ID!, oderBy: SemesterOrderByField, sortOrder: SortOrder, pageSize: Int, page: Int): [Semester!]!
-    statistic(semesterId: ID!, direction: Order, limit: Int): [FeedbackStatistics!]!
+    statistic(semesterId: ID!, direction: Order, limit: Int, description: String): [FeedbackStatistics!]!
     challenge(id: ID!): Challenge
     testResult(id: ID!): TestResult
     me: AppUser!
@@ -187,6 +187,7 @@ type FeedbackStatistics {
     challengeId: ID
     description: String
     feedbackTypeId: ID
+    feedbackName: String
     count: Int
 }
 

@@ -20,6 +20,9 @@ data class FeedbackStatistics(
     val feedbackTypeId: Long,
 
     @field:Column
+    val feedbackName: String,
+
+    @field:Column
     val count: Long
 ) {
     fun toQL(): FeedbackStatisticsQL {
@@ -28,6 +31,7 @@ data class FeedbackStatistics(
             challengeId = challengeId,
             description = description,
             feedbackTypeId = feedbackTypeId,
+            feedbackName = feedbackName,
             count = count
         )
     }

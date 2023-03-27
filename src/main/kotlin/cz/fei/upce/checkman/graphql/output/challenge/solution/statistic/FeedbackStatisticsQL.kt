@@ -5,5 +5,6 @@ data class FeedbackStatisticsQL(
     val challengeId: Long,
     val description: String,
     val feedbackTypeId: Long,
+    val feedbackName: String,
     val count: Long
 )
