@@ -13,7 +13,7 @@ databaseChangeLog:
                   value: EXAMPLE-COURSE-1
               - column:
                   name: name
-                  value: Example course no. 1
+                  value: Základy programování
               - column:
                   name: date_creation
                   value: 2022-07-10 00:00:00.000000
@@ -34,7 +34,7 @@ databaseChangeLog:
                   value: EXAMPLE-COURSE-2
               - column:
                   name: name
-                  value: Example course no. 2
+                  value: Operační systémy 1
               - column:
                   name: date_creation
                   value: 2022-01-01 00:00:00.000000
@@ -52,13 +52,13 @@ databaseChangeLog:
                   value: 100
               - column:
                   name: note
-                  value: Example semester in course no. 1
+                  value: Studenti se v předmětu naučí analyzovat základní úlohy a následně je implementovat pomocí vyššího programovacího jazyka Java.
               - column:
                   name: date_start
                   value: 2021-01-01 00:00:00.000000
               - column:
                   name: date_end
-                  value: 2023-01-01 00:00:00.000000
+                  value: 2024-01-01 00:00:00.000000
               - column:
                   name: course_id
                   value: 100
@@ -70,13 +70,13 @@ databaseChangeLog:
                   value: 101
               - column:
                   name: note
-                  value: Example semester in course no. 2
+                  value: Cílem předmětu je seznámit studenty se základy teorie operačních systémů a praktickým použitím teorie v posixových operačních systémech. Umožnit studentům získat základní praktické zkušenosti a dovednosti při řešení problémů souběhu v posixových OS (se zaměřením na Linux).
               - column:
                   name: date_start
                   value: 2021-01-01 00:00:00.000000
               - column:
                   name: date_end
-                  value: 2023-01-01 00:00:00.000000
+                  value: 2024-01-01 00:00:00.000000
               - column:
                   name: course_id
                   value: 101

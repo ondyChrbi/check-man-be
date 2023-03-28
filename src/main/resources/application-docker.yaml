@@ -31,6 +31,9 @@ login:
 
 logging:
   level:
+    io.r2dbc.postgresql.QUERY: debug
+    io.r2dbc.postgresql.PARAM: debug
+    liquibase: info
     org:
       springframework:
         r2dbc: debug

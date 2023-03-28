@@ -1,6 +1,7 @@
 package cz.fei.upce.checkman.service.role
 
 import cz.fei.upce.checkman.domain.course.AppUserCourseSemesterRole
+import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.appuser.CourseSemesterRoleDtoV1
 import cz.fei.upce.checkman.dto.appuser.CourseSemesterRolesResponseDtoV1
@@ -22,6 +23,14 @@ class CourseSemesterRoleServiceV1(
     private val courseSemesterRoleRepository: CourseSemesterRoleRepository,
     private val courseSemesterRepository: CourseSemesterRepository
 ) {
+    fun hasRole(appUser: AppUser, semesterId: Long, role: CourseSemesterRole.Value): Mono<Boolean> {
+        return appUserCourseSemesterRoleRepository.existsByAppUserIdEqualsAndCourseSemesterIdEqualsAndCourseSemesterRoleIdEquals(
+            appUser.id!!,
+            semesterId,
+            role.id
+        )
+    }
+
 
     fun findAllRolesByUserAndCourseSemesterAsQL(appUser: AppUserQL, semesterId: Long): Flux<CourseSemesterRoleQL> {
         return courseSemesterRoleRepository.findAllRelatedToUserAndCourseSemester(appUser.id!!, semesterId)

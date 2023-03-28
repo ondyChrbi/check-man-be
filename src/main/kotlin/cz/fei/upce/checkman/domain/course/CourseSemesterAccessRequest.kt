@@ -9,7 +9,9 @@ import java.util.UUID
 data class CourseSemesterAccessRequest(
     val appUser: AppUser,
     val semesterId: Long,
-    val id: String = UUID.randomUUID().toString()
+    val id: String = UUID.randomUUID().toString(),
+    val dateCreation: LocalDateTime = LocalDateTime.now(),
+    val expirationDate: LocalDateTime = LocalDateTime.now(),
 ) : CacheKey {
     override fun toCacheKey() = "{${CourseSemesterAccessRequest::class.java.simpleName}}-$semesterId-${appUser.id}"
 
@@ -22,7 +24,27 @@ data class CourseSemesterAccessRequest(
         return CourseSemesterAccessRequestQL(appUser.toQL(), semesterId, dateCreation, expirationDate, id)
     }
 
+    fun toQL(): CourseSemesterAccessRequestQL {
+        return CourseSemesterAccessRequestQL(appUser.toQL(), semesterId, dateCreation, expirationDate, id)
+    }
+
     companion object {
         const val EXPIRATION = 60L
+
+        fun cacheKeyPatternAppUser(appUserId: Long): String {
+            return "{${CourseSemesterAccessRequest::class.java.simpleName}}-*-$appUserId"
+        }
+
+        fun cacheKeyPatternSemester(semesterId: Long): String {
+            return "{${CourseSemesterAccessRequest::class.java.simpleName}}-$semesterId-*"
+        }
+
+        fun cacheKeyPattern(semesterId: Long, appUser: AppUser): String {
+            return "{${CourseSemesterAccessRequest::class.java.simpleName}}-$semesterId-${appUser.id}"
+        }
+
+        fun cacheKeyPattern(semesterId: Long, appUserId: Long): String {
+            return "{${CourseSemesterAccessRequest::class.java.simpleName}}-$semesterId-$appUserId"
+        }
     }
 }

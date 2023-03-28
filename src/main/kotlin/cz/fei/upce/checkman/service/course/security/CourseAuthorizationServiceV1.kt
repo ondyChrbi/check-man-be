@@ -6,11 +6,12 @@ import cz.fei.upce.checkman.domain.course.CourseSemesterAccessRequest
 import cz.fei.upce.checkman.domain.course.CourseSemesterAccessRequest.Companion.EXPIRATION
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.AppUser
+import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterAccessRequestQL
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
-import cz.fei.upce.checkman.service.course.CourseServiceV1
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
+import cz.fei.upce.checkman.service.course.security.exception.AppUserAlreadyRequestedAccessSemesterException
 import cz.fei.upce.checkman.service.course.security.exception.AppUserCanAlreadyAccessSemesterException
 import cz.fei.upce.checkman.service.course.security.exception.CourseSemesterAlreadyEndedException
 import cz.fei.upce.checkman.service.course.security.exception.CourseSemesterNotStartedYetException
@@ -67,7 +68,8 @@ class CourseAuthorizationServiceV1(
     }
 
     fun createCourseAccessRequest(appUser: AppUser, semesterId: Long): Mono<CourseSemesterAccessRequestQL> {
-        return courseSemesterRepository.findById(semesterId)
+        return checkAlreadyRequested(semesterId, appUser)
+            .flatMap { courseSemesterRepository.findById(semesterId) }
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { checkOngoingCourseSemester(it) }
             .flatMap { hasCourseAccess(it.id!!, appUser, listOf(CourseSemesterRole.Value.ACCESS.id)) }
@@ -95,6 +97,43 @@ class CourseAuthorizationServiceV1(
             .map { accessRequest.toQL() }
     }
 
+    fun findAllCourseAccessRequestsBySemester(semesterId: Long): Flux<CourseSemesterAccessRequestQL> {
+        return courseAccessOps.keys(CourseSemesterAccessRequest.cacheKeyPatternSemester(semesterId))
+            .flatMap { courseAccessOps.opsForValue().get(it) }
+            .map { it.toQL() }
+    }
+
+    fun findAllCourseAccessRequestsByAppUser(appUserId: Long): Flux<CourseSemesterAccessRequestQL> {
+        return courseAccessOps.keys(CourseSemesterAccessRequest.cacheKeyPatternAppUser(appUserId))
+            .flatMap { courseAccessOps.opsForValue().get(it) }
+            .map { it.toQL() }
+    }
+
+    fun findAllCourseAccessRequestsBySemester(appUser: AppUserQL): Flux<CourseSemesterAccessRequestQL> {
+        return findAllCourseAccessRequestsByAppUser(appUser.id!!)
+    }
+
+    fun findAllCourseAccessRequests(appUserId: Long, semesterId: Long): Mono<CourseSemesterAccessRequestQL> {
+        return courseAccessOps.opsForValue().get(CourseSemesterAccessRequest.cacheKeyPattern(semesterId, appUserId))
+            .map { it.toQL() }
+    }
+
+    private fun checkAlreadyRequested(semesterId: Long, appUser: AppUser): Mono<Boolean> {
+        return isAlreadyRequested(semesterId, appUser)
+            .flatMap {
+                if (it)
+                    Mono.error(AppUserAlreadyRequestedAccessSemesterException(appUser, semesterId))
+                else
+                    Mono.just(true)
+            }
+    }
+
+    private fun isAlreadyRequested(semesterId: Long, appUser: AppUser): Mono<Boolean> {
+        return courseAccessOps.keys(CourseSemesterAccessRequest.cacheKeyPattern(semesterId, appUser))
+            .collectList()
+            .map { it.size > 0 }
+    }
+
     private fun checkOngoingCourseSemester(semester: CourseSemester): Mono<CourseSemester> {
         val now = LocalDateTime.now()
 
@@ -108,7 +147,4 @@ class CourseAuthorizationServiceV1(
 
         return Mono.just(semester)
     }
-
-    private fun hasGlobalPermission(courseAccess: CourseAuthorizeRequest) =
-        CourseServiceV1.VIEW_PERMISSIONS.intersect(courseAccess.authorities.map { it.name }.toSet()).isNotEmpty()
 }
