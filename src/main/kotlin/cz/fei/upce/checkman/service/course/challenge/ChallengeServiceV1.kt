@@ -216,7 +216,7 @@ class ChallengeServiceV1(
         val findActive = true
 
         return canSeeNotPublishedMono.flatMapMany { findNotPublished ->
-            challengeRepository.findAllByCourseSemesterIdEqualsAndActiveAndPublishedEquals(semesterId, findActive, !findNotPublished)
+            challengeRepository.findAllByCourseSemesterIdEqualsAndActiveEquals(semesterId, findActive)
                 .flatMap { assignRelatives(it) }
         }
     }
