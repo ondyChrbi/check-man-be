@@ -68,7 +68,7 @@ class CourseSemesterRoleServiceV1(
             .map { CourseSemesterRoleDtoV1.fromEntity(it) }
     }
 
-    fun addRole(appUserId: Long, roleId: Long, semesterId: Long): Mono<Boolean> {
+    fun addRole(appUserId: Long, semesterId: Long, roleId: Long): Mono<Boolean> {
         return appUserCourseSemesterRoleRepository.existsByAppUserIdEqualsAndCourseSemesterIdEqualsAndCourseSemesterRoleIdEquals(
             appUserId,
             semesterId,

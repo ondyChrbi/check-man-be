@@ -13,7 +13,7 @@ data class CourseSemesterAccessRequest(
     val dateCreation: LocalDateTime = LocalDateTime.now(),
     val expirationDate: LocalDateTime = LocalDateTime.now(),
 ) : CacheKey {
-    override fun toCacheKey() = "{${CourseSemesterAccessRequest::class.java.simpleName}}-$semesterId-${appUser.id}"
+    override fun toCacheKey() = "{${CourseSemesterAccessRequest::class.java.simpleName}}-$semesterId-${appUser.id}-$id"
 
     override fun toAllCacheKeyPattern() = "{${CourseSemesterAccessRequest::class.java.simpleName}}-$semesterId-*"
 
@@ -32,19 +32,23 @@ data class CourseSemesterAccessRequest(
         const val EXPIRATION = 60L
 
         fun cacheKeyPatternAppUser(appUserId: Long): String {
-            return "{${CourseSemesterAccessRequest::class.java.simpleName}}-*-$appUserId"
+            return "{${CourseSemesterAccessRequest::class.java.simpleName}}-*-$appUserId-*"
         }
 
         fun cacheKeyPatternSemester(semesterId: Long): String {
             return "{${CourseSemesterAccessRequest::class.java.simpleName}}-$semesterId-*"
         }
 
+        fun cacheKeyPatternId(id: Long): String {
+            return "{${CourseSemesterAccessRequest::class.java.simpleName}}-*-$id"
+        }
+
         fun cacheKeyPattern(semesterId: Long, appUser: AppUser): String {
-            return "{${CourseSemesterAccessRequest::class.java.simpleName}}-$semesterId-${appUser.id}"
+            return "{${CourseSemesterAccessRequest::class.java.simpleName}}-$semesterId-${appUser.id}-*"
         }
 
         fun cacheKeyPattern(semesterId: Long, appUserId: Long): String {
-            return "{${CourseSemesterAccessRequest::class.java.simpleName}}-$semesterId-$appUserId"
+            return "{${CourseSemesterAccessRequest::class.java.simpleName}}-$semesterId-$appUserId-*"
         }
     }
 }

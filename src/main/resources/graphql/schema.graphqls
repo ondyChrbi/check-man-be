@@ -48,6 +48,7 @@ type Mutation {
     addCourseRole(appUserId: ID!, semesterId: ID!, roleId: ID!): Boolean
     removeCourseRole(appUserId: ID!, semesterId: ID!, roleId: ID!): Boolean
     editReviewPoints(reviewId: ID!, requirementId: ID!, reviewPointsInput: ReviewPointsInput!): Boolean
+    approveCourseSemesterRequest(id: ID!, roles: [CourseSemesterInputRole!]): Boolean!
 }
 
 type AppUser{
@@ -203,6 +204,10 @@ enum TestStatus {
 enum Order {
     ASC,
     DESC,
+}
+
+input CourseSemesterInputRole {
+    id: ID!
 }
 
 input CourseInput {

@@ -93,6 +93,26 @@ class SemesterServiceV1(
         return resultFlux.map { it.toQL() }
     }
 
+    fun existById(id: Long): Mono<Boolean> {
+        return courseSemesterRepository.existsById(id)
+    }
+
+    fun checkExistById(id: Long): Mono<Boolean> {
+        return existById(id).map {
+            if (!it)
+                throw ResourceNotFoundException()
+            it
+        }
+    }
+
+    fun findById(id: Long): Mono<CourseSemester> {
+        return courseSemesterRepository.findById(id)
+    }
+
+    fun findAllByUserHasRolesInCourse(courseId: Long, appUserId: Long, requestedRoles: List<Long> = listOf()): Flux<CourseSemester> {
+        return courseSemesterRepository.findAllByUserHasRolesInCourse(courseId, appUserId, requestedRoles)
+    }
+
     private companion object {
         const val DEFAULT_LIMIT = 5
     }

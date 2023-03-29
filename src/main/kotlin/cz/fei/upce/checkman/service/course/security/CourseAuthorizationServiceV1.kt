@@ -8,13 +8,14 @@ import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterAccessRequestQL
-import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
+import cz.fei.upce.checkman.service.course.SemesterServiceV1
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.fei.upce.checkman.service.course.security.exception.AppUserAlreadyRequestedAccessSemesterException
 import cz.fei.upce.checkman.service.course.security.exception.AppUserCanAlreadyAccessSemesterException
 import cz.fei.upce.checkman.service.course.security.exception.CourseSemesterAlreadyEndedException
 import cz.fei.upce.checkman.service.course.security.exception.CourseSemesterNotStartedYetException
+import cz.fei.upce.checkman.service.role.CourseSemesterRoleServiceV1
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory
 import org.springframework.data.redis.core.ReactiveRedisOperations
@@ -30,7 +31,8 @@ import java.time.LocalDateTime
 
 @Service
 class CourseAuthorizationServiceV1(
-    private val courseSemesterRepository: CourseSemesterRepository,
+    private val semesterService: SemesterServiceV1,
+    private val courseSemesterRoleService: CourseSemesterRoleServiceV1,
     private val cacheFactory: ReactiveRedisConnectionFactory,
     private val courseAccessOps: ReactiveRedisOperations<String, CourseSemesterAccessRequest>,
     private val entityTemplate: R2dbcEntityTemplate
@@ -47,7 +49,7 @@ class CourseAuthorizationServiceV1(
     }
 
     fun findAllCoursesWhereUserHasRoles(courseId: Long, appUser: AppUser, requestedRoles: List<Long>): Flux<CourseSemester> {
-        return courseSemesterRepository.findAllByUserHasRolesInCourse(courseId, appUser.id!!, requestedRoles)
+        return semesterService.findAllByUserHasRolesInCourse(courseId, appUser.id!!, requestedRoles)
     }
 
     fun hasCourseAccess(semesterId: Long, appUser: AppUser, requestedRoles: List<Long>): Mono<Boolean> {
@@ -69,7 +71,7 @@ class CourseAuthorizationServiceV1(
 
     fun createCourseAccessRequest(appUser: AppUser, semesterId: Long): Mono<CourseSemesterAccessRequestQL> {
         return checkAlreadyRequested(semesterId, appUser)
-            .flatMap { courseSemesterRepository.findById(semesterId) }
+            .flatMap { semesterService.findById(semesterId) }
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { checkOngoingCourseSemester(it) }
             .flatMap { hasCourseAccess(it.id!!, appUser, listOf(CourseSemesterRole.Value.ACCESS.id)) }
@@ -116,6 +118,28 @@ class CourseAuthorizationServiceV1(
     fun findAllCourseAccessRequests(appUserId: Long, semesterId: Long): Mono<CourseSemesterAccessRequestQL> {
         return courseAccessOps.opsForValue().get(CourseSemesterAccessRequest.cacheKeyPattern(semesterId, appUserId))
             .map { it.toQL() }
+    }
+
+    fun approveCourseSemesterRequest(id: Long, roles: List<CourseSemesterRole.Value> = listOf()): Mono<Boolean> {
+        return courseAccessOps.keys(CourseSemesterAccessRequest.cacheKeyPatternId(id))
+            .flatMap { courseAccessOps.opsForValue().get(it) }
+            .next()
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .flatMap { addAppUserToCourseSemester(it, roles) }
+    }
+
+    private fun addAppUserToCourseSemester(
+        accessRequest: CourseSemesterAccessRequest,
+        roles: List<CourseSemesterRole.Value> = listOf()
+    ): Mono<Boolean> {
+        val appUserId = accessRequest.appUser.id!!
+        val semesterId = accessRequest.semesterId
+
+        return semesterService.checkExistById(semesterId)
+            .flatMapMany { Flux.fromIterable(roles.map { it.id }) }
+            .flatMap { roleId -> courseSemesterRoleService.addRole(appUserId, semesterId, roleId) }
+            .next()
+            .map { true }
     }
 
     private fun checkAlreadyRequested(semesterId: Long, appUser: AppUser): Mono<Boolean> {

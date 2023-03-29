@@ -4,6 +4,7 @@ import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.course.CourseSemester
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
+import cz.fei.upce.checkman.domain.course.CourseSemesterRole.Value.Companion.IDS_MAP
 import cz.fei.upce.checkman.graphql.input.course.CourseRequirementsInputQL
 import cz.fei.upce.checkman.graphql.input.course.SemesterInputQL
 import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
@@ -82,7 +83,7 @@ class CourseSemesterQLController(
         @Argument roleId: Long,
         authentication: Authentication
     ): Mono<Boolean> {
-        return courseSemesterRoleService.addRole(appUserId, roleId, semesterId)
+        return courseSemesterRoleService.addRole(appUserId, semesterId, roleId)
     }
 
     @MutationMapping
@@ -144,6 +145,16 @@ class CourseSemesterQLController(
         } else {
             courseAuthorizationService.findAllCourseAccessRequests(appUserId ?: appUser.id!!, semesterId)
         }
+    }
+
+    @MutationMapping
+    fun approveCourseSemesterRequest(@Argument id: Long, @Argument roles: MutableList<CourseSemesterInputRoleQL>?) : Mono<Boolean> {
+        val rolesToAdd = if (roles.isNullOrEmpty())
+            listOf(CourseSemesterRole.Value.ACCESS)
+        else
+            roles.map { IDS_MAP[it.id]!! }
+
+        return courseAuthorizationService.approveCourseSemesterRequest(id, rolesToAdd)
     }
 
     @SchemaMapping(typeName = "AppUser")
