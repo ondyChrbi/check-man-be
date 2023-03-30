@@ -11,7 +11,7 @@ data class CourseSemesterAccessRequest(
     val semesterId: Long,
     val id: String = UUID.randomUUID().toString(),
     val dateCreation: LocalDateTime = LocalDateTime.now(),
-    val expirationDate: LocalDateTime = LocalDateTime.now(),
+    val expirationDate: LocalDateTime = dateCreation.plusSeconds(EXPIRATION)
 ) : CacheKey {
     override fun toCacheKey() = "{${CourseSemesterAccessRequest::class.java.simpleName}}-$semesterId-${appUser.id}-$id"
 
@@ -39,7 +39,7 @@ data class CourseSemesterAccessRequest(
             return "{${CourseSemesterAccessRequest::class.java.simpleName}}-$semesterId-*"
         }
 
-        fun cacheKeyPatternId(id: Long): String {
+        fun cacheKeyPatternId(id: String): String {
             return "{${CourseSemesterAccessRequest::class.java.simpleName}}-*-$id"
         }
 

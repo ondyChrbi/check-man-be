@@ -116,30 +116,34 @@ class CourseAuthorizationServiceV1(
     }
 
     fun findAllCourseAccessRequests(appUserId: Long, semesterId: Long): Mono<CourseSemesterAccessRequestQL> {
-        return courseAccessOps.opsForValue().get(CourseSemesterAccessRequest.cacheKeyPattern(semesterId, appUserId))
+        return courseAccessOps.keys(CourseSemesterAccessRequest.cacheKeyPattern(semesterId, appUserId))
+            .flatMap { courseAccessOps.opsForValue().get(it) }
+            .next()
             .map { it.toQL() }
     }
 
-    fun approveCourseSemesterRequest(id: Long, roles: List<CourseSemesterRole.Value> = listOf()): Mono<Boolean> {
+    fun approveCourseSemesterRequest(id: String, roles: List<CourseSemesterRole.Value> = listOf()): Mono<Boolean> {
         return courseAccessOps.keys(CourseSemesterAccessRequest.cacheKeyPatternId(id))
             .flatMap { courseAccessOps.opsForValue().get(it) }
-            .next()
+            .collectList()
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-            .flatMap { addAppUserToCourseSemester(it, roles) }
+            .flatMap { addAppUserToCourseSemester(it.first(), roles) }
+            .flatMap { courseAccessOps.opsForValue().delete(it.toCacheKey()) }
+            .map { true }
     }
 
     private fun addAppUserToCourseSemester(
         accessRequest: CourseSemesterAccessRequest,
         roles: List<CourseSemesterRole.Value> = listOf()
-    ): Mono<Boolean> {
+    ): Mono<CourseSemesterAccessRequest> {
         val appUserId = accessRequest.appUser.id!!
         val semesterId = accessRequest.semesterId
 
         return semesterService.checkExistById(semesterId)
             .flatMapMany { Flux.fromIterable(roles.map { it.id }) }
             .flatMap { roleId -> courseSemesterRoleService.addRole(appUserId, semesterId, roleId) }
-            .next()
-            .map { true }
+            .collectList()
+            .map { accessRequest }
     }
 
     private fun checkAlreadyRequested(semesterId: Long, appUser: AppUser): Mono<Boolean> {

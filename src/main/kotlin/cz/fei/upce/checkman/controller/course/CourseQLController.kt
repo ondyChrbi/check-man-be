@@ -14,7 +14,6 @@ class CourseQLController(
     private val courseService: CourseServiceV1
 ) {
     @QueryMapping
-    @PreAuthorize("hasRole('${GlobalRole.ROLE_COURSE_MANAGE}')")
     fun courses() = courseService.findAllAsQL()
 
     @MutationMapping
