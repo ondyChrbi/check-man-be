@@ -5,9 +5,9 @@ import cz.fei.upce.checkman.graphql.input.course.RequirementInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.ChallengeQL
 import cz.fei.upce.checkman.graphql.output.challenge.requirement.RequirementQL
 import cz.fei.upce.checkman.service.course.challenge.requirement.RequirementServiceV1
-import cz.fei.upce.checkman.service.course.security.annotation.ChallengeId
+import cz.upce.fei.checkman.domain.course.security.annotation.ChallengeId
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
-import cz.fei.upce.checkman.service.course.security.annotation.RequirementId
+import cz.upce.fei.checkman.domain.course.security.annotation.RequirementId
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.graphql.data.method.annotation.QueryMapping

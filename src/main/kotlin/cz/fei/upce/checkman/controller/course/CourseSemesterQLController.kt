@@ -15,7 +15,7 @@ import cz.fei.upce.checkman.service.course.CourseServiceV1
 import cz.fei.upce.checkman.service.course.SemesterServiceV1
 import cz.fei.upce.checkman.service.course.security.CourseAuthorizationServiceV1
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
-import cz.fei.upce.checkman.service.course.security.annotation.SemesterId
+import cz.upce.fei.checkman.domain.course.security.annotation.SemesterId
 import cz.fei.upce.checkman.service.role.CourseSemesterRoleServiceV1
 import org.springframework.data.domain.Sort
 import org.springframework.graphql.data.method.annotation.*

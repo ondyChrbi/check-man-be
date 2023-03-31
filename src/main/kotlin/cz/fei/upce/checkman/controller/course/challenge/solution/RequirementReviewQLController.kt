@@ -4,8 +4,8 @@ import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.graphql.input.course.challenge.solution.ReviewPointsInputQL
 import cz.fei.upce.checkman.service.course.challenge.requirement.RequirementServiceV1
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
-import cz.fei.upce.checkman.service.course.security.annotation.RequirementId
-import cz.fei.upce.checkman.service.course.security.annotation.ReviewId
+import cz.upce.fei.checkman.domain.course.security.annotation.RequirementId
+import cz.upce.fei.checkman.domain.course.security.annotation.ReviewId
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.security.core.Authentication

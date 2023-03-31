@@ -12,9 +12,9 @@ import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import cz.fei.upce.checkman.service.course.challenge.ChallengeServiceV1
 import cz.fei.upce.checkman.service.course.challenge.attachment.ChallengeFileAttachmentServiceV1
 import cz.fei.upce.checkman.service.course.challenge.ChallengeLocation
-import cz.fei.upce.checkman.service.course.security.annotation.CourseId
+import cz.upce.fei.checkman.domain.course.security.annotation.CourseId
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
-import cz.fei.upce.checkman.service.course.security.annotation.SemesterId
+import cz.upce.fei.checkman.domain.course.security.annotation.SemesterId
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.core.io.Resource
 import org.springframework.hateoas.CollectionModel

@@ -14,7 +14,11 @@ import cz.fei.upce.checkman.graphql.output.challenge.solution.SolutionQL
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import cz.fei.upce.checkman.service.course.challenge.solution.FeedbackServiceV1
 import cz.fei.upce.checkman.service.course.challenge.solution.ReviewServiceV1
-import cz.fei.upce.checkman.service.course.security.annotation.*
+import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
+import cz.upce.fei.checkman.domain.course.security.annotation.ChallengeId
+import cz.upce.fei.checkman.domain.course.security.annotation.CourseId
+import cz.upce.fei.checkman.domain.course.security.annotation.ReviewId
+import cz.upce.fei.checkman.domain.course.security.annotation.SolutionId
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.graphql.data.method.annotation.QueryMapping

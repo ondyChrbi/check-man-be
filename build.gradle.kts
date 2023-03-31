@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "2.7.1"
+	id("org.springframework.boot") version "2.7.10"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
-	kotlin("jvm") version "1.6.21"
+	kotlin("jvm") version "1.8.0"
 	kotlin("plugin.spring") version "1.6.21"
-	kotlin("plugin.jpa") version "1.6.10"
+	kotlin("plugin.jpa") version "1.6.21"
 }
 
 group = "cz.fei.upce"
@@ -20,6 +20,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	mavenLocal()
 }
 
 dependencies {
@@ -45,6 +46,7 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-ui:1.6.8")
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
 	implementation("cz.jirutka.rsql:rsql-parser:2.1.0")
+	implementation("cz.upce.fei.checkman:domain:1.0.0")
 	compileOnly("org.projectlombok:lombok")
 	implementation("com.graphql-java:graphql-java-extended-scalars:20.0")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")

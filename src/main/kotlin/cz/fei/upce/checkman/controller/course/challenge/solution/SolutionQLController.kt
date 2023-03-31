@@ -3,9 +3,9 @@ package cz.fei.upce.checkman.controller.course.challenge.solution
 import cz.fei.upce.checkman.graphql.output.challenge.solution.SolutionQL
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import cz.fei.upce.checkman.service.course.challenge.solution.SolutionServiceV1
-import cz.fei.upce.checkman.service.course.security.annotation.ChallengeId
+import cz.upce.fei.checkman.domain.course.security.annotation.ChallengeId
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
-import cz.fei.upce.checkman.service.course.security.annotation.SolutionId
+import cz.upce.fei.checkman.domain.course.security.annotation.SolutionId
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.security.core.Authentication

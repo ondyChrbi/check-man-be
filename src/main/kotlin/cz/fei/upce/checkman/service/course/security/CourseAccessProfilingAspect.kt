@@ -4,7 +4,8 @@ import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
 import cz.fei.upce.checkman.service.course.AppUserCourseSemesterForbiddenException
-import cz.fei.upce.checkman.service.course.security.annotation.*
+import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
+import cz.upce.fei.checkman.domain.course.security.annotation.*
 import cz.fei.upce.checkman.service.course.security.exception.*
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
