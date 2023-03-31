@@ -37,7 +37,7 @@ class CourseAuthorizationServiceV1(
     private val courseAccessOps: ReactiveRedisOperations<String, CourseSemesterAccessRequest>,
     private val entityTemplate: R2dbcEntityTemplate
 ) {
-    fun courseSemesterRoles(appUser: AppUser, semesterId: Long): Flux<AppUserCourseSemesterRole> {
+    fun findAllCourseSemesterRoles(appUser: AppUser, semesterId: Long): Flux<AppUserCourseSemesterRole> {
         val query = query(
             where("app_user_id").isEqual(appUser.id!!)
                 .and("course_semester_id").isEqual(semesterId)

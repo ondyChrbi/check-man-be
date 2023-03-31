@@ -5,7 +5,6 @@ import cz.fei.upce.checkman.domain.challenge.Challenge
 import cz.fei.upce.checkman.domain.challenge.ChallengeKind
 import cz.fei.upce.checkman.domain.challenge.PermittedAppUserChallenge
 import cz.fei.upce.checkman.domain.course.CourseSemester
-import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.domain.user.GlobalRole
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeRequestDtoV1
@@ -17,10 +16,8 @@ import cz.fei.upce.checkman.graphql.output.challenge.ChallengeQL
 import cz.fei.upce.checkman.repository.challenge.ChallengeRepository
 import cz.fei.upce.checkman.repository.challenge.PermittedAppUserChallengeRepository
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
-import cz.fei.upce.checkman.repository.review.RequirementRepository
 import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
-import cz.fei.upce.checkman.service.course.security.CourseAuthorizationServiceV1
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -36,11 +33,10 @@ class ChallengeServiceV1(
     private val permittedAppUserChallengeRepository: PermittedAppUserChallengeRepository,
     private val entityTemplate: R2dbcEntityTemplate,
     private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRSQLSpecification,
-    private val requirementRepository: RequirementRepository,
-    private val courseAuthorizationService: CourseAuthorizationServiceV1,
+    private val challengeAuthorizationService: ChallengeAuthorizationServiceV1
 ) {
     fun search(search: String?, courseId: Long, semesterId: Long): Flux<ChallengeResponseDtoV1> {
-        val challenges = if (search == null || search.isEmpty())
+        val challenges = if (search.isNullOrEmpty())
             challengeRepository.findAll()
         else
             entityTemplate.select(Challenge::class.java)
@@ -210,35 +206,14 @@ class ChallengeServiceV1(
             }
 
     fun findAllBySemesterIdAsQL(semesterId: Long, requester: AppUser): Flux<ChallengeQL> {
-        val canSeeNotPublishedMono = courseAuthorizationService.hasCourseAccess(
-            semesterId, requester, listOf(CourseSemesterRole.Value.EDIT_CHALLENGE.id)
-        )
-        val findActive = true
-
-        return canSeeNotPublishedMono.flatMapMany { findNotPublished ->
-            challengeRepository.findAllByCourseSemesterIdEqualsAndActiveEquals(semesterId, findActive)
-                .flatMap { assignRelatives(it) }
-        }
-    }
-
-    fun findAllBySemesterId(semesterId: Long): Flux<Challenge> {
-        return challengeRepository.findAllByCourseSemesterIdEqualsAndActiveEquals(semesterId)
+        return challengeAuthorizationService.findAllByAppUserIsAuthorized(requester, semesterId)
+            .map { it.toQL() }
     }
 
     fun findByIdAsQL(id: Long): Mono<ChallengeQL> {
         return challengeRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { it.toQL() }
-    }
-
-    private fun assignRelatives(challenge: Challenge): Mono<ChallengeQL> {
-        return appUserRepository.findById(challenge.authorId)
-            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-            .flatMap { author ->
-                requirementRepository.findAllByChallengeIdEqualsAndActiveEquals(challenge.id!!)
-                    .collectList()
-                    .map { requirements -> challenge.toQL(author.toQL(), requirements.map { it.toQL() }) }
-            }
     }
 
     private fun assignAuthor(challenge: Challenge): Mono<ChallengeQL> {

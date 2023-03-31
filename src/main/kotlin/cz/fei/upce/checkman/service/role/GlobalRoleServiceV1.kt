@@ -42,6 +42,12 @@ class GlobalRoleServiceV1(
             }.map { appUserGlobalRoleDto.withId(null) }
     }
 
+    fun hasAnyRole(appUser: AppUser, globalRoles: List<String>): Mono<Boolean> {
+        return globalRoleRepository.findAllByAppUser(appUser.id!!)
+            .collectList()
+            .map { roles -> roles.any { it.name in globalRoles } }
+    }
+
     private fun assign(appUserId: Long, globalRoleId: Long): Mono<AppUserGlobalRole> {
         return appUserRepository.findById(appUserId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))

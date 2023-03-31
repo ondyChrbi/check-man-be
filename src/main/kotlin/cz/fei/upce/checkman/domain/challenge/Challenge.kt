@@ -29,6 +29,22 @@ data class Challenge(
         return NEED_PERMISSIONS_KINDS_IDS.contains(challengeKindId)
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Challenge
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id?.hashCode() ?: 0
+    }
+
+
     companion object {
         val NEED_PERMISSIONS_KINDS_IDS = arrayOf(ChallengeKind.Value.CREDIT.id, ChallengeKind.Value.EXAM.id)
     }

@@ -14,9 +14,19 @@ interface ChallengeRepository : ReactiveCrudRepository<Challenge, Long> {
         challengeKindsIds: Collection<Long>
     ): Flux<Challenge>
 
+    fun findAllByCourseSemesterIdEqualsAndChallengeKindIdIsInAndPublishedEquals(
+        courseSemesterId: Long,
+        challengeKindsIds: Collection<Long>,
+        published: Boolean = true
+    ): Flux<Challenge>
+
+    fun findAllByCourseSemesterIdEquals(semesterId: Long): Flux<Challenge>
+
     fun existsByIdEqualsAndAndCourseSemesterIdEquals(id: Long, semesterId: Long): Mono<Boolean>
 
     fun findAllByCourseSemesterIdEqualsAndActiveEquals(semesterId: Long, active: Boolean = true): Flux<Challenge>
+
+    fun findAllByAuthorIdEqualsAndCourseSemesterIdEquals(appUserId: Long, semesterId: Long): Flux<Challenge>
 
     fun findAllByCourseSemesterIdEqualsAndActiveAndPublishedEquals(semesterId: Long, active: Boolean = true, published : Boolean = true): Flux<Challenge>
 

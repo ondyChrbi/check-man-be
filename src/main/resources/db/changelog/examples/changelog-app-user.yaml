@@ -303,3 +303,32 @@ databaseChangeLog:
                   name: global_role_id
                   value: 13
             tableName: app_user_global_role
+
+  - changeSet:
+      id: changelog-app_user-17
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 101
+              - column:
+                  name: stag_id
+                  value: st66806
+              - column:
+                  name: mail
+                  value: katerina.jindrova@student.upce.cz
+              - column:
+                  name: display_name
+                  value: Katerina Jindrova
+              - column:
+                  name: registration_date
+                  value: 2021-07-30 16:47:10.101896 +00:00
+              - column:
+                  name: last_access_date
+                  value: 2021-07-30 16:47:10.101896 +00:00
+              - column:
+                  name: disabled
+                  value: false
+            tableName: app_user

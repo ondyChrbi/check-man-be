@@ -31,7 +31,7 @@ class MeServiceV1(
     }
 
     fun courseRolesAsQL(semesterId: Long, appUser: AppUser): Flux<String> {
-        return authorizationServiceV1.courseSemesterRoles(appUser, semesterId)
+        return authorizationServiceV1.findAllCourseSemesterRoles(appUser, semesterId)
             .map { IDS_MAP[it.courseSemesterRoleId].toString() }
     }
 }
