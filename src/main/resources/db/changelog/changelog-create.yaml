@@ -1421,6 +1421,9 @@ databaseChangeLog:
                   name: docker_file_path
                   type: text
               - column:
+                  name: test_module_class
+                  type: text
+              - column:
                   name: active
                   type: boolean
                   defaultValue: true
