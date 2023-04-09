@@ -1,6 +1,6 @@
-package cz.fei.upce.checkman.repository.challenge
+package cz.fei.upce.checkman.repository.challenge.solution
 
-import cz.fei.upce.checkman.domain.challenge.TestResult
+import cz.fei.upce.checkman.domain.challenge.solution.TestResult
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono

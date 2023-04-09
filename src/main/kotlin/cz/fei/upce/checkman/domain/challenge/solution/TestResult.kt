@@ -1,4 +1,4 @@
-package cz.fei.upce.checkman.domain.challenge
+package cz.fei.upce.checkman.domain.challenge.solution
 
 import cz.fei.upce.checkman.graphql.output.challenge.solution.TestResultQL
 import org.springframework.data.annotation.Id

@@ -2,6 +2,7 @@ package cz.fei.upce.checkman.graphql.output.challenge
 
 import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
 import cz.fei.upce.checkman.graphql.output.challenge.requirement.RequirementQL
+import cz.fei.upce.checkman.graphql.output.challenge.solution.TestConfigurationQL
 import java.time.OffsetDateTime
 
 data class ChallengeQL (
@@ -14,5 +15,6 @@ data class ChallengeQL (
     var published: Boolean = false,
     var author: AppUserQL? = null,
     var requirements: List<RequirementQL> = emptyList(),
-    var challengeKind: String = ""
+    var testConfigurations: List<TestConfigurationQL> = emptyList(),
+    var challengeKind: String = "",
 )

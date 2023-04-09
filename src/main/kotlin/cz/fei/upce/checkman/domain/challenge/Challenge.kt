@@ -22,7 +22,7 @@ data class Challenge(
     var challengeKindId: Long = 0
 ) {
     fun toQL(author: AppUserQL? = null, requirements: List<RequirementQL> = emptyList()) = ChallengeQL(
-        id, name, description, deadlineDate?.atOffset(ZoneOffset.UTC), startDate?.atOffset(ZoneOffset.UTC), active, published, author, requirements, ChallengeKind.Value.IDS_MAP[challengeKindId].toString()
+        id, name, description, deadlineDate?.atOffset(ZoneOffset.UTC), startDate?.atOffset(ZoneOffset.UTC), active, published, author, requirements, mutableListOf(), ChallengeKind.Value.IDS_MAP[challengeKindId].toString()
     )
 
     fun isPermissionNeeded(): Boolean {

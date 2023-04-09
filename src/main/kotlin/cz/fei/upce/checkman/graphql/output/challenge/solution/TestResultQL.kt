@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.graphql.output.challenge.solution
 
-import cz.fei.upce.checkman.domain.challenge.TestResult
+import cz.fei.upce.checkman.domain.challenge.solution.TestResult
 import java.time.OffsetDateTime
 
 data class TestResultQL(

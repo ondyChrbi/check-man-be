@@ -3,7 +3,7 @@ package cz.fei.upce.checkman.service.course.challenge.solution
 import com.fasterxml.jackson.databind.ObjectMapper
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
-import cz.fei.upce.checkman.domain.challenge.Solution
+import cz.fei.upce.checkman.domain.challenge.solution.Solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Review
 import cz.fei.upce.checkman.domain.user.AppUser

@@ -107,6 +107,7 @@ type Challenge {
     published: Boolean,
     challengeKind: String!
     requirements: [Requirement!]!
+    testConfigurations: [TestConfiguration!]!
 }
 
 type CourseSemesterRoles {
@@ -193,6 +194,16 @@ type FeedbackStatistics {
     feedbackTypeId: ID
     feedbackName: String
     count: Int
+}
+
+type TestConfiguration {
+    id: ID
+    templatePath: String
+    dockerFilePath: String
+    testModuleClass: String
+    active: Boolean
+    creationDate: String
+    updateDate: String
 }
 
 enum TestStatus {

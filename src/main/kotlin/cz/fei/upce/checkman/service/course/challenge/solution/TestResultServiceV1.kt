@@ -1,7 +1,7 @@
 package cz.fei.upce.checkman.service.course.challenge.solution
 
 import cz.fei.upce.checkman.graphql.output.challenge.solution.TestResultQL
-import cz.fei.upce.checkman.repository.challenge.TestResultRepository
+import cz.fei.upce.checkman.repository.challenge.solution.TestResultRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono

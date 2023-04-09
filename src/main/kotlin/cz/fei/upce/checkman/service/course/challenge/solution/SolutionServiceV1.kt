@@ -2,14 +2,14 @@ package cz.fei.upce.checkman.service.course.challenge.solution
 
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
-import cz.fei.upce.checkman.domain.challenge.Solution
+import cz.fei.upce.checkman.domain.challenge.solution.Solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Requirement
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.graphql.output.challenge.requirement.ReviewedRequirementQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.ReviewQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.SolutionQL
-import cz.fei.upce.checkman.repository.challenge.SolutionRepository
+import cz.fei.upce.checkman.repository.challenge.solution.SolutionRepository
 import cz.fei.upce.checkman.repository.review.FeedbackRepository
 import cz.fei.upce.checkman.repository.review.RequirementRepository
 import cz.fei.upce.checkman.repository.review.RequirementReviewRepository

@@ -1,12 +1,7 @@
-package cz.fei.upce.checkman.repository.challenge
+package cz.fei.upce.checkman.repository.challenge.solution
 
 import cz.fei.upce.checkman.CheckManApplication
-import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
-import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
-import cz.fei.upce.checkman.domain.challenge.Solution
-import cz.fei.upce.checkman.domain.review.Review
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
+import cz.fei.upce.checkman.domain.challenge.solution.Solution
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
@@ -35,7 +30,7 @@ interface SolutionRepository : ReactiveCrudRepository<Solution, Long> {
         limit :size offset :offset
     """
     )
-    fun findAllToReview(challengeId: Long, offset: Int = DEFAULT_OFFSET, size: Int = DEFAULT_SIZE): Flux<Solution>
+    fun findAllToReview(challengeId: Long, offset: Int = CheckManApplication.DEFAULT_OFFSET, size: Int = CheckManApplication.DEFAULT_SIZE): Flux<Solution>
 
     @Query("""
         select count(distinct s.*) from solution s
