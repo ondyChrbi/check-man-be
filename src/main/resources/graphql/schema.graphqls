@@ -22,6 +22,7 @@ type Query {
     countToReview(challengeId: ID!): Int!
     solutionsToReview(challengeId: ID!, offset: Int, size: Int): [Solution!]!
     allSolutionsToReview(courseId: ID!): [CoursesReviewList]
+    review(id: ID!): Review
     semesterAccessRequests(semesterId: ID!): [CourseSemesterAccessRequest!]!
     semesterAccessRequestsAppUser(semesterId: ID!, appUserId: ID): CourseSemesterAccessRequest
 }

@@ -20,4 +20,9 @@ class FeedbackServiceV1(
         return feedbackRepository.findAllByTestResult(testResultId)
             .map { it.toQL() }
     }
+
+    fun findAllByReviewIdAsQL(id: Long): Flux<FeedbackQL> {
+        return feedbackRepository.findAllByReview(id)
+            .map { it.toQL() }
+    }
 }

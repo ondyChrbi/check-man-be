@@ -24,4 +24,11 @@ interface FeedbackRepository : ReactiveCrudRepository<Feedback, Long> {
         where tr.id = :testResultId
     """)
     fun findAllByTestResult(testResultId: Long) : Flux<Feedback>
+
+    @Query("""
+        select f.* from feedback f 
+        inner join feedback_review fr on f.id = fr.feedback_id
+        where fr.review_id = :id
+    """)
+    fun findAllByReview(id: Long) : Flux<Feedback>
 }

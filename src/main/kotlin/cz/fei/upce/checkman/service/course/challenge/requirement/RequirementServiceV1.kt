@@ -8,6 +8,7 @@ import cz.fei.upce.checkman.dto.course.challenge.requirement.RequirementResponse
 import cz.fei.upce.checkman.graphql.input.course.RequirementInputQL
 import cz.fei.upce.checkman.graphql.input.course.challenge.solution.ReviewPointsInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.requirement.RequirementQL
+import cz.fei.upce.checkman.graphql.output.challenge.requirement.ReviewedRequirementQL
 import cz.fei.upce.checkman.repository.review.RequirementRepository
 import cz.fei.upce.checkman.repository.review.RequirementReviewRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
@@ -134,6 +135,11 @@ class RequirementServiceV1(
         return requirementReviewRepository.findAllByReviewIdEquals(reviewId)
     }
 
+    fun findAllRequirementReviewsByReviewIdAsQL(reviewId: Long): Flux<ReviewedRequirementQL> {
+        return requirementReviewRepository.findAllByReviewIdEquals(reviewId)
+            .map { it.toQL() }
+    }
+
     fun findAllByChallengeIdAsQL(challengeId: Long): Flux<RequirementQL> {
         return requirementRepository.findAllByChallengeIdEqualsAndActiveEquals(challengeId)
             .map { it.toQL() }
@@ -171,6 +177,12 @@ class RequirementServiceV1(
                     .map { true }
             }
 
+    }
+
+
+    fun findByReviewedRequirementIdAsQL(id: Long): Mono<RequirementQL> {
+        return requirementRepository.findByReviewedRequirementId(id)
+            .map { it.toQL() }
     }
 
     private fun checkRequirementPoints(requirementId: Long, reviewPoints: ReviewPointsInputQL): Flux<Boolean> {

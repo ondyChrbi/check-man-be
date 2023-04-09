@@ -7,6 +7,7 @@ import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Review
 import cz.fei.upce.checkman.graphql.input.course.challenge.ReviewInputQL
 import cz.fei.upce.checkman.graphql.input.course.challenge.solution.FeedbackInputQL
+import cz.fei.upce.checkman.graphql.output.challenge.requirement.ReviewedRequirementQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.CoursesReviewListQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.FeedbackQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.ReviewQL
@@ -22,6 +23,7 @@ import cz.upce.fei.checkman.domain.course.security.annotation.SolutionId
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.graphql.data.method.annotation.QueryMapping
+import org.springframework.graphql.data.method.annotation.SchemaMapping
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Controller
 import org.springframework.validation.annotation.Validated
@@ -95,12 +97,23 @@ class ReviewQLController(
 
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
-    fun createFeedbackToReview(@ReviewId @Argument reviewId: Long, @Argument feedback: FeedbackInputQL,  authentication: Authentication): Mono<FeedbackQL> {
+    fun createFeedbackToReview(@ReviewId @Argument reviewId: Long, @Argument feedback: FeedbackInputQL, authentication: Authentication): Mono<FeedbackQL> {
         return feedbackService.create(feedback)
             .flatMap { createFeedback ->
                 reviewService.linkFeedback(reviewId, createFeedback.id!!)
                 .map { createFeedback.toQL() }
                 .switchIfEmpty(Mono.just(createFeedback.toQL()))
             }
+    }
+
+    @QueryMapping
+    @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.VIEW_REVIEW])
+    fun review(@Argument @ReviewId id: Long, authentication: Authentication) : Mono<ReviewQL> {
+        return reviewService.findByIdAsQL(id)
+    }
+
+    @SchemaMapping(typeName = "Solution", field = "review")
+    fun reviewBySolution(solution: SolutionQL): Mono<ReviewQL> {
+        return reviewService.findBySolutionIdAsQL(solution.id!!)
     }
 }

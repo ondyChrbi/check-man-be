@@ -29,4 +29,11 @@ interface RequirementRepository : ReactiveCrudRepository<Requirement, Long> {
         where r.solution_id = :solutionId
     """)
     fun findAllBySolutionIdEquals(solutionId: Long) : Flux<Requirement>
+
+    @Query("""
+        select * from requirement r
+        inner join requirement_review rr on r.id = rr.requirement_id
+        where rr.id = :id
+    """)
+    fun findByReviewedRequirementId(id: Long) : Mono<Requirement>
 }

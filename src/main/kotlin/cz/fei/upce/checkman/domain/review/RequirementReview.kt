@@ -16,4 +16,8 @@ data class RequirementReview(
     fun toReviewedRequirementQL(requirement: RequirementQL): ReviewedRequirementQL {
         return ReviewedRequirementQL(id, point, description, requirement)
     }
+
+    fun toQL(): ReviewedRequirementQL {
+        return ReviewedRequirementQL(id, point, description)
+    }
 }

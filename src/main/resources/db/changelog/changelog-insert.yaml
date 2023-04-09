@@ -581,3 +581,17 @@ databaseChangeLog:
                   name: name
                   value: VIEW_STATISTICS
             tableName: course_semester_role
+
+  - changeSet:
+      id: insert-34
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 12
+              - column:
+                  name: name
+                  value: VIEW_REVIEW
+            tableName: course_semester_role

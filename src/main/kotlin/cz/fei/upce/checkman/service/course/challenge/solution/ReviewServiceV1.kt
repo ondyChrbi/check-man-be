@@ -1,6 +1,5 @@
 package cz.fei.upce.checkman.service.course.challenge.solution
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.challenge.solution.Solution
@@ -24,8 +23,7 @@ class ReviewServiceV1(
     private val appUserService: AppUserServiceV1,
     private val authorizationService: CourseAuthorizationServiceV1,
     private val challengeService: ChallengeServiceV1,
-    private val reviewRepository: ReviewRepository,
-    private val objectMapper: ObjectMapper
+    private val reviewRepository: ReviewRepository
 ) {
     fun countToReview(challengeId: Long?): Mono<Long> {
         return solutionService.countToReview(challengeId!!)
@@ -97,5 +95,16 @@ class ReviewServiceV1(
         return reviewRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { reviewRepository.save(it.update(reviewInput)) }
+    }
+
+    fun findByIdAsQL(id: Long): Mono<ReviewQL> {
+        return reviewRepository.findById(id)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .map { it.toQL() }
+    }
+
+    fun findBySolutionIdAsQL(solutionId: Long): Mono<ReviewQL> {
+        return reviewRepository.findFirstBySolutionIdEquals(solutionId)
+            .map { it.toQL() }
     }
 }

@@ -3,6 +3,7 @@ package cz.fei.upce.checkman.controller.course.challenge.solution
 import cz.fei.upce.checkman.domain.review.Feedback
 import cz.fei.upce.checkman.graphql.input.course.challenge.solution.FeedbackInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.FeedbackQL
+import cz.fei.upce.checkman.graphql.output.challenge.solution.ReviewQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.TestResultQL
 import cz.fei.upce.checkman.service.course.challenge.solution.FeedbackServiceV1
 import cz.fei.upce.checkman.service.course.challenge.solution.TestResultServiceV1
@@ -25,8 +26,8 @@ class FeedbackQLController(
         return feedbackService.create(feedback)
     }
 
-    @SchemaMapping(typeName = "TestResult")
-    fun feedbacks(testResult: TestResultQL?) : Flux<FeedbackQL> {
+    @SchemaMapping(typeName = "TestResult", field = "feedbacks")
+    fun testResultsFeedbacks(testResult: TestResultQL?) : Flux<FeedbackQL> {
         if (testResult?.id == null) {
             return Flux.empty()
         }
@@ -34,5 +35,10 @@ class FeedbackQLController(
         return testResultService.checkExistById(testResult.id).flatMapMany {
             feedbackService.findByTestResultId(testResult.id)
         }
+    }
+
+    @SchemaMapping(typeName = "Review", field = "feedbacks")
+    fun reviewFeedbacks(review: ReviewQL): Flux<FeedbackQL> {
+        return feedbackService.findAllByReviewIdAsQL(review.id)
     }
 }
