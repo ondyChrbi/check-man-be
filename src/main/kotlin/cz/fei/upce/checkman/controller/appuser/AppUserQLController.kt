@@ -3,6 +3,7 @@ package cz.fei.upce.checkman.controller.appuser
 import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
 import cz.fei.upce.checkman.graphql.output.challenge.ChallengeQL
+import cz.fei.upce.checkman.graphql.output.challenge.PermittedAppUserChallengeQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.graphql.output.course.CourseSemesterRoleQL
 import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
@@ -45,5 +46,10 @@ class AppUserQLController(
     @QueryMapping
     fun appUser(@Argument id: Long): Mono<AppUserQL> {
         return appUserService.findByIdAsQL(id)
+    }
+
+    @SchemaMapping(typeName = "PermittedAppUserChallenge", field = "appUser")
+    fun appUserPermittedAppUserChallenge(permittedAppUserChallenge: PermittedAppUserChallengeQL): Flux<AppUserQL> {
+        return appUserService.findByPermittedAppUserChallengeIdAsQL(permittedAppUserChallenge.id!!)
     }
 }

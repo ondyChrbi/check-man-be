@@ -25,6 +25,8 @@ type Query {
     review(id: ID!): Review
     semesterAccessRequests(semesterId: ID!): [CourseSemesterAccessRequest!]!
     semesterAccessRequestsAppUser(semesterId: ID!, appUserId: ID): CourseSemesterAccessRequest
+    appUsersToPermitChallenge(challengeId: ID!): [AppUser!]!
+    permittedAppUsersChallenge(challengeId: ID!): [AppUser!]!
 }
 
 type Mutation {
@@ -33,6 +35,8 @@ type Mutation {
     createChallenge(semesterId: ID!, input: ChallengeInput!): Challenge!
     editChallenge(challengeId: ID!, input: ChallengeInput!): Challenge!
     deleteChallenge(challengeId: ID!): Challenge!
+    permitUserChallenge(appUserId: ID!, challengeId: ID!, accessTo: DateTime!): PermittedAppUserChallenge!
+    removePermitUserChallenge(appUserId: ID!, challengeId: ID!): Boolean!
     createRequirement(challengeId: ID!, input: RequirementInput!): Requirement!
     editRequirement(requirementId: ID!, input: RequirementInput!): Requirement!
     removeRequirement(requirementId: ID!): Requirement!
@@ -205,6 +209,13 @@ type TestConfiguration {
     active: Boolean
     creationDate: String
     updateDate: String
+}
+
+type PermittedAppUserChallenge {
+    id: ID,
+    accessTo: DateTime!,
+    appUser: AppUser
+    challenge: Challenge
 }
 
 enum TestStatus {

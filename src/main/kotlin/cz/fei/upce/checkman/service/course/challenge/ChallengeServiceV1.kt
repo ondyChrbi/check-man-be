@@ -185,25 +185,17 @@ class ChallengeServiceV1(
         return permittedAppUserChallengeRepository.save(permitted)
     }
 
-    private fun permitToAccess(appUserId: Long, challengeId: Long, accessTo: LocalDateTime) =
-        permittedAppUserChallengeRepository.save(
+    fun permitToAccess(appUserId: Long, challengeId: Long, accessTo: LocalDateTime): Mono<PermittedAppUserChallenge> {
+        return permittedAppUserChallengeRepository.save(
             PermittedAppUserChallenge(
                 appUserId = appUserId, challengeId = challengeId, accessTo = accessTo
             )
         )
+    }
 
-    private fun removeAccessFrom(appUserId: Long, challengeId: Long) =
-        permittedAppUserChallengeRepository.existsByAppUserIdEqualsAndChallengeIdEquals(appUserId, challengeId)
-            .flatMap {
-                if (!it) {
-                    Mono.error(AppUserDoesntHaveAccessToChallengeException())
-                } else {
-                    permittedAppUserChallengeRepository.deleteAllByAppUserIdEqualsAndChallengeIdEquals(
-                        appUserId,
-                        challengeId
-                    )
-                }
-            }
+    fun removeAccessFrom(appUserId: Long, challengeId: Long): Mono<Void> {
+        return Mono.empty()
+    }
 
     fun findAllBySemesterIdAsQL(semesterId: Long, requester: AppUser): Flux<ChallengeQL> {
         return challengeAuthorizationService.findAllByAppUserIsAuthorized(requester, semesterId)
@@ -266,6 +258,27 @@ class ChallengeServiceV1(
         return challengeRepository.findByReviewId(reviewId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { it.published }
+    }
+
+    fun existById(challengeId: Long): Mono<Boolean> {
+        return challengeRepository.existsById(challengeId)
+    }
+
+    fun checkExist(challengeId: Long): Mono<Boolean> {
+        return challengeRepository.existsById(challengeId)
+            .flatMap {
+                if (!it) {
+                    Mono.error(ResourceNotFoundException())
+                } else {
+                    Mono.just(it)
+                }
+            }
+    }
+
+    fun findByPermittedAppUserChallengeIdAsQL(id: Long): Mono<ChallengeQL> {
+        return challengeRepository.findByPermittedAppUserChallenge(id)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .map { it.toQL() }
     }
 
     companion object {

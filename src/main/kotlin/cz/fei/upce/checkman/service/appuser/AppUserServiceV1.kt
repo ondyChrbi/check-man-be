@@ -106,4 +106,18 @@ class AppUserServiceV1(
     fun findAuthor(challengeId: Long): Mono<AppUser> {
         return appUserRepository.findAuthorByChallengeId(challengeId)
     }
+
+    fun findAllPermitToChallenge(challengeId: Long): Flux<AppUser> {
+        return appUserRepository.findAllPermitToChallenge(challengeId)
+    }
+
+    fun findAllPermittedToChallenge(challengeId: Long): Flux<AppUser> {
+        return appUserRepository.findAllPermittedToChallenge(challengeId)
+    }
+
+    fun findByPermittedAppUserChallengeIdAsQL(id: Long): Flux<AppUserQL> {
+        return appUserRepository.findByPermittedChallengeId(id)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+            .map { it.toQL() }
+    }
 }

@@ -56,4 +56,11 @@ interface ChallengeRepository : ReactiveCrudRepository<Challenge, Long> {
         where r.id = : requirementId limit 1
     """)
     fun findByReviewId(requirementId: Long): Mono<Challenge>
+
+    @Query("""
+        select ch.* from challenge ch
+        inner join permitted_app_user_challenge pauc on ch.id = pauc.challenge_id
+        where pauc.id = :id
+    """)
+    fun findByPermittedAppUserChallenge(id: Long): Mono<Challenge>
 }

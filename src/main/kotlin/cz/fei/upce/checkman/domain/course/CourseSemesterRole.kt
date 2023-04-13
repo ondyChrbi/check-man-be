@@ -24,7 +24,9 @@ data class CourseSemesterRole(
         EDIT_COURSE(9),
         VIEW_TEST_RESULT(10),
         VIEW_STATISTICS(11),
-        VIEW_REVIEW(12);
+        VIEW_REVIEW(12),
+        PERMIT_CHALLENGE_CREDIT(13),
+        PERMIT_CHALLENGE_EXAM(14);
 
         fun toEntity() = CourseSemesterRole(id, this.toString())
 
@@ -43,6 +45,8 @@ data class CourseSemesterRole(
                 10L to VIEW_TEST_RESULT,
                 11L to VIEW_STATISTICS,
                 12L to VIEW_REVIEW,
+                13L to PERMIT_CHALLENGE_CREDIT,
+                14L to PERMIT_CHALLENGE_EXAM,
             )
         }
     }

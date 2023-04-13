@@ -595,3 +595,31 @@ databaseChangeLog:
                   name: name
                   value: VIEW_REVIEW
             tableName: course_semester_role
+
+  - changeSet:
+      id: insert-35
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 13
+              - column:
+                  name: name
+                  value: PERMIT_CHALLENGE_CREDIT
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-36
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 14
+              - column:
+                  name: name
+                  value: PERMIT_CHALLENGE_EXAM
+            tableName: course_semester_role
