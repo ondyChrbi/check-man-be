@@ -26,7 +26,9 @@ type Query {
     semesterAccessRequests(semesterId: ID!): [CourseSemesterAccessRequest!]!
     semesterAccessRequestsAppUser(semesterId: ID!, appUserId: ID): CourseSemesterAccessRequest
     appUsersToPermitChallenge(challengeId: ID!): [AppUser!]!
+    searchAppUsersToPermitChallenge(challengeId: ID!, search: String): [AppUser!]!
     permittedAppUsersChallenge(challengeId: ID!): [AppUser!]!
+    searchPermittedAppUsersChallenge(challengeId: ID!, search: String): [AppUser!]!
 }
 
 type Mutation {

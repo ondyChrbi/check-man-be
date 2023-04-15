@@ -111,11 +111,19 @@ class AppUserServiceV1(
         return appUserRepository.findAllPermitToChallenge(challengeId)
     }
 
+    fun searchAllPermitToChallenge(challengeId: Long, search: String = ""): Flux<AppUser> {
+        return appUserRepository.searchAllPermitToChallenge(challengeId, search = search)
+    }
+
     fun findAllPermittedToChallenge(challengeId: Long): Flux<AppUser> {
         return appUserRepository.findAllPermittedToChallenge(challengeId)
     }
 
-    fun findByPermittedAppUserChallengeIdAsQL(id: Long): Flux<AppUserQL> {
+    fun searchAllPermittedToChallenge(challengeId: Long, search: String = ""): Flux<AppUser> {
+        return appUserRepository.searchAllPermittedToChallenge(challengeId, search)
+    }
+
+    fun findByPermittedAppUserChallengeIdAsQL(id: Long): Mono<AppUserQL> {
         return appUserRepository.findByPermittedChallengeId(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { it.toQL() }

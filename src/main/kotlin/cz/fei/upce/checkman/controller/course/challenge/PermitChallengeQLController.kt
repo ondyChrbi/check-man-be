@@ -50,6 +50,26 @@ class PermitChallengeQLController(private val permitChallengeService: PermitChal
         @Argument @ChallengeId challengeId: Long,
         authentication: Authentication
     ): Flux<AppUserQL> {
-        return permitChallengeService.finaAllPermitted(challengeId)
+        return permitChallengeService.finaAllPermittedAsQL(challengeId)
+    }
+
+    @QueryMapping
+    @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS])
+    fun searchAppUsersToPermitChallenge(
+        @Argument @ChallengeId challengeId: Long,
+        @Argument search: String? = "",
+        authentication: Authentication
+    ): Flux<AppUserQL> {
+        return permitChallengeService.findAllToPermitAsQL(challengeId, search ?: "")
+    }
+
+    @QueryMapping
+    @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS])
+    fun searchPermittedAppUsersChallenge(
+        @Argument @ChallengeId challengeId: Long,
+        @Argument search: String? = "",
+        authentication: Authentication
+    ): Flux<AppUserQL> {
+        return permitChallengeService.finaAllPermittedAsQL(challengeId, search ?: "")
     }
 }

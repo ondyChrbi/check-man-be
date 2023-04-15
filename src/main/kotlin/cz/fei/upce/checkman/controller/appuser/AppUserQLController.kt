@@ -49,7 +49,7 @@ class AppUserQLController(
     }
 
     @SchemaMapping(typeName = "PermittedAppUserChallenge", field = "appUser")
-    fun appUserPermittedAppUserChallenge(permittedAppUserChallenge: PermittedAppUserChallengeQL): Flux<AppUserQL> {
+    fun appUserPermittedAppUserChallenge(permittedAppUserChallenge: PermittedAppUserChallengeQL): Mono<AppUserQL> {
         return appUserService.findByPermittedAppUserChallengeIdAsQL(permittedAppUserChallenge.id!!)
     }
 }

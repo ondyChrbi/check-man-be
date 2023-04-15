@@ -1579,3 +1579,28 @@ databaseChangeLog:
               inner join feedback_type ft on f.feedback_type_id = ft.id
               group by f.description, cs.id, c.id, f.feedback_type_id, ft.name
               order by count desc
+
+  - changeSet:
+      id: create-32
+      author: ondrej.chrbolka
+      preConditions:
+        - onFail: CONTINUE
+      changes:
+        - dropView:
+            viewName: to_permit_app_user_challenge
+
+  - changeSet:
+      id: create-33
+      author: ondrej.chrbolka
+      changes:
+        - createView:
+            viewName: to_permit_app_user_challenge
+            selectQuery: >
+              select distinct au.*, aucsr.course_semester_role_id as role, c.id as challengeId from app_user au
+              inner join app_user_course_semester_role aucsr on au.id = aucsr.app_user_id
+              inner join challenge c on c.course_semester_id = aucsr.course_semester_id
+              where aucsr.app_user_id not in (
+              select distinct au.id from app_user au
+              inner join permitted_app_user_challenge pauc on au.id = pauc.app_user_id
+              where pauc.challenge_id = c.id
+              );

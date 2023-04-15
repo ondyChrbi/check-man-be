@@ -55,5 +55,32 @@ interface AppUserRepository : ReactiveCrudRepository<AppUser, Long> {
         where pauc.id = :id
         limit 1
     """)
-    fun findByPermittedChallengeId(id: Long) : Flux<AppUser>
+    fun findByPermittedChallengeId(id: Long) : Mono<AppUser>
+
+    @Query("""
+        select distinct au.* from app_user au
+        inner join permitted_app_user_challenge pauc on au.id = pauc.app_user_id
+        where pauc.challenge_id = :challengeId and (
+                au.display_name LIKE ('%' || :search || '%')
+                OR au.mail LIKE ('%' || :search || '%')
+                OR au.stag_id LIKE ('%' || :search || '%')
+        )
+    """)
+    fun searchAllPermittedToChallenge(challengeId: Long, search: String = ""): Flux<AppUser>
+
+    @Query("""
+        select distinct au.* from app_user au
+        inner join app_user_course_semester_role aucsr on au.id = aucsr.app_user_id
+        inner join challenge c on c.course_semester_id = aucsr.course_semester_id
+        where aucsr.course_semester_role_id = :role and aucsr.app_user_id not in (
+            select distinct au.id from app_user au
+            inner join permitted_app_user_challenge pauc on au.id = pauc.app_user_id
+            where pauc.challenge_id = :challengeId
+        ) and (
+                au.display_name LIKE ('%' || :search || '%')
+                OR au.mail LIKE ('%' || :search || '%')
+                OR au.stag_id LIKE ('%' || :search || '%')
+        )
+    """)
+    fun searchAllPermitToChallenge(challengeId: Long, roleId: Long = CourseSemesterRole.Value.ACCESS.id, search: String = "") : Flux<AppUser>
 }

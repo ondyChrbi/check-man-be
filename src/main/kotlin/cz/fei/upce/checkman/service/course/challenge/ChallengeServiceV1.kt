@@ -235,14 +235,8 @@ class ChallengeServiceV1(
 
     fun publish(challengeId: Long, extractAuthenticateUser: AppUser): Mono<Boolean> {
         return challengeRepository.findById(challengeId)
+            .flatMap { challenge -> checkChallenge(challenge, extractAuthenticateUser) }
             .flatMap { challenge ->
-                if (challenge.authorId != extractAuthenticateUser.id)
-                    Mono.error(UserNotAuthorException(challengeId))
-                else if (challenge.published)
-                    Mono.error(AlreadyPublishedException(challengeId))
-                else
-                    Mono.just(challenge)
-            }.flatMap { challenge ->
                 challenge.published = true
                 challengeRepository.save(challenge)
             }.map { true }
@@ -279,6 +273,15 @@ class ChallengeServiceV1(
         return challengeRepository.findByPermittedAppUserChallenge(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { it.toQL() }
+    }
+
+    private fun checkChallenge(challenge: Challenge, extractAuthenticateUser: AppUser): Mono<Challenge> {
+        return if (challenge.authorId != extractAuthenticateUser.id)
+            Mono.error(UserNotAuthorException(challenge.id!!))
+        else if (challenge.published)
+            Mono.error(AlreadyPublishedException(challenge.id!!))
+        else
+            Mono.just(challenge)
     }
 
     companion object {
