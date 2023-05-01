@@ -3,7 +3,7 @@ package cz.fei.upce.checkman.controller.course.challenge.solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.graphql.output.challenge.solution.SolutionQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.TestResultQL
-import cz.fei.upce.checkman.service.course.challenge.solution.TestResultServiceV1
+import cz.fei.upce.checkman.service.course.challenge.solution.TestResultService
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.upce.fei.checkman.domain.course.security.annotation.TestResultId
 import org.springframework.graphql.data.method.annotation.Argument
@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono
 
 @Controller
 class TestResultQLController(
-    private val testResultService: TestResultServiceV1,
+    private val testResultService: TestResultService,
 ) {
     @QueryMapping
     @PreCourseSemesterAuthorize(value = [CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.VIEW_TEST_RESULT])

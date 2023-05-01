@@ -10,9 +10,9 @@ import cz.fei.upce.checkman.dto.course.CourseRequestDtoV1
 import cz.fei.upce.checkman.dto.course.CourseResponseDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterRequestDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterResponseDtoV1
-import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
-import cz.fei.upce.checkman.service.course.CourseServiceV1
-import cz.fei.upce.checkman.service.role.CourseSemesterRoleServiceV1
+import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
+import cz.fei.upce.checkman.service.course.CourseService
+import cz.fei.upce.checkman.service.role.CourseSemesterRoleService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.linkTo
@@ -29,9 +29,9 @@ import javax.validation.Valid
 @RequestMapping("/v1/course")
 @Tag(name = "Course V1", description = "Course API (V1)")
 class CourseControllerV1(
-    private val courseService: CourseServiceV1,
-    private val courseSemesterRoleService: CourseSemesterRoleServiceV1,
-    private val authenticationService: AuthenticationServiceV1
+    private val courseService: CourseService,
+    private val courseSemesterRoleService: CourseSemesterRoleService,
+    private val authenticationService: AuthenticationServiceImpl
     ) {
     @GetMapping("")
     @PreAuthorize("hasRole('$ROLE_COURSE_VIEW')")

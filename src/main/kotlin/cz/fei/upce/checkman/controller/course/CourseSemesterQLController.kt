@@ -9,14 +9,14 @@ import cz.fei.upce.checkman.graphql.input.course.SemesterInputQL
 import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL
 import cz.fei.upce.checkman.graphql.output.course.*
-import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
-import cz.fei.upce.checkman.service.course.AppUserCourseSemesterForbiddenException
-import cz.fei.upce.checkman.service.course.CourseServiceV1
-import cz.fei.upce.checkman.service.course.SemesterServiceV1
-import cz.fei.upce.checkman.service.course.security.CourseAuthorizationServiceV1
+import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
+import cz.fei.upce.checkman.service.course.security.exception.AppUserCourseSemesterForbiddenException
+import cz.fei.upce.checkman.service.course.CourseService
+import cz.fei.upce.checkman.service.course.SemesterService
+import cz.fei.upce.checkman.service.course.security.CourseAuthorizationService
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.upce.fei.checkman.domain.course.security.annotation.SemesterId
-import cz.fei.upce.checkman.service.role.CourseSemesterRoleServiceV1
+import cz.fei.upce.checkman.service.role.CourseSemesterRoleService
 import org.springframework.data.domain.Sort
 import org.springframework.graphql.data.method.annotation.*
 import org.springframework.security.core.Authentication
@@ -26,11 +26,11 @@ import reactor.core.publisher.Mono
 
 @Controller
 class CourseSemesterQLController(
-    private val courseService: CourseServiceV1,
-    private val courseSemesterRoleService: CourseSemesterRoleServiceV1,
-    private val semesterService: SemesterServiceV1,
-    private val courseAuthorizationService: CourseAuthorizationServiceV1,
-    private val authenticationService: AuthenticationServiceV1
+    private val courseService: CourseService,
+    private val courseSemesterRoleService: CourseSemesterRoleService,
+    private val semesterService: SemesterService,
+    private val courseAuthorizationService: CourseAuthorizationService,
+    private val authenticationService: AuthenticationServiceImpl
 ) {
 
     @QueryMapping

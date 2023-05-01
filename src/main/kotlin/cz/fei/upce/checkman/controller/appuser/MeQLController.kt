@@ -2,9 +2,9 @@ package cz.fei.upce.checkman.controller.appuser
 
 import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
 import cz.fei.upce.checkman.graphql.output.course.CourseQL
-import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
-import cz.fei.upce.checkman.service.appuser.MeServiceV1
-import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
+import cz.fei.upce.checkman.service.appuser.AppUserService
+import cz.fei.upce.checkman.service.appuser.MeService
+import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.QueryMapping
 import org.springframework.security.core.Authentication
@@ -14,9 +14,9 @@ import reactor.core.publisher.Mono
 
 @Controller
 class MeQLController(
-    private val appUserService: AppUserServiceV1,
-    private val authenticationService: AuthenticationServiceV1,
-    private val meServiceV1: MeServiceV1
+    private val appUserService: AppUserService,
+    private val authenticationService: AuthenticationServiceImpl,
+    private val meService: MeService
 ) {
     @QueryMapping
     fun me(authentication: Authentication?): Mono<AppUserQL> {
@@ -25,16 +25,16 @@ class MeQLController(
 
     @QueryMapping
     fun myCourses(authentication: Authentication?): Flux<CourseQL> {
-        return meServiceV1.myCoursesAsQL(authenticationService.extractAuthenticateUser(authentication!!))
+        return meService.myCoursesAsQL(authenticationService.extractAuthenticateUser(authentication!!))
     }
 
     @QueryMapping
     fun availableCourses(authentication: Authentication?): Flux<CourseQL> {
-        return meServiceV1.availableCoursesAsQL(authenticationService.extractAuthenticateUser(authentication!!))
+        return meService.availableCoursesAsQL(authenticationService.extractAuthenticateUser(authentication!!))
     }
 
     @QueryMapping
     fun courseRoles(@Argument id: Long, authentication: Authentication?): Flux<String> {
-        return meServiceV1.courseRolesAsQL(id, authenticationService.extractAuthenticateUser(authentication!!))
+        return meService.courseRolesAsQL(id, authenticationService.extractAuthenticateUser(authentication!!))
     }
 }

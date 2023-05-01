@@ -8,9 +8,9 @@ import cz.fei.upce.checkman.domain.user.GlobalRole
 import cz.fei.upce.checkman.dto.appuser.AppUserResponseDtoV1
 import cz.fei.upce.checkman.dto.course.CourseResponseDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterResponseDtoV1
-import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
-import cz.fei.upce.checkman.service.appuser.MeServiceV1
-import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
+import cz.fei.upce.checkman.service.appuser.AppUserService
+import cz.fei.upce.checkman.service.appuser.MeService
+import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.linkTo
@@ -28,9 +28,9 @@ import reactor.core.publisher.Mono
 @RequestMapping("/v1/me")
 @Tag(name = "Me V1", description = "Current logged user (V1)")
 class MeControllerV1(
-    private val appUserService: AppUserServiceV1,
-    private val meService: MeServiceV1,
-    private val authenticationService: AuthenticationServiceV1
+    private val appUserService: AppUserService,
+    private val meService: MeService,
+    private val authenticationService: AuthenticationServiceImpl
     ) {
     @GetMapping("")
     @MeEndpointV1

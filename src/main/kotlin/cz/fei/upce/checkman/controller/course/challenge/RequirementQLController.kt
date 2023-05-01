@@ -5,7 +5,7 @@ import cz.fei.upce.checkman.graphql.input.course.RequirementInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.ChallengeQL
 import cz.fei.upce.checkman.graphql.output.challenge.requirement.RequirementQL
 import cz.fei.upce.checkman.graphql.output.challenge.requirement.ReviewedRequirementQL
-import cz.fei.upce.checkman.service.course.challenge.requirement.RequirementServiceV1
+import cz.fei.upce.checkman.service.course.challenge.requirement.RequirementService
 import cz.upce.fei.checkman.domain.course.security.annotation.ChallengeId
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.upce.fei.checkman.domain.course.security.annotation.RequirementId
@@ -19,7 +19,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Controller
-class RequirementQLController(private val requirementService: RequirementServiceV1) {
+class RequirementQLController(private val requirementService: RequirementService) {
     @QueryMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS])
     fun requirements(@ChallengeId @Argument challengeId: Long, authentication: Authentication): Flux<RequirementQL> {

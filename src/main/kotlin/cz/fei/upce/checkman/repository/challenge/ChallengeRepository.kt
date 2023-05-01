@@ -1,6 +1,7 @@
 package cz.fei.upce.checkman.repository.challenge
 
 import cz.fei.upce.checkman.domain.challenge.Challenge
+import cz.fei.upce.checkman.domain.challenge.ChallengeKind
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
@@ -63,4 +64,11 @@ interface ChallengeRepository : ReactiveCrudRepository<Challenge, Long> {
         where pauc.id = :id
     """)
     fun findByPermittedAppUserChallenge(id: Long): Mono<Challenge>
+
+    @Query("""
+        select ch.* from challenge ch
+        where ch.course_semester_id = :semesterId AND ch.challenge_kind_id in (:challengeKindsIds)
+    """)
+    fun findAllProtectedByCourseSemesterIdEquals(semesterId: Long, challengeKindsIds: Collection<Long> =
+        listOf(ChallengeKind.Value.CREDIT.id, ChallengeKind.Value.EXAM.id)): Flux<Challenge>
 }

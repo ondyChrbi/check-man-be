@@ -5,7 +5,7 @@ import cz.fei.upce.checkman.doc.appuser.UnblockAppUserEndpointV1
 import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_BLOCK_APP_USER
 import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_MANAGE_APP_USER
 import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_UNBLOCK_APP_USER
-import cz.fei.upce.checkman.service.appuser.AppUserServiceV1
+import cz.fei.upce.checkman.service.appuser.AppUserService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono
 @RestController
 @RequestMapping("/v1/app-user")
 @Tag(name = "App User V1", description = "App User API (V1)")
-class AppUserControllerV1(private val appUserService: AppUserServiceV1) {
+class AppUserControllerV1(private val appUserService: AppUserService) {
     @PostMapping("/{stagId}/block")
     @PreAuthorize("hasAnyRole('$ROLE_MANAGE_APP_USER', '$ROLE_BLOCK_APP_USER')")
     @BlockAppUserEndpointV1

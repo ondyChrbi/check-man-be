@@ -212,100 +212,6 @@ databaseChangeLog:
             sequenceName: app_global_role_id_seq
 
   - changeSet:
-      id: create-5
-      author: ondrej.chrbolka
-      changes:
-        - createTable:
-            tableName: team
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  constraints:
-                    primaryKey: true
-              - column:
-                  name: name
-                  type: varchar(64)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: creation_date
-                  type: timestamptz
-                  constraints:
-                    defaultValue: now()
-                    nullable: false
-              - column:
-                  name: private
-                  type: bool
-                  constraints:
-                    defaultValue: false
-                    nullable: false
-              - column:
-                  name: min_members
-                  type: smallint
-                  constraints:
-                    defaultValue: 0
-                    nullable: false
-              - column:
-                  name: max_members
-                  type: smallint
-
-        - createSequence:
-            dataType: bigint
-            incrementBy: 1
-            startValue: 0
-            minValue: 0
-            sequenceName: team_id_seq
-
-  - changeSet:
-      id: create-6
-      author: ondrej.chrbolka
-      changes:
-        - createTable:
-            tableName: app_user_team
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  constraints:
-                    primaryKey: true
-              - column:
-                  name: app_user_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
-                  name: team_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-
-        - addForeignKeyConstraint:
-            baseColumnNames: app_user_id
-            baseTableName: app_user_team
-            constraintName: app_user_team_app_user_id_fk
-            referencedColumnNames: id
-            referencedTableName: app_user
-            validate: true
-            onDelete: CASCADE
-            onUpdate: RESTRICT
-        - addForeignKeyConstraint:
-            baseColumnNames: team_id
-            baseTableName: app_user_team
-            constraintName: app_user_team_team_id_fk
-            referencedColumnNames: id
-            referencedTableName: team
-            validate: true
-            onDelete: CASCADE
-            onUpdate: RESTRICT
-        - createSequence:
-            dataType: bigint
-            incrementBy: 1
-            startValue: 0
-            minValue: 0
-            sequenceName: app_user_team_id_seq
-
-  - changeSet:
       id: create-7
       author: ondrej.chrbolka
       changes:
@@ -1167,30 +1073,6 @@ databaseChangeLog:
             generationType: ALWAYS
             incrementBy: 1
             startWith: 0
-            tableName: team
-
-        - addAutoIncrement:
-            columnDataType: bigint
-            columnName: id
-            generationType: ALWAYS
-            incrementBy: 1
-            startWith: 0
-            tableName: team
-
-        - addAutoIncrement:
-            columnDataType: bigint
-            columnName: id
-            generationType: ALWAYS
-            incrementBy: 1
-            startWith: 0
-            tableName: app_user_team
-
-        - addAutoIncrement:
-            columnDataType: bigint
-            columnName: id
-            generationType: ALWAYS
-            incrementBy: 1
-            startWith: 0
             tableName: course_semester_role
 
         - addAutoIncrement:
@@ -1579,15 +1461,6 @@ databaseChangeLog:
               inner join feedback_type ft on f.feedback_type_id = ft.id
               group by f.description, cs.id, c.id, f.feedback_type_id, ft.name
               order by count desc
-
-  - changeSet:
-      id: create-32
-      author: ondrej.chrbolka
-      preConditions:
-        - onFail: CONTINUE
-      changes:
-        - dropView:
-            viewName: to_permit_app_user_challenge
 
   - changeSet:
       id: create-33

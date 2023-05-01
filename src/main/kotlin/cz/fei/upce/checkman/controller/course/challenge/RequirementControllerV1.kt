@@ -9,7 +9,7 @@ import cz.fei.upce.checkman.domain.user.GlobalRole
 import cz.fei.upce.checkman.dto.course.challenge.requirement.RequirementRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.requirement.RequirementResponseDtoV1
 import cz.fei.upce.checkman.service.course.challenge.ChallengeLocation
-import cz.fei.upce.checkman.service.course.challenge.requirement.RequirementServiceV1
+import cz.fei.upce.checkman.service.course.challenge.requirement.RequirementService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.hateoas.CollectionModel
 import org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.linkTo
@@ -23,7 +23,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/v1/course/{courseId}/semester/{semesterId}/challenge/{challengeId}/requirement")
 @Tag(name = "Requirement V1", description = "Requirement API (V1)")
-class RequirementControllerV1(private val requirementService: RequirementServiceV1) {
+class RequirementControllerV1(private val requirementService: RequirementService) {
     @GetMapping("")
     @PreAuthorize(
         """hasAnyRole('${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_SEMESTER_MANAGE}', 

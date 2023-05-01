@@ -8,9 +8,9 @@ import cz.fei.upce.checkman.dto.course.challenge.ChallengeResponseDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.PermitAppUserChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.RemoveAccessAppUserChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.attachment.FileAttachmentResponseDtoV1
-import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
-import cz.fei.upce.checkman.service.course.challenge.ChallengeServiceV1
-import cz.fei.upce.checkman.service.course.challenge.attachment.ChallengeFileAttachmentServiceV1
+import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
+import cz.fei.upce.checkman.service.course.challenge.ChallengeService
+import cz.fei.upce.checkman.service.course.challenge.attachment.ChallengeFileAttachmentService
 import cz.fei.upce.checkman.service.course.challenge.ChallengeLocation
 import cz.upce.fei.checkman.domain.course.security.annotation.CourseId
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
@@ -33,9 +33,9 @@ import javax.validation.Valid
 @RequestMapping("/v1/course/{courseId}/semester/{semesterId}/challenge")
 @Tag(name = "Challenge V1", description = "Challenge API (V1)")
 class ChallengeControllerV1(
-    private val challengeService: ChallengeServiceV1,
-    private val challengeFileAttachmentService: ChallengeFileAttachmentServiceV1,
-    private val authenticationService: AuthenticationServiceV1
+    private val challengeService: ChallengeService,
+    private val challengeFileAttachmentService: ChallengeFileAttachmentService,
+    private val authenticationService: AuthenticationServiceImpl
 ) {
     @GetMapping("")
     @PreAuthorize("""hasAnyRole('${GlobalRole.ROLE_COURSE_MANAGE}', '${GlobalRole.ROLE_COURSE_VIEW}', 

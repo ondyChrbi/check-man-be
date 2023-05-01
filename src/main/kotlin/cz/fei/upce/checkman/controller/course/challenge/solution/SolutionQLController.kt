@@ -1,8 +1,8 @@
 package cz.fei.upce.checkman.controller.course.challenge.solution
 
 import cz.fei.upce.checkman.graphql.output.challenge.solution.SolutionQL
-import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
-import cz.fei.upce.checkman.service.course.challenge.solution.SolutionServiceV1
+import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
+import cz.fei.upce.checkman.service.course.challenge.solution.SolutionService
 import cz.upce.fei.checkman.domain.course.security.annotation.ChallengeId
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.upce.fei.checkman.domain.course.security.annotation.SolutionId
@@ -17,8 +17,8 @@ import reactor.core.publisher.Mono
 @Controller
 @Validated
 class SolutionQLController(
-    private val solutionService: SolutionServiceV1,
-    private val authenticationService: AuthenticationServiceV1,
+    private val solutionService: SolutionService,
+    private val authenticationService: AuthenticationServiceImpl,
     ) {
     @QueryMapping
     @PreCourseSemesterAuthorize

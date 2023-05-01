@@ -5,8 +5,8 @@ import cz.fei.upce.checkman.graphql.input.course.challenge.solution.FeedbackInpu
 import cz.fei.upce.checkman.graphql.output.challenge.solution.FeedbackQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.ReviewQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.TestResultQL
-import cz.fei.upce.checkman.service.course.challenge.solution.FeedbackServiceV1
-import cz.fei.upce.checkman.service.course.challenge.solution.TestResultServiceV1
+import cz.fei.upce.checkman.service.course.challenge.solution.FeedbackService
+import cz.fei.upce.checkman.service.course.challenge.solution.TestResultService
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
 import org.springframework.graphql.data.method.annotation.SchemaMapping
@@ -18,8 +18,8 @@ import reactor.core.publisher.Mono
 @Controller
 @Validated
 class FeedbackQLController(
-    private val testResultService: TestResultServiceV1,
-    private val feedbackService: FeedbackServiceV1
+    private val testResultService: TestResultService,
+    private val feedbackService: FeedbackService
 ) {
     @MutationMapping
     fun createFeedback(@Argument feedback: FeedbackInputQL): Mono<Feedback> {

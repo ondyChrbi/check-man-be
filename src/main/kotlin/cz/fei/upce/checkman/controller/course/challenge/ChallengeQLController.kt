@@ -4,8 +4,8 @@ import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.graphql.input.course.challenge.ChallengeInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.ChallengeQL
 import cz.fei.upce.checkman.graphql.output.challenge.PermittedAppUserChallengeQL
-import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
-import cz.fei.upce.checkman.service.course.challenge.ChallengeServiceV1
+import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
+import cz.fei.upce.checkman.service.course.challenge.ChallengeService
 import cz.upce.fei.checkman.domain.course.security.annotation.ChallengeId
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.upce.fei.checkman.domain.course.security.annotation.SemesterId
@@ -22,8 +22,8 @@ import javax.validation.Valid
 @Controller
 @Validated
 class ChallengeQLController(
-    private val challengeService: ChallengeServiceV1,
-    private val authenticationService: AuthenticationServiceV1
+    private val challengeService: ChallengeService,
+    private val authenticationService: AuthenticationServiceImpl
 ) {
     @QueryMapping
     @PreCourseSemesterAuthorize
@@ -32,8 +32,11 @@ class ChallengeQLController(
 
     @QueryMapping
     @PreCourseSemesterAuthorize
-    fun challenge(@ChallengeId @Argument id: Long, authentication: Authentication) =
-        challengeService.findByIdAsQL(id)
+    fun challenge(@ChallengeId @Argument id: Long, authentication: Authentication): Mono<ChallengeQL> {
+        val appUser = authenticationService.extractAuthenticateUser(authentication)
+
+        return challengeService.findByIdAsQL(id, appUser)
+    }
 
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.CREATE_CHALLENGE])

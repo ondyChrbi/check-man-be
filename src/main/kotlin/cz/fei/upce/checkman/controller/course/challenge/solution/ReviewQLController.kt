@@ -7,14 +7,13 @@ import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Review
 import cz.fei.upce.checkman.graphql.input.course.challenge.ReviewInputQL
 import cz.fei.upce.checkman.graphql.input.course.challenge.solution.FeedbackInputQL
-import cz.fei.upce.checkman.graphql.output.challenge.requirement.ReviewedRequirementQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.CoursesReviewListQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.FeedbackQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.ReviewQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.SolutionQL
-import cz.fei.upce.checkman.service.authentication.AuthenticationServiceV1
-import cz.fei.upce.checkman.service.course.challenge.solution.FeedbackServiceV1
-import cz.fei.upce.checkman.service.course.challenge.solution.ReviewServiceV1
+import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
+import cz.fei.upce.checkman.service.course.challenge.solution.FeedbackService
+import cz.fei.upce.checkman.service.course.challenge.solution.ReviewService
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.upce.fei.checkman.domain.course.security.annotation.ChallengeId
 import cz.upce.fei.checkman.domain.course.security.annotation.CourseId
@@ -33,9 +32,9 @@ import reactor.core.publisher.Mono
 @Controller
 @Validated
 class ReviewQLController(
-    private val reviewService: ReviewServiceV1,
-    private val feedbackService: FeedbackServiceV1,
-    private val authenticationService: AuthenticationServiceV1
+    private val reviewService: ReviewService,
+    private val feedbackService: FeedbackService,
+    private val authenticationService: AuthenticationServiceImpl
 ) {
     @QueryMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])

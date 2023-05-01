@@ -4,7 +4,7 @@ import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.graphql.input.course.challenge.solution.ReviewPointsInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.requirement.ReviewedRequirementQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.ReviewQL
-import cz.fei.upce.checkman.service.course.challenge.requirement.RequirementServiceV1
+import cz.fei.upce.checkman.service.course.challenge.requirement.RequirementService
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.upce.fei.checkman.domain.course.security.annotation.RequirementId
 import cz.upce.fei.checkman.domain.course.security.annotation.ReviewId
@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono
 @Controller
 @Validated
 class RequirementReviewQLController(
-    private val requirementService: RequirementServiceV1
+    private val requirementService: RequirementService
 ) {
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
