@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.domain.course
 
-import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
@@ -13,7 +13,7 @@ data class CourseSemester(
     var dateEnd: LocalDateTime? = null,
     var courseId: Long? = null
 ) {
-    fun toQL() = CourseSemesterQL(id!!, note!!, dateStart!!, dateEnd!!)
+    fun toQL() = cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL(id!!, note!!, dateStart!!, dateEnd!!)
 
     fun isBeforeStart(nowDate: LocalDateTime = LocalDateTime.now()) = dateStart != null && nowDate.isBefore(dateStart)
 

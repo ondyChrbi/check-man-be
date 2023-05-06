@@ -4,10 +4,10 @@ import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.course.CourseSemester
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
-import cz.fei.upce.checkman.graphql.input.course.CourseRequirementsInputQL
-import cz.fei.upce.checkman.graphql.input.course.SemesterInputQL
-import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
-import cz.fei.upce.checkman.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL
+import cz.fei.upce.checkman.dto.graphql.input.course.CourseRequirementsInputQL
+import cz.fei.upce.checkman.dto.graphql.input.course.SemesterInputQL
+import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL
 import cz.fei.upce.checkman.graphql.output.course.*
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
 import cz.fei.upce.checkman.service.course.security.exception.AppUserCourseSemesterForbiddenException
@@ -34,18 +34,18 @@ class CourseSemesterQLController(
 ) {
 
     @QueryMapping
-    fun course(@Argument id: Long): Mono<CourseQL> {
+    fun course(@Argument id: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
         return courseService.findAsQL(id)
     }
 
     @BatchMapping(typeName = "Course")
-    fun semesters(courses: List<CourseQL>): Flux<List<CourseSemester>> {
+    fun semesters(courses: List<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL>): Flux<List<CourseSemester>> {
         return semesterService.findAllByCoursesQL(courses)
     }
 
     @QueryMapping
     @PreCourseSemesterAuthorize
-    fun semester(@SemesterId @Argument id: Long, authentication: Authentication): Mono<CourseSemesterQL> {
+    fun semester(@SemesterId @Argument id: Long, authentication: Authentication): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL> {
         return courseService.findSemesterAsQL(id)
     }
 
@@ -63,14 +63,14 @@ class CourseSemesterQLController(
     @MutationMapping
     fun createSemester(
         @Argument courseId: Long,
-        @Argument input: SemesterInputQL,
+        @Argument input: cz.fei.upce.checkman.dto.graphql.input.course.SemesterInputQL,
         authentication: Authentication
-    ): Mono<CourseSemesterQL> {
+    ): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL> {
         return semesterService.add(courseId, input)
     }
 
     @QueryMapping
-    fun allCourseRoles(): Flux<CourseSemesterRoleQL> {
+    fun allCourseRoles(): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRoleQL> {
         return courseSemesterRoleService.findAllAsQL()
     }
 
@@ -97,7 +97,7 @@ class CourseSemesterQLController(
     }
 
     @MutationMapping
-    fun createSemesterAccessRequest(@Argument semesterId: Long, authentication: Authentication): Mono<CourseSemesterAccessRequestQL> {
+    fun createSemesterAccessRequest(@Argument semesterId: Long, authentication: Authentication): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL> {
         val appUser = authenticationService.extractAuthenticateUser(authentication)
 
         return courseAuthorizationService.createCourseAccessRequest(appUser, semesterId)
@@ -105,17 +105,17 @@ class CourseSemesterQLController(
 
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.EDIT_COURSE])
-    fun editSemesterRequirements(@Argument @SemesterId semesterId: Long, @Argument input : CourseRequirementsInputQL, authentication: Authentication): Mono<CourseSemesterQL> {
+    fun editSemesterRequirements(@Argument @SemesterId semesterId: Long, @Argument input : cz.fei.upce.checkman.dto.graphql.input.course.CourseRequirementsInputQL, authentication: Authentication): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL> {
         return courseService.editRequirementsAsQL(semesterId, input)
     }
 
     @SchemaMapping(typeName = "Semester")
-    fun fulfillmentConditions (semestersQL: CourseSemesterQL): Mono<CourseRequirementsQL> {
+    fun fulfillmentConditions (semestersQL: cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseRequirementsQL> {
         return courseService.findSemesterRequirements(semestersQL.id)
     }
 
     @SchemaMapping(typeName = "Semester")
-    fun statistic(semestersQL: CourseSemesterQL): Flux<FeedbackStatisticsQL> {
+    fun statistic(semestersQL: cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL> {
         return semesterService.makeStatistic(semestersQL)
     }
 
@@ -123,18 +123,18 @@ class CourseSemesterQLController(
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.VIEW_STATISTICS])
     fun statisticQuery(@Argument @SemesterId semesterId: Long, @Argument direction : Sort.Direction?,
                        @Argument limit: Int?, @Argument description: String?,
-                       authentication: Authentication): Flux<FeedbackStatisticsQL> {
+                       authentication: Authentication): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL> {
         return semesterService.findAllStatistics(semesterId, direction, limit, description)
     }
 
     @QueryMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.MANAGE_USERS])
-    fun semesterAccessRequests(@Argument @SemesterId semesterId: Long, authentication: Authentication) : Flux<CourseSemesterAccessRequestQL> {
+    fun semesterAccessRequests(@Argument @SemesterId semesterId: Long, authentication: Authentication) : Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL> {
         return courseAuthorizationService.findAllCourseAccessRequestsBySemester(semesterId)
     }
 
     @QueryMapping
-    fun semesterAccessRequestsAppUser(@Argument @SemesterId semesterId: Long, @Argument appUserId: Long?, authentication: Authentication?): Mono<CourseSemesterAccessRequestQL> {
+    fun semesterAccessRequestsAppUser(@Argument @SemesterId semesterId: Long, @Argument appUserId: Long?, authentication: Authentication?): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL> {
         val appUser = authenticationService.extractAuthenticateUser(authentication!!)
 
         return if (appUserId != null && appUserId != appUser.id) {
@@ -157,7 +157,7 @@ class CourseSemesterQLController(
     }
 
     @SchemaMapping(typeName = "AppUser")
-    fun accessRequests(appUser: AppUserQL): Flux<CourseSemesterAccessRequestQL> {
+    fun accessRequests(appUser: cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL> {
         return courseAuthorizationService.findAllCourseAccessRequestsBySemester(appUser)
     }
 

@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.domain.statistic
 
-import cz.fei.upce.checkman.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
@@ -25,8 +25,8 @@ data class FeedbackStatistics(
     @field:Column
     val count: Long
 ) {
-    fun toQL(): FeedbackStatisticsQL {
-        return FeedbackStatisticsQL(
+    fun toQL(): cz.fei.upce.checkman.dto.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL {
+        return cz.fei.upce.checkman.dto.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL(
             semesterId = semesterId,
             challengeId = challengeId,
             description = description,

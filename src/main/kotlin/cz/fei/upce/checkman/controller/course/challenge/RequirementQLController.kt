@@ -1,10 +1,10 @@
 package cz.fei.upce.checkman.controller.course.challenge
 
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
-import cz.fei.upce.checkman.graphql.input.course.RequirementInputQL
-import cz.fei.upce.checkman.graphql.output.challenge.ChallengeQL
-import cz.fei.upce.checkman.graphql.output.challenge.requirement.RequirementQL
-import cz.fei.upce.checkman.graphql.output.challenge.requirement.ReviewedRequirementQL
+import cz.fei.upce.checkman.dto.graphql.input.course.RequirementInputQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.ReviewedRequirementQL
 import cz.fei.upce.checkman.service.course.challenge.requirement.RequirementService
 import cz.upce.fei.checkman.domain.course.security.annotation.ChallengeId
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
@@ -22,33 +22,33 @@ import reactor.core.publisher.Mono
 class RequirementQLController(private val requirementService: RequirementService) {
     @QueryMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS])
-    fun requirements(@ChallengeId @Argument challengeId: Long, authentication: Authentication): Flux<RequirementQL> {
+    fun requirements(@ChallengeId @Argument challengeId: Long, authentication: Authentication): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL> {
         return requirementService.findAllByChallengeIdAsQL(challengeId)
     }
 
     @SchemaMapping(typeName = "Challenge")
-    fun requirements(challengeQL: ChallengeQL): Flux<RequirementQL> {
+    fun requirements(challengeQL: cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL> {
         return requirementService.findAllByChallengeIdAsQL(challengeQL.id!!)
     }
 
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.EDIT_CHALLENGE])
-    fun createRequirement(@ChallengeId @Argument challengeId: Long, @Argument input: RequirementInputQL, authentication: Authentication) =
+    fun createRequirement(@ChallengeId @Argument challengeId: Long, @Argument input: cz.fei.upce.checkman.dto.graphql.input.course.RequirementInputQL, authentication: Authentication) =
         requirementService.addAsQL(challengeId, input)
 
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.EDIT_CHALLENGE])
-    fun editRequirement(@RequirementId @Argument requirementId: Long, @Argument input: RequirementInputQL, authentication: Authentication) =
+    fun editRequirement(@RequirementId @Argument requirementId: Long, @Argument input: cz.fei.upce.checkman.dto.graphql.input.course.RequirementInputQL, authentication: Authentication) =
         requirementService.editAsQL(requirementId, input)
 
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.EDIT_CHALLENGE])
-    fun removeRequirement(@RequirementId @Argument requirementId: Long, authentication: Authentication): Mono<RequirementQL> {
+    fun removeRequirement(@RequirementId @Argument requirementId: Long, authentication: Authentication): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL> {
         return requirementService.removeAsQL(requirementId)
     }
 
     @SchemaMapping(typeName = "ReviewedRequirement")
-    fun requirement(reviewedRequirement: ReviewedRequirementQL): Mono<RequirementQL> {
+    fun requirement(reviewedRequirement: cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.ReviewedRequirementQL): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL> {
         return requirementService.findByReviewedRequirementIdAsQL(reviewedRequirement.id!!)
     }
 

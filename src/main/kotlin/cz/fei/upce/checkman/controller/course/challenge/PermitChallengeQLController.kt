@@ -1,8 +1,8 @@
 package cz.fei.upce.checkman.controller.course.challenge
 
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
-import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
-import cz.fei.upce.checkman.graphql.output.challenge.PermittedAppUserChallengeQL
+import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.PermittedAppUserChallengeQL
 import cz.fei.upce.checkman.service.course.challenge.PermitChallengeService
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.upce.fei.checkman.domain.course.security.annotation.ChallengeId
@@ -22,7 +22,7 @@ class PermitChallengeQLController(private val permitChallengeService: PermitChal
     fun permitUserChallenge(
         @Argument @ChallengeId challengeId: Long, @Argument appUserId: Long, @Argument accessTo: OffsetDateTime = OffsetDateTime.now(),
         authentication: Authentication
-    ): Mono<PermittedAppUserChallengeQL> {
+    ): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.PermittedAppUserChallengeQL> {
         return permitChallengeService.permitToAccessAsQL(challengeId, appUserId, accessTo.toLocalDateTime())
     }
 
@@ -40,7 +40,7 @@ class PermitChallengeQLController(private val permitChallengeService: PermitChal
     fun appUsersToPermitChallenge(
         @Argument @ChallengeId challengeId: Long,
         authentication: Authentication
-    ): Flux<AppUserQL> {
+    ): Flux<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
         return permitChallengeService.findAllToPermitAsQL(challengeId)
     }
 
@@ -49,7 +49,7 @@ class PermitChallengeQLController(private val permitChallengeService: PermitChal
     fun permittedAppUsersChallenge(
         @Argument @ChallengeId challengeId: Long,
         authentication: Authentication
-    ): Flux<AppUserQL> {
+    ): Flux<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
         return permitChallengeService.finaAllPermittedAsQL(challengeId)
     }
 
@@ -59,7 +59,7 @@ class PermitChallengeQLController(private val permitChallengeService: PermitChal
         @Argument @ChallengeId challengeId: Long,
         @Argument search: String? = "",
         authentication: Authentication
-    ): Flux<AppUserQL> {
+    ): Flux<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
         return permitChallengeService.findAllToPermitAsQL(challengeId, search ?: "")
     }
 
@@ -69,7 +69,7 @@ class PermitChallengeQLController(private val permitChallengeService: PermitChal
         @Argument @ChallengeId challengeId: Long,
         @Argument search: String? = "",
         authentication: Authentication
-    ): Flux<AppUserQL> {
+    ): Flux<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
         return permitChallengeService.finaAllPermittedAsQL(challengeId, search ?: "")
     }
 }

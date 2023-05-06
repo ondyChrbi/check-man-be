@@ -11,8 +11,8 @@ import cz.fei.upce.checkman.dto.course.challenge.ChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeResponseDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.PermitAppUserChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.RemoveAccessAppUserChallengeRequestDtoV1
-import cz.fei.upce.checkman.graphql.input.course.challenge.ChallengeInputQL
-import cz.fei.upce.checkman.graphql.output.challenge.ChallengeQL
+import cz.fei.upce.checkman.dto.graphql.input.course.challenge.ChallengeInputQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL
 import cz.fei.upce.checkman.repository.challenge.ChallengeRepository
 import cz.fei.upce.checkman.repository.challenge.PermittedAppUserChallengeRepository
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
@@ -200,12 +200,12 @@ class ChallengeService(
         return Mono.empty()
     }
 
-    fun findAllBySemesterIdAsQL(semesterId: Long, requester: AppUser): Flux<ChallengeQL> {
+    fun findAllBySemesterIdAsQL(semesterId: Long, requester: AppUser): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
         return challengeAuthorizationService.findAllByAppUserIsAuthorized(requester, semesterId)
             .map { it.toQL() }
     }
 
-    fun findByIdAsQL(id: Long, appUser: AppUser): Mono<ChallengeQL> {
+    fun findByIdAsQL(id: Long, appUser: AppUser): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
         return challengeRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { challenge -> checkAuthorizeToViewChallenge(challenge, appUser) }
@@ -223,18 +223,18 @@ class ChallengeService(
             }
     }
 
-    private fun assignAuthor(challenge: Challenge): Mono<ChallengeQL> {
+    private fun assignAuthor(challenge: Challenge): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
         return appUserRepository.findById(challenge.authorId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { challenge.toQL(it.toQL()) }
     }
 
-    fun addAsQL(semesterId: Long, input: ChallengeInputQL, author: AppUser): Mono<ChallengeQL> {
+    fun addAsQL(semesterId: Long, input: cz.fei.upce.checkman.dto.graphql.input.course.challenge.ChallengeInputQL, author: AppUser): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
         return challengeRepository.save(input.toEntity(semesterId, author))
             .map { it.toQL(author.toQL(), emptyList()) }
     }
 
-    fun editAsQL(challengeId: Long, input: ChallengeInputQL, appUser: AppUser): Mono<ChallengeQL> {
+    fun editAsQL(challengeId: Long, input: cz.fei.upce.checkman.dto.graphql.input.course.challenge.ChallengeInputQL, appUser: AppUser): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
         return challengeRepository.findById(challengeId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { input.toEntity(it.courseSemesterId!!, challengeId, appUser) }
@@ -242,7 +242,7 @@ class ChallengeService(
             .map { it.toQL(appUser.toQL(), emptyList()) }
     }
 
-    fun deleteAsQL(challengeId: Long, appUser: AppUser): Mono<ChallengeQL> {
+    fun deleteAsQL(challengeId: Long, appUser: AppUser): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
         return challengeRepository.disableChallenge(challengeId)
             .flatMap { assignAuthor(it) }
             .toMono()
@@ -284,7 +284,7 @@ class ChallengeService(
             }
     }
 
-    fun findByPermittedAppUserChallengeIdAsQL(id: Long): Mono<ChallengeQL> {
+    fun findByPermittedAppUserChallengeIdAsQL(id: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
         return challengeRepository.findByPermittedAppUserChallenge(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { it.toQL() }

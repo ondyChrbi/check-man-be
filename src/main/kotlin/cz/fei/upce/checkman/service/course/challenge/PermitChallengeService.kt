@@ -3,8 +3,8 @@ package cz.fei.upce.checkman.service.course.challenge
 import cz.fei.upce.checkman.domain.challenge.Challenge
 import cz.fei.upce.checkman.domain.challenge.PermittedAppUserChallenge
 import cz.fei.upce.checkman.domain.user.AppUser
-import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
-import cz.fei.upce.checkman.graphql.output.challenge.PermittedAppUserChallengeQL
+import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.PermittedAppUserChallengeQL
 import cz.fei.upce.checkman.repository.challenge.PermittedAppUserChallengeRepository
 import cz.fei.upce.checkman.service.appuser.AppUserService
 import cz.fei.upce.checkman.service.course.challenge.exception.AppUserCanAlreadyAccessChallengeException
@@ -19,7 +19,7 @@ class PermitChallengeService(
     private val permittedPermittedAppUserChallengeRepository: PermittedAppUserChallengeRepository,
     private val appUserService: AppUserService,
 ) {
-    fun permitToAccessAsQL(challengeId: Long, appUserId: Long, accessTo: LocalDateTime): Mono<PermittedAppUserChallengeQL> {
+    fun permitToAccessAsQL(challengeId: Long, appUserId: Long, accessTo: LocalDateTime): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.PermittedAppUserChallengeQL> {
         val checkExist = checkNotExist(challengeId, appUserId)
 
         return checkExist.flatMap {
@@ -44,7 +44,7 @@ class PermitChallengeService(
         }
     }
 
-    fun findAllToPermitAsQL(challengeId: Long, search: String = ""): Flux<AppUserQL> {
+    fun findAllToPermitAsQL(challengeId: Long, search: String = ""): Flux<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
         val disable = disableAccessToOutdated(challengeId)
 
          return disable.flatMapMany {
@@ -53,7 +53,7 @@ class PermitChallengeService(
              }
     }
 
-    fun finaAllPermittedAsQL(challengeId: Long, search: String = ""): Flux<AppUserQL> {
+    fun finaAllPermittedAsQL(challengeId: Long, search: String = ""): Flux<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
         val disable = disableAccessToOutdated(challengeId)
 
         return disable.flatMapMany {

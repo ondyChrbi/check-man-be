@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.controller.course.challenge.solution
 
-import cz.fei.upce.checkman.graphql.output.challenge.solution.SolutionQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
 import cz.fei.upce.checkman.service.course.challenge.solution.SolutionService
 import cz.upce.fei.checkman.domain.course.security.annotation.ChallengeId
@@ -23,13 +23,13 @@ class SolutionQLController(
     @QueryMapping
     @PreCourseSemesterAuthorize
     fun solutions(@ChallengeId @Argument challengeId: Long,
-                  authentication: Authentication): Flux<SolutionQL> {
+                  authentication: Authentication): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL> {
         return solutionService.findAllByChallengeAndUser(challengeId, authenticationService.extractAuthenticateUser(authentication))
     }
 
     @QueryMapping
     @PreCourseSemesterAuthorize
-    fun solution(@SolutionId @Argument id: Long, authentication: Authentication): Mono<SolutionQL> {
+    fun solution(@SolutionId @Argument id: Long, authentication: Authentication): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL> {
         return solutionService.findById(id, authenticationService.extractAuthenticateUser(authentication))
     }
 }

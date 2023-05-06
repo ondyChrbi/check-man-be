@@ -6,7 +6,7 @@ import cz.fei.upce.checkman.domain.challenge.solution.Solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Review
 import cz.fei.upce.checkman.domain.user.AppUser
-import cz.fei.upce.checkman.graphql.input.course.challenge.ReviewInputQL
+import cz.fei.upce.checkman.dto.graphql.input.course.challenge.ReviewInputQL
 import cz.fei.upce.checkman.graphql.output.challenge.solution.*
 import cz.fei.upce.checkman.repository.review.ReviewRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
@@ -29,7 +29,7 @@ class ReviewService(
         return solutionService.countToReview(challengeId!!)
     }
 
-    fun findAllToReview(challengeId: Long?, offset: Int = DEFAULT_OFFSET, size: Int = DEFAULT_SIZE): Flux<SolutionQL> {
+    fun findAllToReview(challengeId: Long?, offset: Int = DEFAULT_OFFSET, size: Int = DEFAULT_SIZE): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL> {
         return solutionService.findAllToReview(challengeId!!, offset, size)
             .flatMap { solution ->
                 val review = solutionService.findReviewAsQL(solution.id!!)
@@ -43,7 +43,7 @@ class ReviewService(
             }
     }
 
-    fun findAllToReview(courseId: Long, reviewer: AppUser): Flux<CoursesReviewListQL> {
+    fun findAllToReview(courseId: Long, reviewer: AppUser): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.CoursesReviewListQL> {
         val courses = authorizationService.findAllCoursesWhereUserHasRoles(
             courseId,
             reviewer,
@@ -59,11 +59,19 @@ class ReviewService(
                     findAllToReview(challenge.id!!)
                         .collectList()
                         .map { solutions ->
-                            ChallengeSolutionsQL(challenge, solutions)
+                            cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ChallengeSolutionsQL(
+                                challenge,
+                                solutions
+                            )
                         }
                 }
                 .collectList()
-                .map { CoursesReviewListQL(courseSemester.toQL(), it) }
+                .map {
+                    cz.fei.upce.checkman.dto.graphql.output.challenge.solution.CoursesReviewListQL(
+                        courseSemester.toQL(),
+                        it
+                    )
+                }
         }
     }
 
@@ -75,7 +83,7 @@ class ReviewService(
         return reviewRepository.linkFeedback(reviewId, feedbackId)
     }
 
-    fun create(solutionId: Long, reviewInput: ReviewInputQL, author: AppUser): Mono<ReviewQL> {
+    fun create(solutionId: Long, reviewInput: cz.fei.upce.checkman.dto.graphql.input.course.challenge.ReviewInputQL, author: AppUser): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL> {
         return reviewRepository.save(reviewInput.toEntity(solutionId, author.id!!))
             .map { it.toQL() }
     }
@@ -91,19 +99,19 @@ class ReviewService(
         }
     }
 
-    fun edit(id: Long, reviewInput: ReviewInputQL): Mono<Review> {
+    fun edit(id: Long, reviewInput: cz.fei.upce.checkman.dto.graphql.input.course.challenge.ReviewInputQL): Mono<Review> {
         return reviewRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { reviewRepository.save(it.update(reviewInput)) }
     }
 
-    fun findByIdAsQL(id: Long): Mono<ReviewQL> {
+    fun findByIdAsQL(id: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL> {
         return reviewRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { it.toQL() }
     }
 
-    fun findBySolutionIdAsQL(solutionId: Long): Mono<ReviewQL> {
+    fun findBySolutionIdAsQL(solutionId: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL> {
         return reviewRepository.findFirstBySolutionIdEquals(solutionId)
             .map { it.toQL() }
     }

@@ -1,8 +1,8 @@
 package cz.fei.upce.checkman.domain.challenge
 
-import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
-import cz.fei.upce.checkman.graphql.output.challenge.ChallengeQL
-import cz.fei.upce.checkman.graphql.output.challenge.requirement.RequirementQL
+import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
@@ -21,9 +21,20 @@ data class Challenge(
     var courseSemesterId: Long? = null,
     var challengeKindId: Long = 0
 ) {
-    fun toQL(author: AppUserQL? = null, requirements: List<RequirementQL> = emptyList()) = ChallengeQL(
-        id, name, description, deadlineDate?.atOffset(ZoneOffset.UTC), startDate?.atOffset(ZoneOffset.UTC), active, published, author, requirements, mutableListOf(), ChallengeKind.Value.IDS_MAP[challengeKindId].toString()
-    )
+    fun toQL(author: cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL? = null, requirements: List<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL> = emptyList()) =
+        cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL(
+            id,
+            name,
+            description,
+            deadlineDate?.atOffset(ZoneOffset.UTC),
+            startDate?.atOffset(ZoneOffset.UTC),
+            active,
+            published,
+            author,
+            requirements,
+            mutableListOf(),
+            ChallengeKind.Value.IDS_MAP[challengeKindId].toString()
+        )
 
     fun isPermissionNeeded(): Boolean {
         return NEED_PERMISSIONS_KINDS_IDS.contains(challengeKindId)

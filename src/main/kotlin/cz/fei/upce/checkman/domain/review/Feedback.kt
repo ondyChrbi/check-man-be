@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.domain.review
 
-import cz.fei.upce.checkman.graphql.output.challenge.solution.FeedbackQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.FeedbackQL
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 
@@ -10,8 +10,12 @@ data class Feedback(
     var description: String? = "",
     var feedbackTypeId: Long = -1
 ) {
-    fun toQL(): FeedbackQL {
-        return FeedbackQL(id, description, getById(feedbackTypeId).toString())
+    fun toQL(): cz.fei.upce.checkman.dto.graphql.output.challenge.solution.FeedbackQL {
+        return cz.fei.upce.checkman.dto.graphql.output.challenge.solution.FeedbackQL(
+            id,
+            description,
+            getById(feedbackTypeId).toString()
+        )
     }
 
     enum class FeedbackType(val id: Long) {

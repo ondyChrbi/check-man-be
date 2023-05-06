@@ -1,7 +1,7 @@
 package cz.fei.upce.checkman.controller.course
 
 import cz.fei.upce.checkman.domain.user.GlobalRole
-import cz.fei.upce.checkman.graphql.input.course.CourseInputQL
+import cz.fei.upce.checkman.dto.graphql.input.course.CourseInputQL
 import cz.fei.upce.checkman.service.course.CourseService
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
@@ -18,5 +18,5 @@ class CourseQLController(
 
     @MutationMapping
     @PreAuthorize("hasRole('${GlobalRole.ROLE_COURSE_MANAGE}')")
-    fun createCourse(@Argument input: CourseInputQL) = courseService.add(input)
+    fun createCourse(@Argument input: cz.fei.upce.checkman.dto.graphql.input.course.CourseInputQL) = courseService.add(input)
 }

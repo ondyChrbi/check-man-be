@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.domain.challenge
 
-import cz.fei.upce.checkman.graphql.output.challenge.PermittedAppUserChallengeQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.PermittedAppUserChallengeQL
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
@@ -13,7 +13,10 @@ data class PermittedAppUserChallenge(
     var appUserId: Long = -1,
     var challengeId: Long = -1
 ) {
-    fun toQL(): PermittedAppUserChallengeQL {
-        return PermittedAppUserChallengeQL(id, accessTo.atOffset(ZoneOffset.UTC))
+    fun toQL(): cz.fei.upce.checkman.dto.graphql.output.challenge.PermittedAppUserChallengeQL {
+        return cz.fei.upce.checkman.dto.graphql.output.challenge.PermittedAppUserChallengeQL(
+            id,
+            accessTo.atOffset(ZoneOffset.UTC)
+        )
     }
 }

@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.domain.review
 
-import cz.fei.upce.checkman.graphql.output.challenge.requirement.RequirementQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 
@@ -15,5 +15,12 @@ data class Requirement(
     var challengeId: Long = -1,
     var removed: Boolean = false
 ) {
-    fun toQL() = RequirementQL(id!!, name, description, active, minPoint.toInt(), maxPoint.toInt())
+    fun toQL() = cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL(
+        id!!,
+        name,
+        description,
+        active,
+        minPoint.toInt(),
+        maxPoint.toInt()
+    )
 }

@@ -3,7 +3,7 @@ package cz.fei.upce.checkman.service.appuser
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole.Value.Companion.IDS_MAP
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.course.CourseResponseDtoV1
-import cz.fei.upce.checkman.graphql.output.course.CourseQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseQL
 import cz.fei.upce.checkman.service.course.CourseService
 import cz.fei.upce.checkman.service.course.security.CourseAuthorizationService
 import org.springframework.stereotype.Service
@@ -18,7 +18,7 @@ class MeService(
         return courseService.findAllRelatedToAsDto(appUser)
     }
 
-    fun myCoursesAsQL(appUser: AppUser): Flux<CourseQL> {
+    fun myCoursesAsQL(appUser: AppUser): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
         return courseService.findAllRelatedToAsQL(appUser)
     }
 
@@ -26,7 +26,7 @@ class MeService(
         return courseService.findAvailableToAsDto(appUser)
     }
 
-    fun availableCoursesAsQL(appUser: AppUser): Flux<CourseQL> {
+    fun availableCoursesAsQL(appUser: AppUser): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
         return courseService.findAvailableToAsQL(appUser)
     }
 

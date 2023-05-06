@@ -11,11 +11,11 @@ import cz.fei.upce.checkman.dto.course.CourseRequestDtoV1
 import cz.fei.upce.checkman.dto.course.CourseResponseDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterRequestDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterResponseDtoV1
-import cz.fei.upce.checkman.graphql.input.course.CourseInputQL
-import cz.fei.upce.checkman.graphql.input.course.CourseRequirementsInputQL
-import cz.fei.upce.checkman.graphql.output.course.CourseQL
-import cz.fei.upce.checkman.graphql.output.course.CourseRequirementsQL
-import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
+import cz.fei.upce.checkman.dto.graphql.input.course.CourseInputQL
+import cz.fei.upce.checkman.dto.graphql.input.course.CourseRequirementsInputQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseRequirementsQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.repository.course.AppUserCourseSemesterRoleRepository
 import cz.fei.upce.checkman.repository.course.CourseRepository
 import cz.fei.upce.checkman.repository.course.CourseRequirementsRepository
@@ -63,7 +63,7 @@ class CourseService(
         return courseRepository.findFirstBySolutionId(solutionId)
     }
 
-    fun findAllAsQL(): Flux<CourseQL> {
+    fun findAllAsQL(): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
         return courseRepository.findAll()
             .map { it.toQL() }
     }
@@ -75,13 +75,13 @@ class CourseService(
             .flatMap { assignSemesters(it) }
     }
 
-    fun findAsQL(id: Long): Mono<CourseQL> {
+    fun findAsQL(id: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
         return courseRepository.findById(id).map { it.toQL() }
     }
 
     fun add(courseDto: CourseRequestDtoV1): Mono<CourseResponseDtoV1> = add(courseDto.toResponseDto())
 
-    fun add(input: CourseInputQL): Mono<CourseQL> {
+    fun add(input: cz.fei.upce.checkman.dto.graphql.input.course.CourseInputQL): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
         return courseRepository.save(input.toEntity())
             .flatMap { course ->
                 courseSemesterRepository.saveAll(input.semesters.map { it.toEntity(course.id!!) })
@@ -168,7 +168,7 @@ class CourseService(
             .flatMap { groupSemestersByCourseAsDto(it.key(), it.collectList()) }
     }
 
-    fun findAllRelatedToAsQL(appUser: AppUser): Flux<CourseQL> {
+    fun findAllRelatedToAsQL(appUser: AppUser): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
         return findAllRelatedTo(appUser)
             .flatMap { groupSemestersByCourseAsQL(it.key(), it.collectList()) }
     }
@@ -179,26 +179,26 @@ class CourseService(
             .flatMap { groupSemestersByCourseAsDto(it.key(), it.collectList()) }
     }
 
-    fun findAvailableToAsQL(appUser: AppUser): Flux<CourseQL> {
+    fun findAvailableToAsQL(appUser: AppUser): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
         return this.findAllAvailableToAppUser(appUser, LocalDateTime.now())
             .groupBy { it.courseId!! }
             .flatMap { groupSemestersByCourseAsQL(it.key(), it.collectList()) }
     }
 
-    fun findSemesterAsQL(id: Long): Mono<CourseSemesterQL> {
+    fun findSemesterAsQL(id: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL> {
         return courseSemesterRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { it.toQL() }
     }
 
-    fun editRequirementsAsQL(semesterId: Long, input: CourseRequirementsInputQL) : Mono<CourseSemesterQL> {
+    fun editRequirementsAsQL(semesterId: Long, input: cz.fei.upce.checkman.dto.graphql.input.course.CourseRequirementsInputQL) : Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL> {
         return courseSemesterRepository.findById(semesterId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { courseSemester -> saveCourseSemesterRequirements(semesterId, input, courseSemester) }
             .map { it.toQL() }
     }
 
-    fun findSemesterRequirements(semesterId: Long): Mono<CourseRequirementsQL> {
+    fun findSemesterRequirements(semesterId: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseRequirementsQL> {
         return courseRequirementsRepository.findFirstByCourseSemesterIdEquals(semesterId)
             .map { it.toDto() }
     }
@@ -230,7 +230,7 @@ class CourseService(
     private fun groupSemestersByCourseAsQL(
         courseId: Long,
         courseSemesters: Mono<List<CourseSemester>>
-    ): Mono<CourseQL> {
+    ): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
         return courseSemesters.flatMap { semesters ->
             courseRepository.findById(courseId)
                 .map { course -> course.toQL(semesters.map { it.toQL() }) }
@@ -244,7 +244,7 @@ class CourseService(
             .map { courseDto.withSemesters(it) }
     }
 
-    private fun assignSemesters(course: Course): Mono<CourseQL> {
+    private fun assignSemesters(course: Course): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
         return courseSemesterRepository.findAllByCourseIdEquals(course.id!!)
             .map { it.toQL() }
             .collectList()
@@ -257,7 +257,7 @@ class CourseService(
             .groupBy { it.courseId!! }
     }
 
-    private fun saveCourseSemesterRequirements(semesterId: Long, input: CourseRequirementsInputQL, courseSemester: CourseSemester?): Mono<CourseSemester> =
+    private fun saveCourseSemesterRequirements(semesterId: Long, input: cz.fei.upce.checkman.dto.graphql.input.course.CourseRequirementsInputQL, courseSemester: CourseSemester?): Mono<CourseSemester> =
         courseRequirementsRepository.deleteAllByCourseSemesterIdEquals(semesterId)
             .flatMap { courseRequirementsRepository.save(input.toEntity(semesterId)) }
             .mapNotNull { courseSemester }

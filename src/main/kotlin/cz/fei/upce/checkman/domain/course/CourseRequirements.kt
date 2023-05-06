@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.domain.course
 
-import cz.fei.upce.checkman.graphql.output.course.CourseRequirementsQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseRequirementsQL
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 
@@ -13,8 +13,8 @@ data class CourseRequirements(
     var minExam: Int = 0,
     var courseSemesterId: Long = -1L,
 ) {
-    fun toDto(): CourseRequirementsQL {
-        return CourseRequirementsQL(
+    fun toDto(): cz.fei.upce.checkman.dto.graphql.output.course.CourseRequirementsQL {
+        return cz.fei.upce.checkman.dto.graphql.output.course.CourseRequirementsQL(
             minOptional = minOptional,
             minMandatory = minMandatory,
             minCredit = minCredit,

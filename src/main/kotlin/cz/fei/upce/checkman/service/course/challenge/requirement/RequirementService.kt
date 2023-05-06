@@ -5,10 +5,10 @@ import cz.fei.upce.checkman.domain.review.Requirement
 import cz.fei.upce.checkman.domain.review.RequirementReview
 import cz.fei.upce.checkman.dto.course.challenge.requirement.RequirementRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.requirement.RequirementResponseDtoV1
-import cz.fei.upce.checkman.graphql.input.course.RequirementInputQL
-import cz.fei.upce.checkman.graphql.input.course.challenge.solution.ReviewPointsInputQL
-import cz.fei.upce.checkman.graphql.output.challenge.requirement.RequirementQL
-import cz.fei.upce.checkman.graphql.output.challenge.requirement.ReviewedRequirementQL
+import cz.fei.upce.checkman.dto.graphql.input.course.RequirementInputQL
+import cz.fei.upce.checkman.dto.graphql.input.course.challenge.solution.ReviewPointsInputQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.ReviewedRequirementQL
 import cz.fei.upce.checkman.repository.review.RequirementRepository
 import cz.fei.upce.checkman.repository.review.RequirementReviewRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
@@ -90,7 +90,7 @@ class RequirementService(
             }
     }
 
-    fun addAsQL(challengeId: Long, input: RequirementInputQL): Mono<RequirementQL> {
+    fun addAsQL(challengeId: Long, input: cz.fei.upce.checkman.dto.graphql.input.course.RequirementInputQL): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL> {
         val isPublishedMono = challengeService.isPublished(challengeId)
 
         return isPublishedMono.flatMap {
@@ -102,7 +102,7 @@ class RequirementService(
         }
     }
 
-    fun editAsQL(requirementId: Long, input: RequirementInputQL): Mono<RequirementQL> {
+    fun editAsQL(requirementId: Long, input: cz.fei.upce.checkman.dto.graphql.input.course.RequirementInputQL): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL> {
 
         return requirementRepository.findById(requirementId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
@@ -120,12 +120,12 @@ class RequirementService(
             .map { it.toQL() }
     }
 
-    fun findBySolutionIdAsQL(solutionId: Long): Flux<RequirementQL> {
+    fun findBySolutionIdAsQL(solutionId: Long): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL> {
         return requirementRepository.findAllBySolutionIdEquals(solutionId)
             .map { it.toQL() }
     }
 
-    fun findByChallengeIdAsQL(challengeId: Long): Flux<RequirementQL> {
+    fun findByChallengeIdAsQL(challengeId: Long): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL> {
         return requirementRepository.findAllByChallengeIdEqualsAndRemovedEquals(challengeId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { it.toQL() }
@@ -135,22 +135,22 @@ class RequirementService(
         return requirementReviewRepository.findAllByReviewIdEquals(reviewId)
     }
 
-    fun findAllRequirementReviewsByReviewIdAsQL(reviewId: Long): Flux<ReviewedRequirementQL> {
+    fun findAllRequirementReviewsByReviewIdAsQL(reviewId: Long): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.ReviewedRequirementQL> {
         return requirementReviewRepository.findAllByReviewIdEquals(reviewId)
             .map { it.toQL() }
     }
 
-    fun findAllByChallengeIdAsQL(challengeId: Long): Flux<RequirementQL> {
+    fun findAllByChallengeIdAsQL(challengeId: Long): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL> {
         return requirementRepository.findAllByChallengeIdEqualsAndActiveEquals(challengeId)
             .map { it.toQL() }
     }
 
-    fun findAllBySolutionIdAsQL(solutionId: Long): Flux<RequirementQL> {
+    fun findAllBySolutionIdAsQL(solutionId: Long): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL> {
         return requirementRepository.findAllBySolutionIdEquals(solutionId)
             .map { it.toQL() }
     }
 
-    fun removeAsQL(requirementId: Long): Mono<RequirementQL> {
+    fun removeAsQL(requirementId: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL> {
         val isPublished = challengeService.isPublishedByReview(requirementId)
 
         return isPublished.flatMap {
@@ -163,7 +163,7 @@ class RequirementService(
         }
     }
 
-    fun editReviewPoints(reviewId: Long, requirementId: Long, reviewPoints: ReviewPointsInputQL): Mono<Boolean> {
+    fun editReviewPoints(reviewId: Long, requirementId: Long, reviewPoints: cz.fei.upce.checkman.dto.graphql.input.course.challenge.solution.ReviewPointsInputQL): Mono<Boolean> {
         val validationCheck = checkRequirementPoints(requirementId, reviewPoints)
         val alreadyCreated = requirementReviewRepository.findByReviewIdEqualsAndRequirementIdEquals(reviewId, requirementId)
 
@@ -180,12 +180,12 @@ class RequirementService(
     }
 
 
-    fun findByReviewedRequirementIdAsQL(id: Long): Mono<RequirementQL> {
+    fun findByReviewedRequirementIdAsQL(id: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL> {
         return requirementRepository.findByReviewedRequirementId(id)
             .map { it.toQL() }
     }
 
-    private fun checkRequirementPoints(requirementId: Long, reviewPoints: ReviewPointsInputQL): Flux<Boolean> {
+    private fun checkRequirementPoints(requirementId: Long, reviewPoints: cz.fei.upce.checkman.dto.graphql.input.course.challenge.solution.ReviewPointsInputQL): Flux<Boolean> {
         val points = reviewPoints.points
 
         val minCheck = if (points > 0)

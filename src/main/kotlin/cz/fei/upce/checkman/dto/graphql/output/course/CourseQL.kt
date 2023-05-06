@@ -1,0 +1,13 @@
+package cz.fei.upce.checkman.dto.graphql.output.course
+
+import java.time.LocalDateTime
+
+data class CourseQL(
+    val id: Long? = null,
+    val stagId: String = "",
+    val name: String = "",
+    val dateCreation: LocalDateTime = LocalDateTime.now(),
+    val icon: String? = null,
+    val template: String? = null,
+    val semesters: List<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL>? = emptyList()
+)

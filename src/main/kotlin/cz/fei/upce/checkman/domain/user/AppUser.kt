@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.domain.user
 
-import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
+import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
@@ -15,5 +15,13 @@ data class AppUser(
     var lastAccessDate: LocalDateTime = LocalDateTime.now(),
     var disabled: Boolean = false
 ) {
-    fun toQL() = AppUserQL(id!!, stagId, mail, displayName, registrationDate, lastAccessDate, disabled)
+    fun toQL() = cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL(
+        id!!,
+        stagId,
+        mail,
+        displayName,
+        registrationDate,
+        lastAccessDate,
+        disabled
+    )
 }

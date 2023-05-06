@@ -1,6 +1,6 @@
 package cz.fei.upce.checkman.domain.challenge.solution
 
-import cz.fei.upce.checkman.graphql.output.challenge.solution.TestResultQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.TestResultQL
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
@@ -15,8 +15,8 @@ data class TestResult(
     var testStatusId: Long? = TestStatus.WAITING_TO_TEST.id,
     var solutionId: Long? = 0L,
 ) {
-    fun toDto(): TestResultQL {
-        return TestResultQL(
+    fun toDto(): cz.fei.upce.checkman.dto.graphql.output.challenge.solution.TestResultQL {
+        return cz.fei.upce.checkman.dto.graphql.output.challenge.solution.TestResultQL(
             id = id,
             log = log,
             creationDate = creationDate.atOffset(ZoneOffset.UTC),

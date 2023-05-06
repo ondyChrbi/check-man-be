@@ -5,12 +5,12 @@ import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.challenge.solution.Solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Review
-import cz.fei.upce.checkman.graphql.input.course.challenge.ReviewInputQL
-import cz.fei.upce.checkman.graphql.input.course.challenge.solution.FeedbackInputQL
-import cz.fei.upce.checkman.graphql.output.challenge.solution.CoursesReviewListQL
-import cz.fei.upce.checkman.graphql.output.challenge.solution.FeedbackQL
-import cz.fei.upce.checkman.graphql.output.challenge.solution.ReviewQL
-import cz.fei.upce.checkman.graphql.output.challenge.solution.SolutionQL
+import cz.fei.upce.checkman.dto.graphql.input.course.challenge.ReviewInputQL
+import cz.fei.upce.checkman.dto.graphql.input.course.challenge.solution.FeedbackInputQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.CoursesReviewListQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.FeedbackQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
 import cz.fei.upce.checkman.service.course.challenge.solution.FeedbackService
 import cz.fei.upce.checkman.service.course.challenge.solution.ReviewService
@@ -43,7 +43,7 @@ class ReviewQLController(
     }
 
     @QueryMapping
-    fun allSolutionsToReview(@CourseId @Argument courseId: Long, authentication: Authentication): Flux<CoursesReviewListQL> {
+    fun allSolutionsToReview(@CourseId @Argument courseId: Long, authentication: Authentication): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.CoursesReviewListQL> {
         return reviewService.findAllToReview(courseId, authenticationService.extractAuthenticateUser(authentication))
     }
 
@@ -52,13 +52,13 @@ class ReviewQLController(
     fun solutionsToReview(@ChallengeId @Argument challengeId: Long?,
                           @Argument offset: Int = DEFAULT_OFFSET,
                           @Argument size: Int = DEFAULT_SIZE,
-                          authentication: Authentication): Flux<SolutionQL> {
+                          authentication: Authentication): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL> {
         return reviewService.findAllToReview(challengeId, offset, size)
     }
 
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
-    fun createReview(@SolutionId @Argument solutionId: Long, @Argument reviewInput: ReviewInputQL, authentication: Authentication): Mono<ReviewQL> {
+    fun createReview(@SolutionId @Argument solutionId: Long, @Argument reviewInput: cz.fei.upce.checkman.dto.graphql.input.course.challenge.ReviewInputQL, authentication: Authentication): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL> {
         return reviewService.create(solutionId, reviewInput, authenticationService.extractAuthenticateUser(authentication))
     }
 
@@ -70,7 +70,7 @@ class ReviewQLController(
 
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
-    fun editReview(@ReviewId @Argument id: Long, @Argument input: ReviewInputQL, authentication: Authentication): Mono<Review> {
+    fun editReview(@ReviewId @Argument id: Long, @Argument input: cz.fei.upce.checkman.dto.graphql.input.course.challenge.ReviewInputQL, authentication: Authentication): Mono<Review> {
         return reviewService.edit(id, input)
     }
 
@@ -96,7 +96,7 @@ class ReviewQLController(
 
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
-    fun createFeedbackToReview(@ReviewId @Argument reviewId: Long, @Argument feedback: FeedbackInputQL, authentication: Authentication): Mono<FeedbackQL> {
+    fun createFeedbackToReview(@ReviewId @Argument reviewId: Long, @Argument feedback: cz.fei.upce.checkman.dto.graphql.input.course.challenge.solution.FeedbackInputQL, authentication: Authentication): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.FeedbackQL> {
         return feedbackService.create(feedback)
             .flatMap { createFeedback ->
                 reviewService.linkFeedback(reviewId, createFeedback.id!!)
@@ -107,12 +107,12 @@ class ReviewQLController(
 
     @QueryMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.VIEW_REVIEW])
-    fun review(@Argument @ReviewId id: Long, authentication: Authentication) : Mono<ReviewQL> {
+    fun review(@Argument @ReviewId id: Long, authentication: Authentication) : Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL> {
         return reviewService.findByIdAsQL(id)
     }
 
     @SchemaMapping(typeName = "Solution", field = "review")
-    fun reviewBySolution(solution: SolutionQL): Mono<ReviewQL> {
+    fun reviewBySolution(solution: cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL> {
         return reviewService.findBySolutionIdAsQL(solution.id!!)
     }
 }

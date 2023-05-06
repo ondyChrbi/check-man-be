@@ -1,7 +1,7 @@
 package cz.fei.upce.checkman.controller.appuser
 
-import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
-import cz.fei.upce.checkman.graphql.output.course.CourseQL
+import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseQL
 import cz.fei.upce.checkman.service.appuser.AppUserService
 import cz.fei.upce.checkman.service.appuser.MeService
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
@@ -19,17 +19,17 @@ class MeQLController(
     private val meService: MeService
 ) {
     @QueryMapping
-    fun me(authentication: Authentication?): Mono<AppUserQL> {
+    fun me(authentication: Authentication?): Mono<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
         return appUserService.meAsQL(authenticationService.extractAuthenticateUser(authentication!!))
     }
 
     @QueryMapping
-    fun myCourses(authentication: Authentication?): Flux<CourseQL> {
+    fun myCourses(authentication: Authentication?): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
         return meService.myCoursesAsQL(authenticationService.extractAuthenticateUser(authentication!!))
     }
 
     @QueryMapping
-    fun availableCourses(authentication: Authentication?): Flux<CourseQL> {
+    fun availableCourses(authentication: Authentication?): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
         return meService.availableCoursesAsQL(authenticationService.extractAuthenticateUser(authentication!!))
     }
 

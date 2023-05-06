@@ -5,8 +5,8 @@ import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.appuser.AppUserResponseDtoV1
 import cz.fei.upce.checkman.dto.appuser.GlobalRoleResponseDtoV1
-import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
-import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
+import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.role.CourseSemesterRoleService
@@ -28,7 +28,7 @@ class AppUserService(
         return appUserRepository.findById(id)
     }
 
-    fun findByIdAsQL(id: Long): Mono<AppUserQL> {
+    fun findByIdAsQL(id: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
         return appUserRepository.findById(id)
             .map { it.toQL() }
     }
@@ -58,7 +58,7 @@ class AppUserService(
             .map { responseDto.withCourseRoles(it) }
     }
 
-    fun meAsQL(loggedUser: AppUser): Mono<AppUserQL> {
+    fun meAsQL(loggedUser: AppUser): Mono<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
         val ql = loggedUser.toQL()
 
         return globalRoleService.rolesByUser(loggedUser)
@@ -97,7 +97,7 @@ class AppUserService(
             }
     }
 
-    fun findAllRelatedToCourseByQL(semesterQL : CourseSemesterQL, offset: Int = DEFAULT_OFFSET, size: Int = DEFAULT_SIZE): Flux<AppUser> {
+    fun findAllRelatedToCourseByQL(semesterQL : cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL, offset: Int = DEFAULT_OFFSET, size: Int = DEFAULT_SIZE): Flux<AppUser> {
         return appUserRepository.findAllByCourseSemester(semesterQL.id, offset, size)
     }
 
@@ -121,7 +121,7 @@ class AppUserService(
         return appUserRepository.searchAllPermittedToChallenge(challengeId, search)
     }
 
-    fun findByPermittedAppUserChallengeIdAsQL(id: Long): Mono<AppUserQL> {
+    fun findByPermittedAppUserChallengeIdAsQL(id: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
         return appUserRepository.findByPermittedChallengeId(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { it.toQL() }

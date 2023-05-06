@@ -1,9 +1,9 @@
 package cz.fei.upce.checkman.controller.course.challenge
 
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
-import cz.fei.upce.checkman.graphql.input.course.challenge.ChallengeInputQL
-import cz.fei.upce.checkman.graphql.output.challenge.ChallengeQL
-import cz.fei.upce.checkman.graphql.output.challenge.PermittedAppUserChallengeQL
+import cz.fei.upce.checkman.dto.graphql.input.course.challenge.ChallengeInputQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.PermittedAppUserChallengeQL
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
 import cz.fei.upce.checkman.service.course.challenge.ChallengeService
 import cz.upce.fei.checkman.domain.course.security.annotation.ChallengeId
@@ -32,7 +32,7 @@ class ChallengeQLController(
 
     @QueryMapping
     @PreCourseSemesterAuthorize
-    fun challenge(@ChallengeId @Argument id: Long, authentication: Authentication): Mono<ChallengeQL> {
+    fun challenge(@ChallengeId @Argument id: Long, authentication: Authentication): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
         val appUser = authenticationService.extractAuthenticateUser(authentication)
 
         return challengeService.findByIdAsQL(id, appUser)
@@ -42,7 +42,7 @@ class ChallengeQLController(
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.CREATE_CHALLENGE])
     fun createChallenge(
         @SemesterId @Argument semesterId: Long,
-        @Argument @Valid input: ChallengeInputQL,
+        @Argument @Valid input: cz.fei.upce.checkman.dto.graphql.input.course.challenge.ChallengeInputQL,
         authentication: Authentication
     ) = challengeService.addAsQL(semesterId, input, authenticationService.extractAuthenticateUser(authentication))
 
@@ -50,7 +50,7 @@ class ChallengeQLController(
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.EDIT_CHALLENGE])
     fun editChallenge(
         @ChallengeId @Argument challengeId: Long,
-        @Argument input: ChallengeInputQL,
+        @Argument input: cz.fei.upce.checkman.dto.graphql.input.course.challenge.ChallengeInputQL,
         authentication: Authentication
     ) = challengeService.editAsQL(challengeId, input, authenticationService.extractAuthenticateUser(authentication))
 
@@ -59,7 +59,7 @@ class ChallengeQLController(
     fun deleteChallenge(
         @ChallengeId @Argument challengeId: Long,
         authentication: Authentication
-    ): Mono<ChallengeQL> {
+    ): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
         return challengeService.deleteAsQL(challengeId, authenticationService.extractAuthenticateUser(authentication))
     }
 
@@ -71,7 +71,7 @@ class ChallengeQLController(
     }
 
     @SchemaMapping(typeName = "PermittedAppUserChallenge", field = "challenge")
-    fun challenge(permittedAppUserChallenge: PermittedAppUserChallengeQL): Mono<ChallengeQL> {
+    fun challenge(permittedAppUserChallenge: cz.fei.upce.checkman.dto.graphql.output.challenge.PermittedAppUserChallengeQL): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
         return challengeService.findByPermittedAppUserChallengeIdAsQL(permittedAppUserChallenge.id!!)
     }
 }

@@ -1,8 +1,8 @@
 package cz.fei.upce.checkman.domain.challenge.solution
 
 import cz.fei.upce.checkman.domain.user.AppUser
-import cz.fei.upce.checkman.graphql.output.challenge.solution.ReviewQL
-import cz.fei.upce.checkman.graphql.output.challenge.solution.SolutionQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
@@ -18,11 +18,22 @@ data class Solution(
     var challengeId: Long = -1L,
 ) {
 
-    fun toQL(review: ReviewQL) =
-        SolutionQL(id, uploadDate?.atOffset(ZoneOffset.UTC), getById(statusId), review)
+    fun toQL(review: cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL) =
+        cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL(
+            id,
+            uploadDate?.atOffset(ZoneOffset.UTC),
+            getById(statusId),
+            review
+        )
 
-    fun toQL(review: ReviewQL? = null, author: AppUser? = null) =
-        SolutionQL(id, uploadDate?.atOffset(ZoneOffset.UTC), getById(statusId), review, author)
+    fun toQL(review: cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL? = null, author: AppUser? = null) =
+        cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL(
+            id,
+            uploadDate?.atOffset(ZoneOffset.UTC),
+            getById(statusId),
+            review,
+            author
+        )
 
     enum class Status(val approve: Boolean, val id: Long) {
         APPROVED(true, 0L),

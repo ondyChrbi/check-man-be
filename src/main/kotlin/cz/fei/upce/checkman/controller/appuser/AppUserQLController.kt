@@ -1,11 +1,11 @@
 package cz.fei.upce.checkman.controller.appuser
 
 import cz.fei.upce.checkman.CheckManApplication
-import cz.fei.upce.checkman.graphql.output.appuser.AppUserQL
-import cz.fei.upce.checkman.graphql.output.challenge.ChallengeQL
-import cz.fei.upce.checkman.graphql.output.challenge.PermittedAppUserChallengeQL
-import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
-import cz.fei.upce.checkman.graphql.output.course.CourseSemesterRoleQL
+import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.PermittedAppUserChallengeQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRoleQL
 import cz.fei.upce.checkman.service.appuser.AppUserService
 import cz.upce.fei.checkman.domain.course.security.annotation.SemesterId
 import cz.fei.upce.checkman.service.role.CourseSemesterRoleService
@@ -24,32 +24,32 @@ class AppUserQLController(
     private val courseSemesterRoleService : CourseSemesterRoleService,
 ) {
     @SchemaMapping(typeName = "Semester")
-    fun relatedUsers (semestersQL: CourseSemesterQL,
-               @Argument offset: Int? = CheckManApplication.DEFAULT_OFFSET,
-               @Argument size: Int? = CheckManApplication.DEFAULT_SIZE
-    ): Flux<AppUserQL> {
+    fun relatedUsers (semestersQL: cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL,
+                      @Argument offset: Int? = CheckManApplication.DEFAULT_OFFSET,
+                      @Argument size: Int? = CheckManApplication.DEFAULT_SIZE
+    ): Flux<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
         return appUserService.findAllRelatedToCourseByQL(semestersQL)
             .map { it.toQL() }
     }
 
     @SchemaMapping(typeName = "AppUser")
-    fun roles (appUserQL: AppUserQL, @SemesterId @Argument semesterId: Long = -1L): Flux<CourseSemesterRoleQL> {
+    fun roles (appUserQL: cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL, @SemesterId @Argument semesterId: Long = -1L): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRoleQL> {
         return courseSemesterRoleService.findAllRolesByUserAndCourseSemesterAsQL(appUserQL, semesterId)
     }
 
     @SchemaMapping(typeName = "Challenge")
-    fun author(challenge: ChallengeQL): Mono<AppUserQL> {
+    fun author(challenge: cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL): Mono<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
         return appUserService.findAuthor(challenge.id!!)
             .map { it.toQL() }
     }
 
     @QueryMapping
-    fun appUser(@Argument id: Long): Mono<AppUserQL> {
+    fun appUser(@Argument id: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
         return appUserService.findByIdAsQL(id)
     }
 
     @SchemaMapping(typeName = "PermittedAppUserChallenge", field = "appUser")
-    fun appUserPermittedAppUserChallenge(permittedAppUserChallenge: PermittedAppUserChallengeQL): Mono<AppUserQL> {
+    fun appUserPermittedAppUserChallenge(permittedAppUserChallenge: cz.fei.upce.checkman.dto.graphql.output.challenge.PermittedAppUserChallengeQL): Mono<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
         return appUserService.findByPermittedAppUserChallengeIdAsQL(permittedAppUserChallenge.id!!)
     }
 }

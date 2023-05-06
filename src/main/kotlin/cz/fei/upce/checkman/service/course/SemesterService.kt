@@ -3,10 +3,10 @@ package cz.fei.upce.checkman.service.course
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.course.CourseSemester
-import cz.fei.upce.checkman.graphql.input.course.SemesterInputQL
-import cz.fei.upce.checkman.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL
-import cz.fei.upce.checkman.graphql.output.course.CourseQL
-import cz.fei.upce.checkman.graphql.output.course.CourseSemesterQL
+import cz.fei.upce.checkman.dto.graphql.input.course.SemesterInputQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.repository.review.statistic.FeedbackStatisticsRepository
 import cz.fei.upce.checkman.repository.review.statistic.FeedbackStatisticsRepository.Companion.DEFAULT_PAGEABLE
@@ -25,7 +25,7 @@ class SemesterService(
     private val feedbackStatisticsRepository: FeedbackStatisticsRepository,
 ) {
     fun findAllByCoursesQL(
-        coursesQL: List<CourseQL>,
+        coursesQL: List<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL>,
         sortBy: CourseSemester.OrderByField = CourseSemester.OrderByField.id,
     ): Flux<List<CourseSemester>> {
         val sort = Sort.by(sortBy.toString())
@@ -52,7 +52,7 @@ class SemesterService(
         return courseSemesterRepository.findAllByCourseIdEquals(courseId, sort, pageable)
     }
 
-    fun add(courseId: Long, input: SemesterInputQL): Mono<CourseSemesterQL> {
+    fun add(courseId: Long, input: cz.fei.upce.checkman.dto.graphql.input.course.SemesterInputQL): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL> {
         val courseExistMono = courseService.existById(courseId)
             .flatMap {
                 if (!it)
@@ -66,7 +66,7 @@ class SemesterService(
         }.map { it.toQL() }
     }
 
-    fun makeStatistic(semesters: CourseSemesterQL): Flux<FeedbackStatisticsQL> {
+    fun makeStatistic(semesters: cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL> {
         return feedbackStatisticsRepository.findDistinctBySemesterIdEquals(semesters.id)
             .map { it.toQL() }
     }
@@ -76,7 +76,7 @@ class SemesterService(
         order: Sort.Direction? = Sort.Direction.ASC,
         limit: Int? = DEFAULT_LIMIT,
         description: String?,
-    ): Flux<FeedbackStatisticsQL> {
+    ): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL> {
         val sort = if (order != null) Sort.by(order, "count") else DEFAULT_SORT
         val pageable = if (limit != null) PageRequest.of(0, limit) else DEFAULT_PAGEABLE
 

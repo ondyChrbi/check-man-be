@@ -2,7 +2,7 @@ package cz.fei.upce.checkman.domain.course
 
 import cz.fei.upce.checkman.conf.redis.CacheKey
 import cz.fei.upce.checkman.domain.user.AppUser
-import cz.fei.upce.checkman.graphql.output.course.CourseSemesterAccessRequestQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -20,12 +20,24 @@ data class CourseSemesterAccessRequest(
     fun toQL(
         dateCreation: LocalDateTime = LocalDateTime.now(),
         expirationDate: LocalDateTime = LocalDateTime.now().plusSeconds(EXPIRATION)
-    ): CourseSemesterAccessRequestQL {
-        return CourseSemesterAccessRequestQL(appUser.toQL(), semesterId, dateCreation, expirationDate, id)
+    ): cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL {
+        return cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL(
+            appUser.toQL(),
+            semesterId,
+            dateCreation,
+            expirationDate,
+            id
+        )
     }
 
-    fun toQL(): CourseSemesterAccessRequestQL {
-        return CourseSemesterAccessRequestQL(appUser.toQL(), semesterId, dateCreation, expirationDate, id)
+    fun toQL(): cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL {
+        return cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL(
+            appUser.toQL(),
+            semesterId,
+            dateCreation,
+            expirationDate,
+            id
+        )
     }
 
     companion object {
