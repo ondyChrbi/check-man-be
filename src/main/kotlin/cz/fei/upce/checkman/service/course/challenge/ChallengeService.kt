@@ -11,13 +11,11 @@ import cz.fei.upce.checkman.dto.course.challenge.ChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeResponseDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.PermitAppUserChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.RemoveAccessAppUserChallengeRequestDtoV1
-import cz.fei.upce.checkman.dto.graphql.input.course.challenge.ChallengeInputQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL
 import cz.fei.upce.checkman.repository.challenge.ChallengeRepository
 import cz.fei.upce.checkman.repository.challenge.PermittedAppUserChallengeRepository
-import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
-import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
+import cz.fei.upce.checkman.service.appuser.AppUserService
+import cz.fei.upce.checkman.service.course.SemesterService
 import cz.fei.upce.checkman.service.course.challenge.exception.AlreadyPublishedException
 import cz.fei.upce.checkman.service.course.challenge.exception.UserNotAuthorException
 import cz.fei.upce.checkman.service.course.challenge.exception.UserNotAuthorizedToViewChallengeException
@@ -31,12 +29,12 @@ import java.time.LocalDateTime
 @Service
 class ChallengeService(
     private val challengeRepository: ChallengeRepository,
-    private val appUserRepository: AppUserRepository,
-    private val courseSemesterRepository: CourseSemesterRepository,
     private val permittedAppUserChallengeRepository: PermittedAppUserChallengeRepository,
+    private val challengeAuthorizationService: ChallengeAuthorizationService,
+    private val appUserService: AppUserService,
+    private val semesterService: SemesterService,
     private val entityTemplate: R2dbcEntityTemplate,
-    private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRSQLSpecification,
-    private val challengeAuthorizationService: ChallengeAuthorizationService
+    private val reactiveCriteriaRsqlSpecification: ReactiveCriteriaRSQLSpecification
 ) {
     fun search(search: String?, courseId: Long, semesterId: Long): Flux<ChallengeResponseDtoV1> {
         val challenges = if (search.isNullOrEmpty())
@@ -106,7 +104,7 @@ class ChallengeService(
     }
 
     fun findCourseSemester(semesterId: Long, courseId: Long): Mono<CourseSemester> {
-        return courseSemesterRepository.findFirstByIdEqualsAndCourseIdEquals(semesterId, courseId)
+        return semesterService.findById(semesterId, courseId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
     }
 
@@ -133,14 +131,8 @@ class ChallengeService(
     }
 
     fun checkSemesterExist(courseId: Long, semesterId: Long): Mono<Boolean> {
-        return courseSemesterRepository.existsByIdEqualsAndCourseIdEquals(semesterId, courseId)
-            .flatMap {
-                if (!it) {
-                    Mono.error(ResourceNotFoundException())
-                } else {
-                    Mono.just(it)
-                }
-            }
+        return semesterService.existById(courseId, semesterId)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
     }
 
     private fun findAllRelatedTo(courseSemesterId: Long, appUser: AppUser): Flux<Challenge> {
@@ -224,7 +216,7 @@ class ChallengeService(
     }
 
     private fun assignAuthor(challenge: Challenge): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
-        return appUserRepository.findById(challenge.authorId)
+        return appUserService.findById(challenge.authorId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { challenge.toQL(it.toQL()) }
     }

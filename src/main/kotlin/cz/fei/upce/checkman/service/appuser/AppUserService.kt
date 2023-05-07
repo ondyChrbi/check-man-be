@@ -5,8 +5,6 @@ import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.appuser.AppUserResponseDtoV1
 import cz.fei.upce.checkman.dto.appuser.GlobalRoleResponseDtoV1
-import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
-import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.role.CourseSemesterRoleService
@@ -26,6 +24,7 @@ class AppUserService(
 
     fun findById(id: Long): Mono<AppUser> {
         return appUserRepository.findById(id)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
     }
 
     fun findByIdAsQL(id: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {

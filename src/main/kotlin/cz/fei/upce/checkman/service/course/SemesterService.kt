@@ -3,10 +3,6 @@ package cz.fei.upce.checkman.service.course
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.course.CourseSemester
-import cz.fei.upce.checkman.dto.graphql.input.course.SemesterInputQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL
-import cz.fei.upce.checkman.dto.graphql.output.course.CourseQL
-import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
 import cz.fei.upce.checkman.repository.review.statistic.FeedbackStatisticsRepository
 import cz.fei.upce.checkman.repository.review.statistic.FeedbackStatisticsRepository.Companion.DEFAULT_PAGEABLE
@@ -24,6 +20,23 @@ class SemesterService(
     private val courseSemesterRepository: CourseSemesterRepository,
     private val feedbackStatisticsRepository: FeedbackStatisticsRepository,
 ) {
+
+    fun findById(courseId: Long, semesterId: Long): Mono<CourseSemester> {
+        return courseSemesterRepository.findFirstByIdEqualsAndCourseIdEquals(semesterId, courseId)
+            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
+    }
+
+    fun existById(courseId: Long, semesterId: Long): Mono<Boolean> {
+        return courseSemesterRepository.existsByIdEqualsAndCourseIdEquals(semesterId, courseId)
+            .flatMap {
+                if (!it) {
+                    Mono.error(ResourceNotFoundException())
+                } else {
+                    Mono.just(it)
+                }
+            }
+    }
+
     fun findAllByCoursesQL(
         coursesQL: List<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL>,
         sortBy: CourseSemester.OrderByField = CourseSemester.OrderByField.id,
