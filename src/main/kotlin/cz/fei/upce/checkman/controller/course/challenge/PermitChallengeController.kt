@@ -1,8 +1,6 @@
 package cz.fei.upce.checkman.controller.course.challenge
 
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
-import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.PermittedAppUserChallengeQL
 import cz.fei.upce.checkman.service.course.challenge.PermitChallengeService
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.upce.fei.checkman.domain.course.security.annotation.ChallengeId
@@ -16,7 +14,7 @@ import reactor.core.publisher.Mono
 import java.time.OffsetDateTime
 
 @Controller
-class PermitChallengeQLController(private val permitChallengeService: PermitChallengeService) {
+class PermitChallengeController(private val permitChallengeService: PermitChallengeService) {
     @MutationMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS])
     fun permitUserChallenge(

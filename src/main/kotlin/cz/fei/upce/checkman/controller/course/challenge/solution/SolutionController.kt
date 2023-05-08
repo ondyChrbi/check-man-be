@@ -1,6 +1,5 @@
 package cz.fei.upce.checkman.controller.course.challenge.solution
 
-import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
 import cz.fei.upce.checkman.service.course.challenge.solution.SolutionService
 import cz.upce.fei.checkman.domain.course.security.annotation.ChallengeId
@@ -16,7 +15,7 @@ import reactor.core.publisher.Mono
 
 @Controller
 @Validated
-class SolutionQLController(
+class SolutionController(
     private val solutionService: SolutionService,
     private val authenticationService: AuthenticationServiceImpl,
     ) {

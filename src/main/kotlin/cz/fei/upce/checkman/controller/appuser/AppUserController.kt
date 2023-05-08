@@ -1,11 +1,6 @@
 package cz.fei.upce.checkman.controller.appuser
 
 import cz.fei.upce.checkman.CheckManApplication
-import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.PermittedAppUserChallengeQL
-import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL
-import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRoleQL
 import cz.fei.upce.checkman.service.appuser.AppUserService
 import cz.upce.fei.checkman.domain.course.security.annotation.SemesterId
 import cz.fei.upce.checkman.service.role.CourseSemesterRoleService
@@ -19,7 +14,7 @@ import reactor.core.publisher.Mono
 
 @Controller
 @Validated
-class AppUserQLController(
+class AppUserController(
     private val appUserService: AppUserService,
     private val courseSemesterRoleService : CourseSemesterRoleService,
 ) {

@@ -1,10 +1,6 @@
 package cz.fei.upce.checkman.controller.course.challenge.solution
 
 import cz.fei.upce.checkman.domain.review.Feedback
-import cz.fei.upce.checkman.dto.graphql.input.course.challenge.solution.FeedbackInputQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.FeedbackQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.TestResultQL
 import cz.fei.upce.checkman.service.course.challenge.solution.FeedbackService
 import cz.fei.upce.checkman.service.course.challenge.solution.TestResultService
 import org.springframework.graphql.data.method.annotation.Argument
@@ -17,7 +13,7 @@ import reactor.core.publisher.Mono
 
 @Controller
 @Validated
-class FeedbackQLController(
+class FeedbackController(
     private val testResultService: TestResultService,
     private val feedbackService: FeedbackService
 ) {

@@ -1,7 +1,5 @@
 package cz.fei.upce.checkman.controller.appuser
 
-import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
-import cz.fei.upce.checkman.dto.graphql.output.course.CourseQL
 import cz.fei.upce.checkman.service.appuser.AppUserService
 import cz.fei.upce.checkman.service.appuser.MeService
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
@@ -13,7 +11,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Controller
-class MeQLController(
+class MeController(
     private val appUserService: AppUserService,
     private val authenticationService: AuthenticationServiceImpl,
     private val meService: MeService

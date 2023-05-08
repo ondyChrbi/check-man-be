@@ -4,11 +4,6 @@ import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.course.CourseSemester
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
-import cz.fei.upce.checkman.dto.graphql.input.course.CourseRequirementsInputQL
-import cz.fei.upce.checkman.dto.graphql.input.course.SemesterInputQL
-import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL
-import cz.fei.upce.checkman.graphql.output.course.*
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
 import cz.fei.upce.checkman.service.course.security.exception.AppUserCourseSemesterForbiddenException
 import cz.fei.upce.checkman.service.course.CourseService
@@ -25,7 +20,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Controller
-class CourseSemesterQLController(
+class SemesterController(
     private val courseService: CourseService,
     private val courseSemesterRoleService: CourseSemesterRoleService,
     private val semesterService: SemesterService,

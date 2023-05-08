@@ -1,8 +1,6 @@
 package cz.fei.upce.checkman.controller.course.challenge.solution
 
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
-import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.TestResultQL
 import cz.fei.upce.checkman.service.course.challenge.solution.TestResultService
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.upce.fei.checkman.domain.course.security.annotation.TestResultId
@@ -14,7 +12,7 @@ import org.springframework.stereotype.Controller
 import reactor.core.publisher.Mono
 
 @Controller
-class TestResultQLController(
+class TestResultController(
     private val testResultService: TestResultService,
 ) {
     @QueryMapping

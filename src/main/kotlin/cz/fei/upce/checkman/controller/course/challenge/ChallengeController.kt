@@ -18,7 +18,7 @@ import javax.validation.Valid
 
 @Controller
 @Validated
-class ChallengeQLController(
+class ChallengeController(
     private val challengeService: ChallengeService,
     private val authenticationService: AuthenticationServiceImpl
 ) {

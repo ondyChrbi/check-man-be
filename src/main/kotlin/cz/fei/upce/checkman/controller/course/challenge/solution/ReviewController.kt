@@ -5,12 +5,6 @@ import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.challenge.solution.Solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Review
-import cz.fei.upce.checkman.dto.graphql.input.course.challenge.ReviewInputQL
-import cz.fei.upce.checkman.dto.graphql.input.course.challenge.solution.FeedbackInputQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.CoursesReviewListQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.FeedbackQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
 import cz.fei.upce.checkman.service.course.challenge.solution.FeedbackService
 import cz.fei.upce.checkman.service.course.challenge.solution.ReviewService
@@ -31,7 +25,7 @@ import reactor.core.publisher.Mono
 
 @Controller
 @Validated
-class ReviewQLController(
+class ReviewController(
     private val reviewService: ReviewService,
     private val feedbackService: FeedbackService,
     private val authenticationService: AuthenticationServiceImpl
