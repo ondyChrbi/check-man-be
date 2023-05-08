@@ -8,8 +8,8 @@ import org.springframework.data.r2dbc.config.EnableR2dbcAuditing
 @EnableR2dbcAuditing
 class CheckManApplication {
 	companion object {
-		const val DEFAULT_OFFSET = 1
-		const val DEFAULT_SIZE = 2
+		const val DEFAULT_OFFSET = 0
+		const val DEFAULT_SIZE = 10
 		const val DEFAULT_SORT_FIELD = "id"
 	}
 }
