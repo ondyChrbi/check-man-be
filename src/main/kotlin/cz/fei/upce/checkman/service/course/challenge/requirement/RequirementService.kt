@@ -5,10 +5,6 @@ import cz.fei.upce.checkman.domain.review.Requirement
 import cz.fei.upce.checkman.domain.review.RequirementReview
 import cz.fei.upce.checkman.dto.course.challenge.requirement.RequirementRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.requirement.RequirementResponseDtoV1
-import cz.fei.upce.checkman.dto.graphql.input.course.RequirementInputQL
-import cz.fei.upce.checkman.dto.graphql.input.course.challenge.solution.ReviewPointsInputQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.ReviewedRequirementQL
 import cz.fei.upce.checkman.repository.review.RequirementRepository
 import cz.fei.upce.checkman.repository.review.RequirementReviewRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
@@ -215,5 +211,9 @@ class RequirementService(
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { requirementRepository.save(requirementDto.toEntity(it)) }
             .map { requirementDto.withId(it.id) }
+    }
+
+    fun findByReviewIdAndRequirementId(reviewId: Long, requirementId: Long): Mono<RequirementReview> {
+        return requirementReviewRepository.findByReviewIdEqualsAndRequirementIdEquals(reviewId, requirementId)
     }
 }

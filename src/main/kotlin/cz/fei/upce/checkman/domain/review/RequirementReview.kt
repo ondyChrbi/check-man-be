@@ -13,8 +13,8 @@ data class RequirementReview(
     var requirementId: Long? = -1L,
     var reviewId: Long? = -1L,
 ) {
-    fun toReviewedRequirementQL(requirement: cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL): cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.ReviewedRequirementQL {
-        return cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.ReviewedRequirementQL(
+    fun toReviewedRequirementQL(requirement: RequirementQL): ReviewedRequirementQL {
+        return ReviewedRequirementQL(
             id,
             point,
             description,
@@ -22,8 +22,8 @@ data class RequirementReview(
         )
     }
 
-    fun toQL(): cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.ReviewedRequirementQL {
-        return cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.ReviewedRequirementQL(
+    fun toQL(): ReviewedRequirementQL {
+        return ReviewedRequirementQL(
             id,
             point,
             description

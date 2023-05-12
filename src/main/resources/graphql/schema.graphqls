@@ -23,6 +23,7 @@ type Query {
     solutionsToReview(challengeId: ID!, offset: Int, size: Int): [Solution!]!
     allSolutionsToReview(courseId: ID!): [CoursesReviewList]
     review(id: ID!): Review
+    requirementReview(requirementId: ID!, reviewId: ID!): ReviewedRequirement
     semesterAccessRequests(semesterId: ID!): [CourseSemesterAccessRequest!]!
     semesterAccessRequestsAppUser(semesterId: ID!, appUserId: ID): CourseSemesterAccessRequest
     appUsersToPermitChallenge(challengeId: ID!): [AppUser!]!
