@@ -1477,3 +1477,17 @@ databaseChangeLog:
               inner join permitted_app_user_challenge pauc on au.id = pauc.app_user_id
               where pauc.challenge_id = c.id
               );
+
+  - changeSet:
+      id: create-34
+      author: ondrej.chrbolka
+      changes:
+        - createView:
+            viewName: challenge_summary
+            selectQuery: >
+              select distinct cs.id as course_id, ch.id as challenge_id, st.id as status_id, st.name as status_name, au.id as app_user_id, count(st.id) as count from app_user au
+              inner join solution s on au.id = s.user_id
+              inner join challenge ch on s.challenge_id = ch.id
+              inner join course_semester cs on cs.id = ch.course_semester_id
+              inner join status st on s.status_id = st.id
+              group by cs.id, au.id, ch.id, st.name, st.id

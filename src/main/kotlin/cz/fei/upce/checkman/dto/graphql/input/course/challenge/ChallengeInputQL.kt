@@ -15,9 +15,9 @@ data class ChallengeInputQL (
     var name: String = "",
     @field:Size(max = 5000)
     var description: String = "",
-    @field:DateTimeFormat
+    @field:DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     var deadlineDate: OffsetDateTime? = null,
-    @field:DateTimeFormat
+    @field:DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     var startDate: OffsetDateTime? = null,
     var challengeKind: String
 ) {

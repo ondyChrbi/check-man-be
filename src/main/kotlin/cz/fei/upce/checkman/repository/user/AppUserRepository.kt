@@ -1,5 +1,6 @@
 package cz.fei.upce.checkman.repository.user
 
+import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
@@ -83,4 +84,17 @@ interface AppUserRepository : ReactiveCrudRepository<AppUser, Long> {
         )
     """)
     fun searchAllPermitToChallenge(challengeId: Long, roleId: Long = CourseSemesterRole.Value.ACCESS.id, search: String = "") : Flux<AppUser>
+
+    @Query("""
+        select distinct au.* from app_user au
+        inner join app_user_course_semester_role aucsr on au.id = aucsr.app_user_id
+        inner join challenge c on c.course_semester_id = aucsr.course_semester_id
+        where c.id = :challengeId
+        limit :pageSize offset :page
+    """)
+    fun findAllRelatedToChallenge(
+        challengeId: Long,
+        pageSize: Int = DEFAULT_SIZE,
+        page: Int = DEFAULT_OFFSET
+    ): Flux<AppUser>
 }

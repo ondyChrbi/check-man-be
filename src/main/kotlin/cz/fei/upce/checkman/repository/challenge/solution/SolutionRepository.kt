@@ -46,4 +46,18 @@ interface SolutionRepository : ReactiveCrudRepository<Solution, Long> {
         where r.id = :reviewId limit 1
     """)
     fun findByReview(reviewId: Long) : Mono<Solution>
+
+    @Query("""
+        select s.* from solution s
+        where s.challenge_id = :challengeId
+        limit :size offset :offset
+    """)
+    fun findAllByChallengeIdEquals(challengeId: Long, offset: Int? = CheckManApplication.DEFAULT_OFFSET, size: Int? = CheckManApplication.DEFAULT_SIZE): Flux<Solution>
+
+    @Query("""
+        select s.* from solution s
+        where s.user_id = :appUserId
+        limit :size offset :offset
+    """)
+    fun findAllByAppUserIdEquals(appUserId: Long, offset: Int? = CheckManApplication.DEFAULT_OFFSET, size: Int? = CheckManApplication.DEFAULT_SIZE): Flux<Solution>
 }

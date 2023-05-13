@@ -1,5 +1,6 @@
 package cz.fei.upce.checkman.service.appuser
 
+import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.user.AppUser
@@ -9,6 +10,7 @@ import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.role.CourseSemesterRoleService
 import cz.fei.upce.checkman.service.role.GlobalRoleService
+import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -124,5 +126,13 @@ class AppUserService(
         return appUserRepository.findByPermittedChallengeId(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { it.toQL() }
+    }
+
+    fun findAllRelatedToChallenge(
+        challengeId: Long,
+        pageSize: Int? = DEFAULT_SIZE,
+        page: Int? = DEFAULT_OFFSET
+    ): Flux<AppUser> {
+        return appUserRepository.findAllRelatedToChallenge(challengeId, pageSize ?: DEFAULT_SIZE, page ?: DEFAULT_OFFSET)
     }
 }

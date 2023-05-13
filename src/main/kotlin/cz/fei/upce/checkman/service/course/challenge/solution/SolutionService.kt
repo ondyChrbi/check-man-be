@@ -6,9 +6,7 @@ import cz.fei.upce.checkman.domain.challenge.solution.Solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Requirement
 import cz.fei.upce.checkman.domain.user.AppUser
-import cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.ReviewedRequirementQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL
+import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
 import cz.fei.upce.checkman.repository.challenge.solution.SolutionRepository
 import cz.fei.upce.checkman.repository.review.FeedbackRepository
 import cz.fei.upce.checkman.repository.review.RequirementRepository
@@ -72,9 +70,13 @@ class SolutionService(
             }
     }
 
-    fun findAllByChallengeAndUser(challengeId: Long, requester: AppUser): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL> {
-        return solutionRepository.findAllByChallengeIdEqualsAndUserIdEquals(challengeId, requester.id!!)
+    fun findAllByChallengeAndUser(challengeId: Long, appUser: AppUser): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL> {
+        return solutionRepository.findAllByChallengeIdEqualsAndUserIdEquals(challengeId, appUser.id!!)
             .flatMap { toSolutionQL(it) }
+    }
+
+    fun findAllByChallengeAndUser(challengeId: Long, appUser: AppUserQL): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL> {
+        return findAllByChallengeAndUser(challengeId, appUser.toEntity())
     }
 
     fun findAllToReview(
@@ -124,6 +126,14 @@ class SolutionService(
             }
     }
 
+    fun findAllByChallenge(
+        challengeId: Long,
+        pageSize: Int? = DEFAULT_SIZE,
+        page: Int? = DEFAULT_OFFSET,
+    ): Flux<Solution> {
+        return solutionRepository.findAllByChallengeIdEquals(challengeId, page, pageSize)
+    }
+
     private fun findAllRequirementsByChallengeId(challengeId: Long): Flux<Requirement> {
         return requirementRepository.findAllByChallengeIdEquals(challengeId)
     }
@@ -135,4 +145,7 @@ class SolutionService(
         ).map { it.toReviewedRequirementQL(requirement.toQL()) }
     }
 
+    fun findAllByAppUser(id: Long): Flux<Solution> {
+        return solutionRepository.findAllByAppUserIdEquals(id)
+    }
 }
