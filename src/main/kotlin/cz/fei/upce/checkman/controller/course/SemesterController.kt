@@ -2,8 +2,9 @@ package cz.fei.upce.checkman.controller.course
 
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
-import cz.fei.upce.checkman.domain.course.CourseSemester
+import cz.fei.upce.checkman.domain.course.Semester
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
+import cz.fei.upce.checkman.domain.user.GlobalRole
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
 import cz.fei.upce.checkman.service.course.security.exception.AppUserCourseSemesterForbiddenException
 import cz.fei.upce.checkman.service.course.CourseService
@@ -14,6 +15,7 @@ import cz.upce.fei.checkman.domain.course.security.annotation.SemesterId
 import cz.fei.upce.checkman.service.role.CourseSemesterRoleService
 import org.springframework.data.domain.Sort
 import org.springframework.graphql.data.method.annotation.*
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Controller
 import reactor.core.publisher.Flux
@@ -34,7 +36,7 @@ class SemesterController(
     }
 
     @BatchMapping(typeName = "Course")
-    fun semesters(courses: List<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL>): Flux<List<CourseSemester>> {
+    fun semesters(courses: List<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL>): Flux<List<Semester>> {
         return semesterService.findAllByCoursesQL(courses)
     }
 
@@ -47,21 +49,41 @@ class SemesterController(
     @QueryMapping("semesters")
     fun allSemesters(
         @Argument courseId: Long,
-        @Argument oderBy: CourseSemester.OrderByField? = CourseSemester.OrderByField.id,
+        @Argument oderBy: Semester.OrderByField? = Semester.OrderByField.id,
         @Argument sortOrder: Sort.Direction? = Sort.Direction.ASC,
         @Argument pageSize: Int? = DEFAULT_SIZE,
         @Argument page: Int? = DEFAULT_OFFSET,
-    ): Flux<CourseSemester> {
+    ): Flux<Semester> {
         return semesterService.findAllByCoursesQL(courseId, oderBy, sortOrder, pageSize, page)
     }
 
     @MutationMapping
+    @PreAuthorize("hasRole('${GlobalRole.ROLE_COURSE_MANAGE}')")
     fun createSemester(
         @Argument courseId: Long,
         @Argument input: cz.fei.upce.checkman.dto.graphql.input.course.SemesterInputQL,
         authentication: Authentication
     ): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL> {
         return semesterService.add(courseId, input)
+    }
+
+    @MutationMapping
+    @PreAuthorize("hasRole('${GlobalRole.ROLE_COURSE_MANAGE}')")
+    fun editSemester(
+        @Argument id: Long,
+        @Argument input: cz.fei.upce.checkman.dto.graphql.input.course.SemesterInputQL,
+        authentication: Authentication
+    ): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL> {
+        return semesterService.edit(id, input)
+            .map { it.toQL() }
+    }
+
+    @MutationMapping
+    @PreAuthorize("hasRole('${GlobalRole.ROLE_COURSE_MANAGE}')")
+    fun deleteSemester(
+        @Argument id: Long
+    ): Mono<Boolean> {
+        return semesterService.delete(id)
     }
 
     @QueryMapping

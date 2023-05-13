@@ -2,57 +2,84 @@ scalar DateTime
 scalar JSON
 
 type Query {
-    courses: [Course!]!
-    challenges(semesterId: ID!): [Challenge!]!
-    requirements(challengeId: ID!): [Requirement!]!
+    courses(pageSize: Int, page: Int): [Course!]!
     course(id: ID!): Course
+
     semester(id: ID!): Semester
     semesters(courseId: ID!, oderBy: SemesterOrderByField, sortOrder: SortOrder, pageSize: Int, page: Int): [Semester!]!
-    statistic(semesterId: ID!, direction: Order, limit: Int, description: String): [FeedbackStatistics!]!
+
+    challenges(semesterId: ID!): [Challenge!]!
     challenge(id: ID!): Challenge
-    testResult(id: ID!): TestResult
+
     me: AppUser!
-    appUser(id: ID!): AppUser!
     myCourses: [Course!]!
     availableCourses: [Course!]!
-    courseRoles(id: ID!): [String!]!
-    allCourseRoles: [CourseSemesterRole!]!
-    solutions(challengeId: ID!): [Solution!]!
-    solution(id: ID!): Solution!
-    countToReview(challengeId: ID!): Int!
-    solutionsToReview(challengeId: ID!, offset: Int, size: Int): [Solution!]!
-    allSolutionsToReview(courseId: ID!): [CoursesReviewList]
-    review(id: ID!): Review
-    requirementReview(requirementId: ID!, reviewId: ID!): ReviewedRequirement
-    semesterAccessRequests(semesterId: ID!): [CourseSemesterAccessRequest!]!
-    semesterAccessRequestsAppUser(semesterId: ID!, appUserId: ID): CourseSemesterAccessRequest
+
+    appUser(id: ID!): AppUser!
+
+    searchPermittedAppUsersChallenge(challengeId: ID!, search: String): [AppUser!]!
     appUsersToPermitChallenge(challengeId: ID!): [AppUser!]!
     searchAppUsersToPermitChallenge(challengeId: ID!, search: String): [AppUser!]!
     permittedAppUsersChallenge(challengeId: ID!): [AppUser!]!
-    searchPermittedAppUsersChallenge(challengeId: ID!, search: String): [AppUser!]!
+
+    requirements(challengeId: ID!, pageSize: Int, page: Int): [Requirement!]!
+    requirement(id: ID!): Requirement!
+
+    feedback(id: ID!): Feedback!
+    feedbacks(reviewId: ID!, pageSize: Int, page: Int): [Feedback!]!
+
+    review(id: ID!): Review
+
+    solutions(challengeId: ID!): [Solution!]!
+    solution(id: ID!): Solution!
+    solutionsToReview(challengeId: ID!, offset: Int, size: Int): [Solution!]!
+    allSolutionsToReview(courseId: ID!): [CoursesReviewList]
+
+    statistic(semesterId: ID!, direction: Order, limit: Int, description: String): [FeedbackStatistics!]!
+    testResult(id: ID!): TestResult
+
+    courseRoles(id: ID!): [String!]!
+    allCourseRoles: [CourseSemesterRole!]!
+
+    countToReview(challengeId: ID!): Int!
+    requirementReview(requirementId: ID!, reviewId: ID!): ReviewedRequirement
+
+    semesterAccessRequests(semesterId: ID!): [CourseSemesterAccessRequest!]!
+    semesterAccessRequestsAppUser(semesterId: ID!, appUserId: ID): CourseSemesterAccessRequest
 }
 
 type Mutation {
     createCourse(input: CourseInput!): Course!
+    editCourse(id: ID!, input: CourseInput!): Course!
+    deleteCourse(id: ID!): Boolean!
+    publishChallenge(challengeId: ID!): Boolean
+
     createSemester(courseId: ID!, input: SemesterInput!): Semester!
+    editSemester(id: ID!, input: SemesterInput!): Semester!
+    deleteSemester(id: ID!): Boolean!
+    createSemesterAccessRequest(semesterId: ID!): CourseSemesterAccessRequest!
+    editSemesterRequirements(semesterId: ID!, input: CourseSemesterRequirementsInput!): Semester!
+
     createChallenge(semesterId: ID!, input: ChallengeInput!): Challenge!
     editChallenge(challengeId: ID!, input: ChallengeInput!): Challenge!
     deleteChallenge(challengeId: ID!): Challenge!
     permitUserChallenge(appUserId: ID!, challengeId: ID!, accessTo: DateTime!): PermittedAppUserChallenge!
     removePermitUserChallenge(appUserId: ID!, challengeId: ID!): Boolean!
+
     createRequirement(challengeId: ID!, input: RequirementInput!): Requirement!
-    editRequirement(requirementId: ID!, input: RequirementInput!): Requirement!
-    removeRequirement(requirementId: ID!): Requirement!
-    createSemesterAccessRequest(semesterId: ID!): CourseSemesterAccessRequest!
-    editSemesterRequirements(semesterId: ID!, input: CourseSemesterRequirementsInput!): Semester!
-    publishChallenge(challengeId: ID!): Boolean
+    editRequirement(id: ID!, input: RequirementInput!): Requirement!
+    deleteRequirement(id: ID!): Requirement!
+
     createFeedback(feedback: FeedbackInput!): Feedback!
     removeFeedbackFromReview(reviewId: ID!, feedbackId: ID!): Boolean
     addFeedbackToReview(reviewId: ID!, feedbackId: ID!): Boolean
     createFeedbackToReview(reviewId: ID!, feedback: FeedbackInput!): Feedback!
+    deleteFeedback(id: ID!): Boolean!
+
     createReview(solutionId: ID! reviewInput: ReviewInput!): Review!
     publishReview(id: ID!, status: String!): Boolean!
     editReview(id: ID!, input: ReviewInput!): Review!
+
     addCourseRole(appUserId: ID!, semesterId: ID!, roleId: ID!): Boolean
     removeCourseRole(appUserId: ID!, semesterId: ID!, roleId: ID!): Boolean
     editReviewPoints(reviewId: ID!, requirementId: ID!, reviewPointsInput: ReviewPointsInput!): Boolean
@@ -182,7 +209,8 @@ type Feedback {
 type Review{
     id: ID!
     description: String!
-    requirements: [ReviewedRequirement!]!
+    requirements: [Requirement!]!
+    reviewRequirements: [ReviewedRequirement!]!
     feedbacks: [Feedback!]!
 }
 

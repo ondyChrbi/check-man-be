@@ -1,13 +1,17 @@
 package cz.fei.upce.checkman.repository.review
 
+import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.domain.review.Feedback
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
 @Repository
 interface FeedbackRepository : ReactiveCrudRepository<Feedback, Long> {
+    fun findFirstByDescriptionEquals(description: String) : Mono<Feedback>
+
     @Query("""
         select * from feedback f 
         inner join feedback_review fr on f.id = fr.feedback_id
@@ -29,6 +33,7 @@ interface FeedbackRepository : ReactiveCrudRepository<Feedback, Long> {
         select f.* from feedback f 
         inner join feedback_review fr on f.id = fr.feedback_id
         where fr.review_id = :id
+        limit :size offset :offset
     """)
-    fun findAllByReview(id: Long) : Flux<Feedback>
+    fun findAllByReview(id: Long, size: Int = CheckManApplication.DEFAULT_SIZE, offset: Int = CheckManApplication.DEFAULT_OFFSET) : Flux<Feedback>
 }

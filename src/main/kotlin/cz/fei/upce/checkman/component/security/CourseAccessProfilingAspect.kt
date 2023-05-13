@@ -1,7 +1,7 @@
 package cz.fei.upce.checkman.component.security
 
 import cz.fei.upce.checkman.domain.user.AppUser
-import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
+import cz.fei.upce.checkman.repository.course.SemesterRepository
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
 import cz.fei.upce.checkman.service.course.security.exception.AppUserCourseSemesterForbiddenException
 import cz.fei.upce.checkman.service.course.security.CourseAuthorizationService
@@ -22,7 +22,7 @@ import reactor.core.publisher.Mono
 @Aspect
 @Configuration
 class CourseAccessProfilingAspect(
-    private val courseSemesterRepository: CourseSemesterRepository,
+    private val semesterRepository: SemesterRepository,
     private val authorizeService: CourseAuthorizationService,
     private val authenticationService: AuthenticationServiceImpl
 ) {
@@ -121,7 +121,7 @@ class CourseAccessProfilingAspect(
         appUser: AppUser,
         annotation: PreCourseSemesterAuthorize
     ): Mono<Boolean> {
-        return courseSemesterRepository.findIdByChallengeId(challengeId)
+        return semesterRepository.findIdByChallengeId(challengeId)
             .switchIfEmpty(Mono.error(AuthorizeIdentificationNotFoundException(ChallengeId::class, challengeId)))
             .flatMap { semesterId -> authorizeService.hasCourseAccess(semesterId, appUser, annotation) }
             .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
@@ -141,7 +141,7 @@ class CourseAccessProfilingAspect(
         appUser: AppUser,
         annotation: PreCourseSemesterAuthorize
     ): Mono<Boolean> {
-        return courseSemesterRepository.findIdByRequirementId(requirementId)
+        return semesterRepository.findIdByRequirementId(requirementId)
             .switchIfEmpty(Mono.error(AuthorizeIdentificationNotFoundException(RequirementId::class, requirementId)))
             .flatMap { semesterId -> authorizeService.hasCourseAccess(semesterId, appUser, annotation) }
             .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
@@ -152,7 +152,7 @@ class CourseAccessProfilingAspect(
         appUser: AppUser,
         annotation: PreCourseSemesterAuthorize
     ): Mono<Boolean> {
-        return courseSemesterRepository.findIdBySolutionId(solutionId)
+        return semesterRepository.findIdBySolutionId(solutionId)
             .switchIfEmpty(Mono.error(AuthorizeIdentificationNotFoundException(SolutionId::class, solutionId)))
             .flatMap { semesterId -> authorizeService.hasCourseAccess(semesterId, appUser, annotation) }
             .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
@@ -163,7 +163,7 @@ class CourseAccessProfilingAspect(
         appUser: AppUser,
         annotation: PreCourseSemesterAuthorize
     ): Mono<Boolean> {
-        return courseSemesterRepository.findIdByReviewId(reviewId)
+        return semesterRepository.findIdByReviewId(reviewId)
             .switchIfEmpty(Mono.error(AuthorizeIdentificationNotFoundException(ReviewId::class, reviewId)))
             .flatMap { semesterId -> authorizeService.hasCourseAccess(semesterId, appUser, annotation) }
             .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }
@@ -174,7 +174,7 @@ class CourseAccessProfilingAspect(
         appUser: AppUser,
         annotation: PreCourseSemesterAuthorize
     ): Mono<Boolean> {
-        return courseSemesterRepository.findIdByTestResultId(reviewId)
+        return semesterRepository.findIdByTestResultId(reviewId)
             .switchIfEmpty(Mono.error(AuthorizeIdentificationNotFoundException(ReviewId::class, reviewId)))
             .flatMap { semesterId -> authorizeService.hasCourseAccess(semesterId, appUser, annotation) }
             .flatMap { if (!it) Mono.error(AppUserCourseSemesterForbiddenException()) else Mono.just(it) }

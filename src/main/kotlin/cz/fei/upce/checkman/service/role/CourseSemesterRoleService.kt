@@ -6,11 +6,8 @@ import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.appuser.CourseSemesterRoleDtoV1
 import cz.fei.upce.checkman.dto.appuser.CourseSemesterRolesResponseDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterResponseDtoV1
-import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
-import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRoleQL
-import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRolesQL
 import cz.fei.upce.checkman.repository.course.AppUserCourseSemesterRoleRepository
-import cz.fei.upce.checkman.repository.course.CourseSemesterRepository
+import cz.fei.upce.checkman.repository.course.SemesterRepository
 import cz.fei.upce.checkman.repository.course.CourseSemesterRoleRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import org.springframework.stereotype.Service
@@ -21,7 +18,7 @@ import reactor.core.publisher.Mono
 class CourseSemesterRoleService(
     private val appUserCourseSemesterRoleRepository: AppUserCourseSemesterRoleRepository,
     private val courseSemesterRoleRepository: CourseSemesterRoleRepository,
-    private val courseSemesterRepository: CourseSemesterRepository
+    private val semesterRepository: SemesterRepository
 ) {
     fun hasRole(appUser: AppUser, semesterId: Long, role: CourseSemesterRole.Value): Mono<Boolean> {
         return appUserCourseSemesterRoleRepository.existsByAppUserIdEqualsAndCourseSemesterIdEqualsAndCourseSemesterRoleIdEquals(
@@ -48,14 +45,14 @@ class CourseSemesterRoleService(
     }
 
     fun findSemesterAndRolesAsDto(appUser: AppUser, semesterId: Long): Mono<CourseSemesterRolesResponseDtoV1> {
-        return courseSemesterRepository.findById(semesterId)
+        return semesterRepository.findById(semesterId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { CourseSemesterRolesResponseDtoV1(CourseSemesterResponseDtoV1.fromEntity(it)) }
             .flatMap { assignSemesterRolesAsDto(it, appUser) }
     }
 
     fun findSemesterAndRolesAsQL(appUser: AppUser, semesterId: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRolesQL> {
-        return courseSemesterRepository.findById(semesterId)
+        return semesterRepository.findById(semesterId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRolesQL(it.toQL()) }
             .flatMap { assignSemesterRolesAsQL(it, appUser) }

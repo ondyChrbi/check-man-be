@@ -6,8 +6,6 @@ import cz.fei.upce.checkman.domain.challenge.solution.Solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Review
 import cz.fei.upce.checkman.domain.user.AppUser
-import cz.fei.upce.checkman.dto.graphql.input.course.challenge.ReviewInputQL
-import cz.fei.upce.checkman.graphql.output.challenge.solution.*
 import cz.fei.upce.checkman.repository.review.ReviewRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.appuser.AppUserService

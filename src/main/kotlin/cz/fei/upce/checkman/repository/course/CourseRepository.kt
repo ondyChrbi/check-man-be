@@ -1,9 +1,12 @@
 package cz.fei.upce.checkman.repository.course
 
+import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.domain.course.Course
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Repository
@@ -24,4 +27,11 @@ interface CourseRepository : ReactiveCrudRepository<Course, Long> {
         where s.id = :solutionId
     """)
     fun findFirstBySolutionId(solutionId: Long): Mono<Course>
+
+    @Query("""
+        select * from course c
+        limit :size offset :offset
+    """)
+
+    fun findAllPageable(size : Int = CheckManApplication.DEFAULT_SIZE, offset : Int = CheckManApplication.DEFAULT_OFFSET): Flux<Course>
 }

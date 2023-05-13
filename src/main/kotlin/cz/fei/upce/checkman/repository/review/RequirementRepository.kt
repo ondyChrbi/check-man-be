@@ -1,6 +1,9 @@
 package cz.fei.upce.checkman.repository.review
 
+import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.domain.review.Requirement
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
@@ -9,7 +12,7 @@ import reactor.core.publisher.Mono
 
 @Repository
 interface RequirementRepository : ReactiveCrudRepository<Requirement, Long> {
-    fun findAllByChallengeIdEqualsAndActiveEquals(challengeId: Long, active: Boolean = true): Flux<Requirement>
+    fun findAllByChallengeIdEqualsAndActiveEquals(challengeId: Long, active: Boolean = true, pageable: Pageable = PageRequest.of(CheckManApplication.DEFAULT_OFFSET, CheckManApplication.DEFAULT_SIZE)): Flux<Requirement>
 
     fun findAllByChallengeIdEqualsAndRemovedEquals(challengeId: Long, removed: Boolean = false): Flux<Requirement>
 
@@ -36,4 +39,11 @@ interface RequirementRepository : ReactiveCrudRepository<Requirement, Long> {
         where rr.id = :id
     """)
     fun findByReviewedRequirementId(id: Long) : Mono<Requirement>
+
+    @Query("""
+        select * from requirement r
+        inner join requirement_review rr on r.id = rr.requirement_id
+        where rr.review_id = :id
+    """)
+    fun findAllByReviewId(id: Long): Flux<Requirement>
 }

@@ -1,7 +1,9 @@
 package cz.fei.upce.checkman.controller.course.challenge.solution
 
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
+import cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL
 import cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.ReviewedRequirementQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL
 import cz.fei.upce.checkman.service.course.challenge.requirement.RequirementService
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
 import cz.upce.fei.checkman.domain.course.security.annotation.RequirementId
@@ -35,7 +37,14 @@ class RequirementReviewController(
     }
 
     @SchemaMapping(typeName = "Review")
-    fun requirements(reviewQL: cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL): Flux<ReviewedRequirementQL> {
-        return requirementService.findAllRequirementReviewsByReviewIdAsQL(reviewQL.id)
+    fun requirements(reviewQL: ReviewQL): Flux<RequirementQL> {
+        return requirementService.findAllByReviewIdAsQL(reviewQL.id)
+            .map { it.toQL() }
+    }
+
+    @SchemaMapping(typeName = "Review", field = "reviewRequirements")
+    fun reviewRequirements(reviewQL: ReviewQL, authentication: Authentication): Flux<ReviewedRequirementQL> {
+        return requirementService.findAllByReviewId(reviewQL.id)
+            .map { it.toQL() }
     }
 }

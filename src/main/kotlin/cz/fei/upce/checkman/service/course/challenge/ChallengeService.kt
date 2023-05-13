@@ -1,10 +1,11 @@
 package cz.fei.upce.checkman.service.course.challenge
 
+import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRSQLSpecification
 import cz.fei.upce.checkman.domain.challenge.Challenge
 import cz.fei.upce.checkman.domain.challenge.ChallengeKind
 import cz.fei.upce.checkman.domain.challenge.PermittedAppUserChallenge
-import cz.fei.upce.checkman.domain.course.CourseSemester
+import cz.fei.upce.checkman.domain.course.Semester
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.domain.user.GlobalRole
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeRequestDtoV1
@@ -19,7 +20,9 @@ import cz.fei.upce.checkman.service.course.SemesterService
 import cz.fei.upce.checkman.service.course.challenge.exception.AlreadyPublishedException
 import cz.fei.upce.checkman.service.course.challenge.exception.UserNotAuthorException
 import cz.fei.upce.checkman.service.course.challenge.exception.UserNotAuthorizedToViewChallengeException
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
+import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -103,7 +106,7 @@ class ChallengeService(
             .flatMap { challengeRepository.delete(it) }
     }
 
-    fun findCourseSemester(semesterId: Long, courseId: Long): Mono<CourseSemester> {
+    fun findCourseSemester(semesterId: Long, courseId: Long): Mono<Semester> {
         return semesterService.findById(semesterId, courseId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
     }
@@ -192,7 +195,10 @@ class ChallengeService(
         return Mono.empty()
     }
 
-    fun findAllBySemesterIdAsQL(semesterId: Long, requester: AppUser): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
+    fun findAllBySemesterIdAsQL(
+        semesterId: Long,
+        requester: AppUser
+    ): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
         return challengeAuthorizationService.findAllByAppUserIsAuthorized(requester, semesterId)
             .map { it.toQL() }
     }

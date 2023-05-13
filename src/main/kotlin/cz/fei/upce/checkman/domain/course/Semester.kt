@@ -1,12 +1,11 @@
 package cz.fei.upce.checkman.domain.course
 
-import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
 
 @Table("course_semester")
-data class CourseSemester(
+data class Semester(
     @Id var id: Long? = null,
     var note: String? = null,
     var dateStart: LocalDateTime? = null,
@@ -22,6 +21,13 @@ data class CourseSemester(
     fun isBeforeEnd(nowDate: LocalDateTime = LocalDateTime.now()) = dateEnd != null && nowDate.isBefore(dateEnd)
 
     fun isAfterEnd(nowDate: LocalDateTime = LocalDateTime.now()) = dateEnd != null && nowDate.isAfter(dateEnd)
+    fun update(toEntity: Semester): Semester {
+        this.note = toEntity.note
+        this.dateStart = toEntity.dateStart
+        this.dateEnd = toEntity.dateEnd
+
+        return this
+    }
 
     enum class OrderByField {
         id,

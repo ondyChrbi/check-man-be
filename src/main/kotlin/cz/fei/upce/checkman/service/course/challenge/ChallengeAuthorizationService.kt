@@ -1,5 +1,6 @@
 package cz.fei.upce.checkman.service.course.challenge
 
+import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.domain.challenge.Challenge
 import cz.fei.upce.checkman.domain.challenge.ChallengeKind
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
@@ -7,6 +8,8 @@ import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.domain.user.GlobalRole
 import cz.fei.upce.checkman.repository.challenge.ChallengeRepository
 import cz.fei.upce.checkman.service.course.security.CourseAuthorizationService
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -24,7 +27,12 @@ class ChallengeAuthorizationService(
             .flatMapMany { courseRoles -> findAllByAppUserIsAuthorized(appUser, semesterId, courseRoles) }
     }
 
-    fun findAllByAppUserIsAuthorized(appUser: AppUser, semesterId: Long, roles: MutableList<Long>) : Flux<Challenge> {
+    fun findAllByAppUserIsAuthorized(
+        appUser: AppUser,
+        semesterId: Long,
+        roles: MutableList<Long>,
+    ): Flux<Challenge> {
+
         if (canViewAllChallenges(roles)) {
             return challengeRepository.findAllByCourseSemesterIdEquals(semesterId)
         }

@@ -19,4 +19,13 @@ data class Course(
         cz.fei.upce.checkman.dto.graphql.output.course.CourseQL(
             id, stagId, name, dateCreation, icon, template, semesters
         )
+
+    fun update(entity: Course): Course {
+        stagId = entity.stagId
+        name = entity.name
+        icon = entity.icon
+        template = entity.template
+
+        return this
+    }
 }

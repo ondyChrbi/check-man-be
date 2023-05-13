@@ -1,7 +1,7 @@
 package cz.fei.upce.checkman.repository.course
 
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SORT_FIELD
-import cz.fei.upce.checkman.domain.course.CourseSemester
+import cz.fei.upce.checkman.domain.course.Semester
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.r2dbc.repository.Query
@@ -12,13 +12,13 @@ import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 
 @Repository
-interface CourseSemesterRepository : ReactiveSortingRepository<CourseSemester, Long> {
-    fun findFirstByIdEqualsAndCourseIdEquals(courseSemesterId: Long, courseId: Long): Mono<CourseSemester>
+interface SemesterRepository : ReactiveSortingRepository<Semester, Long> {
+    fun findFirstByIdEqualsAndCourseIdEquals(courseSemesterId: Long, courseId: Long): Mono<Semester>
     fun findAllByCourseIdEquals(
         courseId: Long,
         sort: Sort = Sort.by(DEFAULT_SORT_FIELD),
         pageable: PageRequest? = null
-    ): Flux<CourseSemester>
+    ): Flux<Semester>
 
     @Query(
         """
@@ -78,7 +78,7 @@ interface CourseSemesterRepository : ReactiveSortingRepository<CourseSemester, L
         where :currentDate between cs.date_start and cs.date_end
         """
     )
-    fun findAllAvailableToAppUser(currentDate: LocalDateTime, appUserId: Long): Flux<CourseSemester>
+    fun findAllAvailableToAppUser(currentDate: LocalDateTime, appUserId: Long): Flux<Semester>
 
     fun existsByIdEqualsAndCourseIdEquals(courseSemesterId: Long, courseId: Long): Mono<Boolean>
 
@@ -89,5 +89,5 @@ interface CourseSemesterRepository : ReactiveSortingRepository<CourseSemester, L
         where cs.course_id = :courseId and aucsr.app_user_id = :userId and aucsr.course_semester_role_id in (:rolesIds)
     """
     )
-    fun findAllByUserHasRolesInCourse(courseId: Long, userId: Long, rolesIds: Collection<Long>): Flux<CourseSemester>
+    fun findAllByUserHasRolesInCourse(courseId: Long, userId: Long, rolesIds: Collection<Long>): Flux<Semester>
 }

@@ -1,5 +1,6 @@
 package cz.fei.upce.checkman.repository.review.statistic
 
+import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.domain.statistic.FeedbackStatistics
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -24,6 +25,6 @@ interface FeedbackStatisticsRepository : ReactiveCrudRepository<FeedbackStatisti
 
     companion object {
         val DEFAULT_SORT = Sort.by(Sort.Direction.ASC, "count")
-        val DEFAULT_PAGEABLE = PageRequest.of(0, 5)
+        val DEFAULT_PAGEABLE = PageRequest.of(CheckManApplication.DEFAULT_OFFSET, CheckManApplication.DEFAULT_SIZE)
     }
 }

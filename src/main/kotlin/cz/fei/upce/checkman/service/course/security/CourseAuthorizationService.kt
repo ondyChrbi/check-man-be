@@ -1,13 +1,11 @@
 package cz.fei.upce.checkman.service.course.security
 
 import cz.fei.upce.checkman.domain.course.AppUserCourseSemesterRole
-import cz.fei.upce.checkman.domain.course.CourseSemester
+import cz.fei.upce.checkman.domain.course.Semester
 import cz.fei.upce.checkman.domain.course.CourseSemesterAccessRequest
 import cz.fei.upce.checkman.domain.course.CourseSemesterAccessRequest.Companion.EXPIRATION
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.AppUser
-import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
-import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.course.SemesterService
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
@@ -48,7 +46,7 @@ class CourseAuthorizationService(
             .all()
     }
 
-    fun findAllCoursesWhereUserHasRoles(courseId: Long, appUser: AppUser, requestedRoles: List<Long>): Flux<CourseSemester> {
+    fun findAllCoursesWhereUserHasRoles(courseId: Long, appUser: AppUser, requestedRoles: List<Long>): Flux<Semester> {
         return semesterService.findAllByUserHasRolesInCourse(courseId, appUser.id!!, requestedRoles)
     }
 
@@ -162,7 +160,7 @@ class CourseAuthorizationService(
             .map { it.size > 0 }
     }
 
-    private fun checkOngoingCourseSemester(semester: CourseSemester): Mono<CourseSemester> {
+    private fun checkOngoingCourseSemester(semester: Semester): Mono<Semester> {
         val now = LocalDateTime.now()
 
         if (semester.isBeforeStart(now)) {

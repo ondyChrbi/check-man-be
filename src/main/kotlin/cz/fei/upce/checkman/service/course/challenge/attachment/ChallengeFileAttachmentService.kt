@@ -4,7 +4,7 @@ import cz.fei.upce.checkman.component.rsql.ReactiveCriteriaRSQLSpecification
 import cz.fei.upce.checkman.domain.challenge.Challenge
 import cz.fei.upce.checkman.domain.challenge.ChallengeFileAttachment
 import cz.fei.upce.checkman.domain.challenge.FileAttachment
-import cz.fei.upce.checkman.domain.course.CourseSemester
+import cz.fei.upce.checkman.domain.course.Semester
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeResponseDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.attachment.FileAttachmentResponseDtoV1
@@ -191,7 +191,7 @@ class ChallengeFileAttachmentService(
     }
 
     data class FileAttachmentProperties(
-        val courseSemester: CourseSemester,
+        val semester: Semester,
         val challenge: Challenge,
         val author: AppUser,
         val saveDestination: Path,
