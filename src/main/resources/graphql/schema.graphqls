@@ -33,7 +33,7 @@ type Query {
 
     solution(id: ID!): Solution!
     solutions(challengeId: ID!, pageSize: Int, page: Int): [Solution!]!
-    solutionsToReview(challengeId: ID!, offset: Int, size: Int): [Solution!]!
+    solutionsToReview(challengeId: ID!, page: Int, pageSize: Int): [Solution!]!
     allSolutionsToReview(courseId: ID!): [CoursesReviewList]
 
     statistic(semesterId: ID!, direction: Order, limit: Int, description: String): [FeedbackStatistics!]!
@@ -108,7 +108,7 @@ type AppUser{
     courseRoles: [CourseSemesterRoles!]!
     roles(semesterId: ID!): [CourseSemesterRole!]!
     accessRequests: [CourseSemesterAccessRequest!]!
-    challengeSummary(challengeId: ID!): [ChallengeSummary!]!
+    challengeSummary(challengeId: ID!, limit: Int, offset: Int): [ChallengeSummary!]!
 }
 
 type GlobalRole {

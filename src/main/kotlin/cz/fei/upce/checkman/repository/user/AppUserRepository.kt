@@ -1,8 +1,7 @@
 package cz.fei.upce.checkman.repository.user
 
-import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
-import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_LIMIT
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.AppUser
 import org.springframework.data.r2dbc.repository.Query
@@ -22,7 +21,7 @@ interface AppUserRepository : ReactiveCrudRepository<AppUser, Long> {
         where cs.id = :semesterId
         limit :size offset :offset
     """)
-    fun findAllByCourseSemester(semesterId: Long, offset: Int = DEFAULT_OFFSET, size: Int = DEFAULT_SIZE): Flux<AppUser>
+    fun findAllByCourseSemester(semesterId: Long, offset: Int = DEFAULT_OFFSET, size: Int = DEFAULT_LIMIT): Flux<AppUser>
 
     @Query("""
         select au.* from app_user au
@@ -94,7 +93,7 @@ interface AppUserRepository : ReactiveCrudRepository<AppUser, Long> {
     """)
     fun findAllRelatedToChallenge(
         challengeId: Long,
-        pageSize: Int = DEFAULT_SIZE,
+        pageSize: Int = DEFAULT_LIMIT,
         page: Int = DEFAULT_OFFSET
     ): Flux<AppUser>
 }

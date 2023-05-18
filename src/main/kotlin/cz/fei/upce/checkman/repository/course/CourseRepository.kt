@@ -2,7 +2,6 @@ package cz.fei.upce.checkman.repository.course
 
 import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.domain.course.Course
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
@@ -33,5 +32,5 @@ interface CourseRepository : ReactiveCrudRepository<Course, Long> {
         limit :size offset :offset
     """)
 
-    fun findAllPageable(size : Int = CheckManApplication.DEFAULT_SIZE, offset : Int = CheckManApplication.DEFAULT_OFFSET): Flux<Course>
+    fun findAllPageable(size : Int = CheckManApplication.DEFAULT_LIMIT, offset : Int = CheckManApplication.DEFAULT_OFFSET): Flux<Course>
 }

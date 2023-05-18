@@ -142,10 +142,10 @@ class RequirementService(
 
     fun findAllByChallengeIdAsQL(
         challengeId: Long,
-        pageSize: Int? = CheckManApplication.DEFAULT_SIZE,
+        pageSize: Int? = CheckManApplication.DEFAULT_LIMIT,
         page: Int? = CheckManApplication.DEFAULT_OFFSET,
     ): Flux<RequirementQL> {
-        val pageable = PageRequest.of(page ?: CheckManApplication.DEFAULT_OFFSET, pageSize ?: CheckManApplication.DEFAULT_SIZE)
+        val pageable = PageRequest.of(page ?: CheckManApplication.DEFAULT_OFFSET, pageSize ?: CheckManApplication.DEFAULT_LIMIT)
 
         return requirementRepository.findAllByChallengeIdEqualsAndActiveEquals(challengeId, pageable = pageable)
             .map { it.toQL() }

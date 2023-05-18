@@ -1,7 +1,7 @@
 package cz.fei.upce.checkman.service.course
 
+import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
-import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
 import cz.fei.upce.checkman.domain.course.Semester
 import cz.fei.upce.checkman.dto.graphql.input.course.SemesterInputQL
 import cz.fei.upce.checkman.repository.course.SemesterRepository
@@ -56,12 +56,12 @@ class SemesterService(
         courseId: Long,
         oderBy: Semester.OrderByField? = Semester.OrderByField.id,
         sortOrder: Sort.Direction? = Sort.Direction.ASC,
-        pageSize: Int? = DEFAULT_SIZE,
+        pageSize: Int? = CheckManApplication.DEFAULT_LIMIT,
         page: Int? = DEFAULT_OFFSET,
     ): Flux<Semester> {
         val sortField = oderBy ?: Semester.OrderByField.id
         val sort = Sort.by(Sort.Order(sortOrder ?: Sort.Direction.ASC, sortField.toString()))
-        val pageable = PageRequest.of(page ?: DEFAULT_OFFSET, pageSize ?: DEFAULT_SIZE)
+        val pageable = PageRequest.of(page ?: DEFAULT_OFFSET, pageSize ?: CheckManApplication.DEFAULT_LIMIT)
 
         return semesterRepository.findAllByCourseIdEquals(courseId, sort, pageable)
     }

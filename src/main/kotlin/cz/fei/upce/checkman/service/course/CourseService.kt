@@ -61,11 +61,11 @@ class CourseService(
     }
 
     fun findAllAsQL(
-        pageSize: Int? = CheckManApplication.DEFAULT_SIZE,
+        pageSize: Int? = CheckManApplication.DEFAULT_LIMIT,
         page: Int? = CheckManApplication.DEFAULT_OFFSET,
     ): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
 
-        return courseRepository.findAllPageable(pageSize ?: CheckManApplication.DEFAULT_SIZE, page ?: CheckManApplication.DEFAULT_OFFSET)
+        return courseRepository.findAllPageable(pageSize ?: CheckManApplication.DEFAULT_LIMIT, page ?: CheckManApplication.DEFAULT_OFFSET)
             .map { it.toQL() }
     }
 

@@ -1,8 +1,7 @@
 package cz.fei.upce.checkman.service.appuser
 
-import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
-import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_LIMIT
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.appuser.AppUserResponseDtoV1
 import cz.fei.upce.checkman.dto.appuser.GlobalRoleResponseDtoV1
@@ -10,7 +9,6 @@ import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.role.CourseSemesterRoleService
 import cz.fei.upce.checkman.service.role.GlobalRoleService
-import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -98,7 +96,7 @@ class AppUserService(
             }
     }
 
-    fun findAllRelatedToCourseByQL(semesterQL : cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL, offset: Int = DEFAULT_OFFSET, size: Int = DEFAULT_SIZE): Flux<AppUser> {
+    fun findAllRelatedToCourseByQL(semesterQL : cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL, offset: Int = DEFAULT_OFFSET, size: Int = DEFAULT_LIMIT): Flux<AppUser> {
         return appUserRepository.findAllByCourseSemester(semesterQL.id, offset, size)
     }
 
@@ -130,9 +128,9 @@ class AppUserService(
 
     fun findAllRelatedToChallenge(
         challengeId: Long,
-        pageSize: Int? = DEFAULT_SIZE,
+        pageSize: Int? = DEFAULT_LIMIT,
         page: Int? = DEFAULT_OFFSET
     ): Flux<AppUser> {
-        return appUserRepository.findAllRelatedToChallenge(challengeId, pageSize ?: DEFAULT_SIZE, page ?: DEFAULT_OFFSET)
+        return appUserRepository.findAllRelatedToChallenge(challengeId, pageSize ?: DEFAULT_LIMIT, page ?: DEFAULT_OFFSET)
     }
 }

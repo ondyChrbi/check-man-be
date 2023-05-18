@@ -6,7 +6,6 @@ import cz.fei.upce.checkman.dto.graphql.input.course.challenge.solution.Feedback
 import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.FeedbackQL
 import cz.fei.upce.checkman.repository.review.FeedbackRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
-import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -27,10 +26,10 @@ class FeedbackService(
 
     fun findAllByReviewIdAsQL(
         id: Long,
-        pageSize: Int? = CheckManApplication.DEFAULT_SIZE,
+        pageSize: Int? = CheckManApplication.DEFAULT_LIMIT,
         page: Int? = CheckManApplication.DEFAULT_OFFSET,
     ): Flux<FeedbackQL> {
-        return feedbackRepository.findAllByReview(id, pageSize ?: CheckManApplication.DEFAULT_SIZE, page ?: CheckManApplication.DEFAULT_OFFSET)
+        return feedbackRepository.findAllByReview(id, pageSize ?: CheckManApplication.DEFAULT_LIMIT, page ?: CheckManApplication.DEFAULT_OFFSET)
             .map { it.toQL() }
     }
 

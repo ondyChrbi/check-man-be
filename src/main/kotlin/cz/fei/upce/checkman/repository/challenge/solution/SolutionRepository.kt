@@ -30,7 +30,7 @@ interface SolutionRepository : ReactiveCrudRepository<Solution, Long> {
         limit :size offset :offset
     """
     )
-    fun findAllToReview(challengeId: Long, offset: Int = CheckManApplication.DEFAULT_OFFSET, size: Int = CheckManApplication.DEFAULT_SIZE): Flux<Solution>
+    fun findAllToReview(challengeId: Long, offset: Int = CheckManApplication.DEFAULT_OFFSET, size: Int = CheckManApplication.DEFAULT_LIMIT): Flux<Solution>
 
     @Query("""
         select count(distinct s.*) from solution s
@@ -52,12 +52,12 @@ interface SolutionRepository : ReactiveCrudRepository<Solution, Long> {
         where s.challenge_id = :challengeId
         limit :size offset :offset
     """)
-    fun findAllByChallengeIdEquals(challengeId: Long, offset: Int? = CheckManApplication.DEFAULT_OFFSET, size: Int? = CheckManApplication.DEFAULT_SIZE): Flux<Solution>
+    fun findAllByChallengeIdEquals(challengeId: Long, offset: Int? = CheckManApplication.DEFAULT_OFFSET, size: Int? = CheckManApplication.DEFAULT_LIMIT): Flux<Solution>
 
     @Query("""
         select s.* from solution s
         where s.user_id = :appUserId
         limit :size offset :offset
     """)
-    fun findAllByAppUserIdEquals(appUserId: Long, offset: Int? = CheckManApplication.DEFAULT_OFFSET, size: Int? = CheckManApplication.DEFAULT_SIZE): Flux<Solution>
+    fun findAllByAppUserIdEquals(appUserId: Long, offset: Int? = CheckManApplication.DEFAULT_OFFSET, size: Int? = CheckManApplication.DEFAULT_LIMIT): Flux<Solution>
 }

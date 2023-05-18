@@ -8,10 +8,10 @@ data class SolutionQL (
     var id: Long? = null,
     var uploadDate: OffsetDateTime? = null,
     var status: Solution.Status = Solution.Status.WAITING_TO_REVIEW,
-    var review: cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL? = null,
+    var review: ReviewQL? = null,
     var author: AppUser? = null
 ) {
-    fun withReview(review: cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL): cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL {
+    fun withReview(review: ReviewQL): SolutionQL {
         this.review = review
         return this
     }

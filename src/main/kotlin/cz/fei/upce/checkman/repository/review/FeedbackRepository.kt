@@ -35,5 +35,5 @@ interface FeedbackRepository : ReactiveCrudRepository<Feedback, Long> {
         where fr.review_id = :id
         limit :size offset :offset
     """)
-    fun findAllByReview(id: Long, size: Int = CheckManApplication.DEFAULT_SIZE, offset: Int = CheckManApplication.DEFAULT_OFFSET) : Flux<Feedback>
+    fun findAllByReview(id: Long, size: Int = CheckManApplication.DEFAULT_LIMIT, offset: Int = CheckManApplication.DEFAULT_OFFSET) : Flux<Feedback>
 }

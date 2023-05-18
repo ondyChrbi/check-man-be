@@ -4,12 +4,13 @@ import cz.fei.upce.checkman.domain.challenge.Challenge
 import cz.fei.upce.checkman.domain.challenge.ChallengeKind
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
+import org.springframework.data.repository.reactive.ReactiveSortingRepository
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Repository
-interface ChallengeRepository : ReactiveCrudRepository<Challenge, Long> {
+interface ChallengeRepository : ReactiveSortingRepository<Challenge, Long> {
     fun findAllByCourseSemesterIdEqualsAndChallengeKindIdIsIn(
         courseSemesterId: Long,
         challengeKindsIds: Collection<Long>

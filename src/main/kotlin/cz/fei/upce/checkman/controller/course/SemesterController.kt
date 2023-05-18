@@ -1,7 +1,7 @@
 package cz.fei.upce.checkman.controller.course
 
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
-import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SIZE
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_LIMIT
 import cz.fei.upce.checkman.domain.course.Semester
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.GlobalRole
@@ -51,7 +51,7 @@ class SemesterController(
         @Argument courseId: Long,
         @Argument oderBy: Semester.OrderByField? = Semester.OrderByField.id,
         @Argument sortOrder: Sort.Direction? = Sort.Direction.ASC,
-        @Argument pageSize: Int? = DEFAULT_SIZE,
+        @Argument pageSize: Int? = DEFAULT_LIMIT,
         @Argument page: Int? = DEFAULT_OFFSET,
     ): Flux<Semester> {
         return semesterService.findAllByCoursesQL(courseId, oderBy, sortOrder, pageSize, page)

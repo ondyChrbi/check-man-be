@@ -5,7 +5,6 @@ import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL
 import cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL
 import cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.ReviewedRequirementQL
-import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL
 import cz.fei.upce.checkman.service.course.challenge.requirement.RequirementService
 import cz.upce.fei.checkman.domain.course.security.annotation.ChallengeId
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
@@ -25,7 +24,7 @@ class RequirementController(private val requirementService: RequirementService) 
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS])
     fun requirements(
         @ChallengeId @Argument challengeId: Long,
-        @Argument pageSize: Int? = CheckManApplication.DEFAULT_SIZE,
+        @Argument pageSize: Int? = CheckManApplication.DEFAULT_LIMIT,
         @Argument page: Int? = CheckManApplication.DEFAULT_OFFSET,
         authentication: Authentication
     ): Flux<RequirementQL> {
