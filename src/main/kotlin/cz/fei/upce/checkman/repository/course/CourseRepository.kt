@@ -32,5 +32,5 @@ interface CourseRepository : ReactiveCrudRepository<Course, Long> {
         limit :size offset :offset
     """)
 
-    fun findAllPageable(size : Int = CheckManApplication.DEFAULT_LIMIT, offset : Int = CheckManApplication.DEFAULT_OFFSET): Flux<Course>
+    fun findAllPageable(size : Int = CheckManApplication.DEFAULT_PAGE_SIZE, offset : Int = CheckManApplication.DEFAULT_PAGE): Flux<Course>
 }

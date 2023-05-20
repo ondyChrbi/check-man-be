@@ -11,7 +11,7 @@ import reactor.core.publisher.Flux
 class ChallengeSummaryService(
     private val challengeSummaryRepository: ChallengeSummaryRepository
 ) {
-    fun findByAppUserAndChallenge(appUserId: Long, challengeId: Long, limit: Int = CheckManApplication.DEFAULT_LIMIT, offset: Int = CheckManApplication.DEFAULT_OFFSET): Flux<ChallengeSummary> {
+    fun findByAppUserAndChallenge(appUserId: Long, challengeId: Long, limit: Int = CheckManApplication.DEFAULT_PAGE_SIZE, offset: Int = CheckManApplication.DEFAULT_PAGE): Flux<ChallengeSummary> {
         val pageable = PageRequest.of(offset, limit)
 
         return challengeSummaryRepository.findAllByAppUserIdEqualsAndChallengeIdEquals(

@@ -18,8 +18,8 @@ class CourseController(
 ) {
     @QueryMapping
     fun courses(
-        @Argument pageSize: Int? = CheckManApplication.DEFAULT_LIMIT,
-        @Argument page: Int? = CheckManApplication.DEFAULT_OFFSET,
+        @Argument pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        @Argument page: Int? = CheckManApplication.DEFAULT_PAGE,
     ): Flux<CourseQL> {
         return courseService.findAllAsQL(pageSize, page)
     }

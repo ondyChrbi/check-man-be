@@ -1,7 +1,7 @@
 package cz.fei.upce.checkman.service.course.challenge.solution
 
-import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
-import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_LIMIT
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_PAGE
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_PAGE_SIZE
 import cz.fei.upce.checkman.domain.challenge.solution.Solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Review
@@ -32,7 +32,7 @@ class ReviewService(
         return solutionService.countToReview(challengeId!!)
     }
 
-    fun findAllToReview(challengeId: Long?, page: Int = DEFAULT_OFFSET, pageSize: Int = DEFAULT_LIMIT): Flux<SolutionQL> {
+    fun findAllToReview(challengeId: Long?, page: Int = DEFAULT_PAGE, pageSize: Int = DEFAULT_PAGE_SIZE): Flux<SolutionQL> {
         return solutionService.findAllToReview(challengeId!!, page, pageSize)
             .flatMap { solution ->
                 val review = solutionService.findReviewAsQL(solution.id!!)

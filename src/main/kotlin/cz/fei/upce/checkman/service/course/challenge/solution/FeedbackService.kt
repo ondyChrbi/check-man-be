@@ -26,10 +26,10 @@ class FeedbackService(
 
     fun findAllByReviewIdAsQL(
         id: Long,
-        pageSize: Int? = CheckManApplication.DEFAULT_LIMIT,
-        page: Int? = CheckManApplication.DEFAULT_OFFSET,
+        pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        page: Int? = CheckManApplication.DEFAULT_PAGE,
     ): Flux<FeedbackQL> {
-        return feedbackRepository.findAllByReview(id, pageSize ?: CheckManApplication.DEFAULT_LIMIT, page ?: CheckManApplication.DEFAULT_OFFSET)
+        return feedbackRepository.findAllByReview(id, pageSize ?: CheckManApplication.DEFAULT_PAGE_SIZE, page ?: CheckManApplication.DEFAULT_PAGE)
             .map { it.toQL() }
     }
 

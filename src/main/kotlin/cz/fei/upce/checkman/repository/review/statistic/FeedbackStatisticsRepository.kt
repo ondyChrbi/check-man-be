@@ -25,6 +25,6 @@ interface FeedbackStatisticsRepository : ReactiveCrudRepository<FeedbackStatisti
 
     companion object {
         val DEFAULT_SORT = Sort.by(Sort.Direction.ASC, "count")
-        val DEFAULT_PAGEABLE = PageRequest.of(CheckManApplication.DEFAULT_OFFSET, CheckManApplication.DEFAULT_LIMIT)
+        val DEFAULT_PAGEABLE = PageRequest.of(CheckManApplication.DEFAULT_PAGE, CheckManApplication.DEFAULT_PAGE_SIZE)
     }
 }

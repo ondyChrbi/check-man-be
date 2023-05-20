@@ -26,8 +26,8 @@ class SolutionController(
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
     fun solutions(
         @ChallengeId @Argument challengeId: Long,
-        @Argument pageSize: Int? = CheckManApplication.DEFAULT_LIMIT,
-        @Argument page: Int? = CheckManApplication.DEFAULT_OFFSET,
+        @Argument pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        @Argument page: Int? = CheckManApplication.DEFAULT_PAGE,
         authentication: Authentication
     ): Flux<SolutionQL> {
 

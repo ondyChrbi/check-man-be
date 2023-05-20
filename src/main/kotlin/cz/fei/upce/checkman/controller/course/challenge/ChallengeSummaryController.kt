@@ -16,8 +16,8 @@ class ChallengeSummaryController(private val challengeSummaryService : Challenge
         return challengeSummaryService.findByAppUserAndChallenge(
             appUser.id!!,
             challengeId,
-            limit ?: CheckManApplication.DEFAULT_LIMIT,
-            offset ?: CheckManApplication.DEFAULT_OFFSET,
+            limit ?: CheckManApplication.DEFAULT_PAGE_SIZE,
+            offset ?: CheckManApplication.DEFAULT_PAGE,
         ).map { it.toQL() }
     }
 

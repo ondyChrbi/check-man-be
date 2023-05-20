@@ -1,7 +1,7 @@
 package cz.fei.upce.checkman.service.course.challenge.solution
 
-import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
-import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_LIMIT
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_PAGE
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_PAGE_SIZE
 import cz.fei.upce.checkman.domain.challenge.solution.Solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Requirement
@@ -81,8 +81,8 @@ class SolutionService(
 
     fun findAllToReview(
         challengeId: Long,
-        page: Int = DEFAULT_OFFSET,
-        pageSize: Int = DEFAULT_LIMIT
+        page: Int = DEFAULT_PAGE,
+        pageSize: Int = DEFAULT_PAGE_SIZE
     ): Flux<Solution> {
         return solutionRepository.findAllToReview(challengeId, (page * pageSize), pageSize)
     }
@@ -128,8 +128,8 @@ class SolutionService(
 
     fun findAllByChallenge(
         challengeId: Long,
-        pageSize: Int? = DEFAULT_LIMIT,
-        page: Int? = DEFAULT_OFFSET,
+        pageSize: Int? = DEFAULT_PAGE_SIZE,
+        page: Int? = DEFAULT_PAGE,
     ): Flux<Solution> {
         return solutionRepository.findAllByChallengeIdEquals(challengeId, page, pageSize)
     }

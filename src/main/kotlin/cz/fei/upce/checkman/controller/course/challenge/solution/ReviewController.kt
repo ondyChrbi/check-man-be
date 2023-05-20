@@ -1,7 +1,7 @@
 package cz.fei.upce.checkman.controller.course.challenge.solution
 
-import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
-import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_LIMIT
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_PAGE
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_PAGE_SIZE
 import cz.fei.upce.checkman.domain.challenge.solution.Solution
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Review
@@ -44,8 +44,8 @@ class ReviewController(
     @QueryMapping
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS, CourseSemesterRole.Value.REVIEW_CHALLENGE])
     fun solutionsToReview(@ChallengeId @Argument challengeId: Long?,
-                          @Argument page: Int = DEFAULT_OFFSET,
-                          @Argument pageSize: Int = DEFAULT_LIMIT,
+                          @Argument page: Int = DEFAULT_PAGE,
+                          @Argument pageSize: Int = DEFAULT_PAGE_SIZE,
                           authentication: Authentication): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL> {
         return reviewService.findAllToReview(challengeId, page, pageSize)
     }

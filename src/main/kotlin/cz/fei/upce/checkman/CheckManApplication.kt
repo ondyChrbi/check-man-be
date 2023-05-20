@@ -9,10 +9,10 @@ import org.springframework.data.r2dbc.config.EnableR2dbcAuditing
 @EnableR2dbcAuditing
 class CheckManApplication {
 	companion object {
-		const val DEFAULT_OFFSET = 0
-		const val DEFAULT_LIMIT = Int.MAX_VALUE
+		const val DEFAULT_PAGE = 0
+		const val DEFAULT_PAGE_SIZE = Int.MAX_VALUE
 		const val DEFAULT_SORT_FIELD = "id"
-		val DEFAULT_PAGEABLE = PageRequest.of(DEFAULT_OFFSET, DEFAULT_LIMIT)
+		val DEFAULT_PAGEABLE = PageRequest.of(DEFAULT_PAGE, DEFAULT_PAGE_SIZE)
 	}
 }
 

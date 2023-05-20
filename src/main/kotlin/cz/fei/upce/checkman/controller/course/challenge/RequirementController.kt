@@ -24,8 +24,8 @@ class RequirementController(private val requirementService: RequirementService) 
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.ACCESS])
     fun requirements(
         @ChallengeId @Argument challengeId: Long,
-        @Argument pageSize: Int? = CheckManApplication.DEFAULT_LIMIT,
-        @Argument page: Int? = CheckManApplication.DEFAULT_OFFSET,
+        @Argument pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        @Argument page: Int? = CheckManApplication.DEFAULT_PAGE,
         authentication: Authentication
     ): Flux<RequirementQL> {
         return requirementService.findAllByChallengeIdAsQL(challengeId, pageSize, page)

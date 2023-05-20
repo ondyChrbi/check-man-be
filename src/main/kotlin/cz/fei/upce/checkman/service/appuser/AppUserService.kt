@@ -1,7 +1,7 @@
 package cz.fei.upce.checkman.service.appuser
 
-import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
-import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_LIMIT
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_PAGE
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_PAGE_SIZE
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.appuser.AppUserResponseDtoV1
 import cz.fei.upce.checkman.dto.appuser.GlobalRoleResponseDtoV1
@@ -96,7 +96,7 @@ class AppUserService(
             }
     }
 
-    fun findAllRelatedToCourseByQL(semesterQL : cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL, offset: Int = DEFAULT_OFFSET, size: Int = DEFAULT_LIMIT): Flux<AppUser> {
+    fun findAllRelatedToCourseByQL(semesterQL : cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL, offset: Int = DEFAULT_PAGE, size: Int = DEFAULT_PAGE_SIZE): Flux<AppUser> {
         return appUserRepository.findAllByCourseSemester(semesterQL.id, offset, size)
     }
 
@@ -128,9 +128,9 @@ class AppUserService(
 
     fun findAllRelatedToChallenge(
         challengeId: Long,
-        pageSize: Int? = DEFAULT_LIMIT,
-        page: Int? = DEFAULT_OFFSET
+        pageSize: Int? = DEFAULT_PAGE_SIZE,
+        page: Int? = DEFAULT_PAGE
     ): Flux<AppUser> {
-        return appUserRepository.findAllRelatedToChallenge(challengeId, pageSize ?: DEFAULT_LIMIT, page ?: DEFAULT_OFFSET)
+        return appUserRepository.findAllRelatedToChallenge(challengeId, pageSize ?: DEFAULT_PAGE_SIZE, page ?: DEFAULT_PAGE)
     }
 }

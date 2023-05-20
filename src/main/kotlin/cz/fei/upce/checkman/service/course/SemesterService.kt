@@ -1,7 +1,7 @@
 package cz.fei.upce.checkman.service.course
 
 import cz.fei.upce.checkman.CheckManApplication
-import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_OFFSET
+import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_PAGE
 import cz.fei.upce.checkman.domain.course.Semester
 import cz.fei.upce.checkman.dto.graphql.input.course.SemesterInputQL
 import cz.fei.upce.checkman.repository.course.SemesterRepository
@@ -56,17 +56,17 @@ class SemesterService(
         courseId: Long,
         oderBy: Semester.OrderByField? = Semester.OrderByField.id,
         sortOrder: Sort.Direction? = Sort.Direction.ASC,
-        pageSize: Int? = CheckManApplication.DEFAULT_LIMIT,
-        page: Int? = DEFAULT_OFFSET,
+        pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        page: Int? = DEFAULT_PAGE,
     ): Flux<Semester> {
         val sortField = oderBy ?: Semester.OrderByField.id
         val sort = Sort.by(Sort.Order(sortOrder ?: Sort.Direction.ASC, sortField.toString()))
-        val pageable = PageRequest.of(page ?: DEFAULT_OFFSET, pageSize ?: CheckManApplication.DEFAULT_LIMIT)
+        val pageable = PageRequest.of(page ?: DEFAULT_PAGE, pageSize ?: CheckManApplication.DEFAULT_PAGE_SIZE)
 
         return semesterRepository.findAllByCourseIdEquals(courseId, sort, pageable)
     }
 
-    fun add(courseId: Long, input: cz.fei.upce.checkman.dto.graphql.input.course.SemesterInputQL): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL> {
+    fun add(courseId: Long, input: SemesterInputQL): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL> {
         val courseExistMono = courseService.existById(courseId)
             .flatMap {
                 if (!it)

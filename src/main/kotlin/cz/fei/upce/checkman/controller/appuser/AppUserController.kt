@@ -23,8 +23,8 @@ class AppUserController(
 ) {
     @SchemaMapping(typeName = "Semester")
     fun relatedUsers (semestersQL: cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL,
-                      @Argument offset: Int? = CheckManApplication.DEFAULT_OFFSET,
-                      @Argument size: Int? = CheckManApplication.DEFAULT_LIMIT
+                      @Argument offset: Int? = CheckManApplication.DEFAULT_PAGE,
+                      @Argument size: Int? = CheckManApplication.DEFAULT_PAGE_SIZE
     ): Flux<AppUserQL> {
         return appUserService.findAllRelatedToCourseByQL(semestersQL)
             .map { it.toQL() }
@@ -54,8 +54,8 @@ class AppUserController(
     @SchemaMapping(typeName = "Challenge", field = "relatedUsers")
     fun relatedUsersChallenge(
         challenge: ChallengeQL,
-        @Argument pageSize: Int? = CheckManApplication.DEFAULT_LIMIT,
-        @Argument page: Int? = CheckManApplication.DEFAULT_OFFSET
+        @Argument pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        @Argument page: Int? = CheckManApplication.DEFAULT_PAGE
     ): Flux<AppUserQL> {
         return appUserService.findAllRelatedToChallenge(challenge.id!!, pageSize, page)
             .map { it.toQL() }

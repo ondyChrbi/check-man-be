@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono
 
 @Repository
 interface RequirementRepository : ReactiveCrudRepository<Requirement, Long> {
-    fun findAllByChallengeIdEqualsAndActiveEquals(challengeId: Long, active: Boolean = true, pageable: Pageable = PageRequest.of(CheckManApplication.DEFAULT_OFFSET, CheckManApplication.DEFAULT_LIMIT)): Flux<Requirement>
+    fun findAllByChallengeIdEqualsAndActiveEquals(challengeId: Long, active: Boolean = true, pageable: Pageable = PageRequest.of(CheckManApplication.DEFAULT_PAGE, CheckManApplication.DEFAULT_PAGE_SIZE)): Flux<Requirement>
 
     fun findAllByChallengeIdEqualsAndRemovedEquals(challengeId: Long, removed: Boolean = false): Flux<Requirement>
 

@@ -31,8 +31,8 @@ class FeedbackController(
     @QueryMapping
     fun feedbacks(
         @Argument reviewId: Long,
-        @Argument pageSize: Int? = CheckManApplication.DEFAULT_LIMIT,
-        @Argument page: Int? = CheckManApplication.DEFAULT_OFFSET,
+        @Argument pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        @Argument page: Int? = CheckManApplication.DEFAULT_PAGE,
     ): Flux<FeedbackQL> {
         return feedbackService.findAllByReviewIdAsQL(reviewId, pageSize, page)
     }
