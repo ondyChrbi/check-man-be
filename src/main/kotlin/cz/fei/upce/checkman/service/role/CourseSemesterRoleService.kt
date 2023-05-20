@@ -6,6 +6,9 @@ import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.appuser.CourseSemesterRoleDtoV1
 import cz.fei.upce.checkman.dto.appuser.CourseSemesterRolesResponseDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterResponseDtoV1
+import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRoleQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRolesQL
 import cz.fei.upce.checkman.repository.course.AppUserCourseSemesterRoleRepository
 import cz.fei.upce.checkman.repository.course.SemesterRepository
 import cz.fei.upce.checkman.repository.course.CourseSemesterRoleRepository
@@ -29,7 +32,7 @@ class CourseSemesterRoleService(
     }
 
 
-    fun findAllRolesByUserAndCourseSemesterAsQL(appUser: cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL, semesterId: Long): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRoleQL> {
+    fun findAllRolesByUserAndCourseSemesterAsQL(appUser: AppUserQL, semesterId: Long): Flux<CourseSemesterRoleQL> {
         return courseSemesterRoleRepository.findAllRelatedToUserAndCourseSemester(appUser.id!!, semesterId)
             .map { it.toQL() }
     }
@@ -39,7 +42,7 @@ class CourseSemesterRoleService(
             .flatMap { findSemesterAndRolesAsDto(appUser, it.courseSemesterId) }
     }
 
-    fun findAllSemestersAndRolesAsQL(appUser: AppUser): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRolesQL> {
+    fun findAllSemestersAndRolesAsQL(appUser: AppUser): Flux<CourseSemesterRolesQL> {
         return appUserCourseSemesterRoleRepository.findOnlySemestersByAppUserIEquals(appUser.id!!)
             .flatMap { findSemesterAndRolesAsQL(appUser, it.courseSemesterId) }
     }
@@ -51,10 +54,10 @@ class CourseSemesterRoleService(
             .flatMap { assignSemesterRolesAsDto(it, appUser) }
     }
 
-    fun findSemesterAndRolesAsQL(appUser: AppUser, semesterId: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRolesQL> {
+    fun findSemesterAndRolesAsQL(appUser: AppUser, semesterId: Long): Mono<CourseSemesterRolesQL> {
         return semesterRepository.findById(semesterId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-            .map { cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRolesQL(it.toQL()) }
+            .map { CourseSemesterRolesQL(it.toQL()) }
             .flatMap { assignSemesterRolesAsQL(it, appUser) }
     }
 
@@ -104,7 +107,7 @@ class CourseSemesterRoleService(
         return assignSemesterRolesAsDto(responseDto, appUser, responseDto.semester.id!!)
     }
 
-    private fun assignSemesterRolesAsQL(ql: cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRolesQL, appUser: AppUser): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRolesQL> {
+    private fun assignSemesterRolesAsQL(ql: CourseSemesterRolesQL, appUser: AppUser): Mono<CourseSemesterRolesQL> {
         return assignSemesterRolesAsQL(ql, appUser, ql.semester.id)
     }
 
@@ -124,10 +127,10 @@ class CourseSemesterRoleService(
     }
 
     private fun assignSemesterRolesAsQL(
-        ql: cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRolesQL,
+        ql: CourseSemesterRolesQL,
         appUser: AppUser,
         semesterId: Long
-    ): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRolesQL> {
+    ): Mono<CourseSemesterRolesQL> {
         return appUserCourseSemesterRoleRepository.findAllByAppUserIdEqualsAndCourseSemesterIdEquals(
             appUser.id!!,
             semesterId
@@ -139,7 +142,7 @@ class CourseSemesterRoleService(
             .map { ql }
     }
 
-    fun findAllAsQL(): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterRoleQL> {
+    fun findAllAsQL(): Flux<CourseSemesterRoleQL> {
         return courseSemesterRoleRepository.findAll()
             .map { it.toQL() }
     }

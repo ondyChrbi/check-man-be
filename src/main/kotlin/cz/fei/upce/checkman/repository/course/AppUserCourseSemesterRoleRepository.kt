@@ -1,25 +1,22 @@
 package cz.fei.upce.checkman.repository.course
 
+import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.domain.course.AppUserCourseSemesterRole
+import org.springframework.data.domain.Pageable
 import org.springframework.data.r2dbc.repository.Query
-import org.springframework.data.repository.reactive.ReactiveCrudRepository
+import org.springframework.data.repository.reactive.ReactiveSortingRepository
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @Repository
-interface AppUserCourseSemesterRoleRepository : ReactiveCrudRepository<AppUserCourseSemesterRole, Long> {
-    fun findDistinctByAppUserIdEqualsAndCourseSemesterRoleIdEquals(appUserId: Long, courseSemesterRoleId: Long): Flux<AppUserCourseSemesterRole>
+interface AppUserCourseSemesterRoleRepository : ReactiveSortingRepository<AppUserCourseSemesterRole, Long> {
+    fun findDistinctByAppUserIdEqualsAndCourseSemesterRoleIdEquals(appUserId: Long, courseSemesterRoleId: Long, pageable: Pageable = CheckManApplication.DEFAULT_PAGEABLE): Flux<AppUserCourseSemesterRole>
 
     fun findAllByAppUserIdEqualsAndCourseSemesterIdEquals(
         appUserId: Long,
         courseSemesterId: Long
     ): Flux<AppUserCourseSemesterRole>
-
-    fun existsByAppUserIdEqualsAndCourseSemesterIdEquals(
-        appUserId: Long,
-        courseSemesterId: Long
-    ): Mono<Boolean>
 
     fun existsByAppUserIdEqualsAndCourseSemesterIdEqualsAndCourseSemesterRoleIdEquals(
         appUserId: Long,

@@ -46,11 +46,18 @@ class ReviewService(
             }
     }
 
-    fun findAllToReview(courseId: Long, reviewer: AppUser): Flux<CoursesReviewListQL> {
+    fun findAllToReview(
+        courseId: Long,
+        reviewer: AppUser,
+        pageSize: Int? = DEFAULT_PAGE_SIZE,
+        page: Int? = DEFAULT_PAGE,
+    ): Flux<CoursesReviewListQL> {
         val courses = authorizationService.findAllCoursesWhereUserHasRoles(
             courseId,
             reviewer,
-            listOf(CourseSemesterRole.Value.REVIEW_CHALLENGE.id)
+            listOf(CourseSemesterRole.Value.REVIEW_CHALLENGE.id),
+            pageSize,
+            page
         )
 
         return courses.flatMap { courseSemester ->

@@ -8,20 +8,20 @@ type Query {
     semester(id: ID!): Semester
     semesters(courseId: ID!, oderBy: SemesterOrderByField, sortOrder: SortOrder, pageSize: Int, page: Int): [Semester!]!
 
-    challenges(semesterId: ID!): [Challenge!]!
+    challenges(semesterId: ID!, pageSize: Int, page: Int): [Challenge!]!
     challenge(id: ID!): Challenge
 
     me: AppUser!
-    myCourses: [Course!]!
-    mySolutions(challengeId: ID!): [Solution!]!
-    availableCourses: [Course!]!
+    myCourses(pageSize: Int, page: Int): [Course!]!
+    mySolutions(challengeId: ID!, pageSize: Int, page: Int): [Solution!]!
+    availableCourses(pageSize: Int, page: Int): [Course!]!
 
     appUser(id: ID!): AppUser!
 
-    searchPermittedAppUsersChallenge(challengeId: ID!, search: String): [AppUser!]!
-    appUsersToPermitChallenge(challengeId: ID!): [AppUser!]!
-    searchAppUsersToPermitChallenge(challengeId: ID!, search: String): [AppUser!]!
-    permittedAppUsersChallenge(challengeId: ID!): [AppUser!]!
+    searchPermittedAppUsersChallenge(challengeId: ID!, search: String, pageSize: Int, page: Int): [AppUser!]!
+    appUsersToPermitChallenge(challengeId: ID!, pageSize: Int, page: Int): [AppUser!]!
+    searchAppUsersToPermitChallenge(challengeId: ID!, search: String, pageSize: Int, page: Int): [AppUser!]!
+    permittedAppUsersChallenge(challengeId: ID!, pageSize: Int, page: Int): [AppUser!]!
 
     requirements(challengeId: ID!, pageSize: Int, page: Int): [Requirement!]!
     requirement(id: ID!): Requirement!
@@ -34,7 +34,7 @@ type Query {
     solution(id: ID!): Solution!
     solutions(challengeId: ID!, pageSize: Int, page: Int): [Solution!]!
     solutionsToReview(challengeId: ID!, page: Int, pageSize: Int): [Solution!]!
-    allSolutionsToReview(courseId: ID!): [CoursesReviewList]
+    allSolutionsToReview(courseId: ID!, page: Int, pageSize: Int): [CoursesReviewList]
 
     statistic(semesterId: ID!, direction: Order, limit: Int, description: String): [FeedbackStatistics!]!
     testResult(id: ID!): TestResult

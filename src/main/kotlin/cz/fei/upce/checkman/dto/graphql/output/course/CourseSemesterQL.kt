@@ -11,9 +11,9 @@ data class CourseSemesterQL(
     var note: String,
     var dateStart: LocalDateTime,
     var dateEnd: LocalDateTime,
-    var challenges: List<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> = emptyList(),
+    var challenges: List<ChallengeQL> = emptyList(),
     @field:JsonRawValue
     var fulfillmentConditions: JsonNode? = null,
     override var page: Int? = null,
     override var pageSize: Int? = null
-) : cz.fei.upce.checkman.dto.graphql.output.PageableQL(page, pageSize)
+) : PageableQL(page, pageSize)

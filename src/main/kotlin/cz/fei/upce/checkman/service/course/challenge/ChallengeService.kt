@@ -12,6 +12,8 @@ import cz.fei.upce.checkman.dto.course.challenge.ChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.ChallengeResponseDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.PermitAppUserChallengeRequestDtoV1
 import cz.fei.upce.checkman.dto.course.challenge.RemoveAccessAppUserChallengeRequestDtoV1
+import cz.fei.upce.checkman.dto.graphql.input.course.challenge.ChallengeInputQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL
 import cz.fei.upce.checkman.repository.challenge.ChallengeRepository
 import cz.fei.upce.checkman.repository.challenge.PermittedAppUserChallengeRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
@@ -197,13 +199,17 @@ class ChallengeService(
 
     fun findAllBySemesterIdAsQL(
         semesterId: Long,
-        requester: AppUser
-    ): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
+        requester: AppUser,
+        pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        page: Int? = CheckManApplication.DEFAULT_PAGE,
+    ): Flux<ChallengeQL> {
         return challengeAuthorizationService.findAllByAppUserIsAuthorized(requester, semesterId)
+            .skip(CheckManApplication.getPage(pageSize, page).toLong())
+            .take(pageSize?.toLong() ?: CheckManApplication.DEFAULT_PAGE_SIZE.toLong())
             .map { it.toQL() }
     }
 
-    fun findByIdAsQL(id: Long, appUser: AppUser): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
+    fun findByIdAsQL(id: Long, appUser: AppUser): Mono<ChallengeQL> {
         return challengeRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { challenge -> checkAuthorizeToViewChallenge(challenge, appUser) }
@@ -221,18 +227,18 @@ class ChallengeService(
             }
     }
 
-    private fun assignAuthor(challenge: Challenge): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
+    private fun assignAuthor(challenge: Challenge): Mono<ChallengeQL> {
         return appUserService.findById(challenge.authorId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { challenge.toQL(it.toQL()) }
     }
 
-    fun addAsQL(semesterId: Long, input: cz.fei.upce.checkman.dto.graphql.input.course.challenge.ChallengeInputQL, author: AppUser): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
+    fun addAsQL(semesterId: Long, input: ChallengeInputQL, author: AppUser): Mono<ChallengeQL> {
         return challengeRepository.save(input.toEntity(semesterId, author))
             .map { it.toQL(author.toQL(), emptyList()) }
     }
 
-    fun editAsQL(challengeId: Long, input: cz.fei.upce.checkman.dto.graphql.input.course.challenge.ChallengeInputQL, appUser: AppUser): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
+    fun editAsQL(challengeId: Long, input: ChallengeInputQL, appUser: AppUser): Mono<ChallengeQL> {
         return challengeRepository.findById(challengeId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { input.toEntity(it.courseSemesterId!!, challengeId, appUser) }
@@ -240,7 +246,7 @@ class ChallengeService(
             .map { it.toQL(appUser.toQL(), emptyList()) }
     }
 
-    fun deleteAsQL(challengeId: Long, appUser: AppUser): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
+    fun deleteAsQL(challengeId: Long, appUser: AppUser): Mono<ChallengeQL> {
         return challengeRepository.disableChallenge(challengeId)
             .flatMap { assignAuthor(it) }
             .toMono()
@@ -282,7 +288,7 @@ class ChallengeService(
             }
     }
 
-    fun findByPermittedAppUserChallengeIdAsQL(id: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL> {
+    fun findByPermittedAppUserChallengeIdAsQL(id: Long): Mono<ChallengeQL> {
         return challengeRepository.findByPermittedAppUserChallenge(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { it.toQL() }

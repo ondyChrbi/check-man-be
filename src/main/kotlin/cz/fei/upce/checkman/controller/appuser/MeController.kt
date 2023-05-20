@@ -1,5 +1,8 @@
 package cz.fei.upce.checkman.controller.appuser
 
+import cz.fei.upce.checkman.CheckManApplication
+import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseQL
 import cz.fei.upce.checkman.service.appuser.AppUserService
 import cz.fei.upce.checkman.service.appuser.MeService
 import cz.fei.upce.checkman.service.authentication.AuthenticationServiceImpl
@@ -17,17 +20,23 @@ class MeController(
     private val meService: MeService
 ) {
     @QueryMapping
-    fun me(authentication: Authentication?): Mono<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
+    fun me(authentication: Authentication?): Mono<AppUserQL> {
         return appUserService.meAsQL(authenticationService.extractAuthenticateUser(authentication!!))
     }
 
     @QueryMapping
-    fun myCourses(authentication: Authentication?): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
-        return meService.myCoursesAsQL(authenticationService.extractAuthenticateUser(authentication!!))
+    fun myCourses(
+        @Argument pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        @Argument page: Int? = CheckManApplication.DEFAULT_PAGE,
+        authentication: Authentication?): Flux<CourseQL> {
+        return meService.myCoursesAsQL(authenticationService.extractAuthenticateUser(authentication!!), pageSize, page)
     }
 
     @QueryMapping
-    fun availableCourses(authentication: Authentication?): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
+    fun availableCourses(
+        @Argument pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        @Argument page: Int? = CheckManApplication.DEFAULT_PAGE,
+        authentication: Authentication?): Flux<CourseQL> {
         return meService.availableCoursesAsQL(authenticationService.extractAuthenticateUser(authentication!!))
     }
 

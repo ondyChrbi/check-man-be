@@ -13,6 +13,14 @@ class CheckManApplication {
 		const val DEFAULT_PAGE_SIZE = Int.MAX_VALUE
 		const val DEFAULT_SORT_FIELD = "id"
 		val DEFAULT_PAGEABLE = PageRequest.of(DEFAULT_PAGE, DEFAULT_PAGE_SIZE)
+
+		fun getPage(pageSize: Int?, page: Int?): Int {
+			if (pageSize == null || page == null) {
+				return DEFAULT_PAGE
+			}
+
+			return page * pageSize
+		}
 	}
 }
 

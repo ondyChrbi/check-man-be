@@ -15,8 +15,7 @@ data class Course(
     var icon: String? = null,
     var template: String? = null
 ) {
-    fun toQL(semesters: List<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL> = listOf()) =
-        cz.fei.upce.checkman.dto.graphql.output.course.CourseQL(
+    fun toQL(semesters: List<CourseSemesterQL> = listOf()) = CourseQL(
             id, stagId, name, dateCreation, icon, template, semesters
         )
 

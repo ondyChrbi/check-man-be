@@ -9,5 +9,5 @@ data class CourseQL(
     val dateCreation: LocalDateTime = LocalDateTime.now(),
     val icon: String? = null,
     val template: String? = null,
-    val semesters: List<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL>? = emptyList()
+    val semesters: List<CourseSemesterQL>? = emptyList()
 )

@@ -17,8 +17,8 @@ data class Review(
     var active: Boolean = true,
     var published: Boolean = false,
 ) {
-    fun toQL(requirements: List<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.ReviewedRequirementQL> = listOf(), feedbacks: List<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.FeedbackQL> = listOf()): cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL {
-        return cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL(
+    fun toQL(requirements: List<ReviewedRequirementQL> = listOf(), feedbacks: List<FeedbackQL> = listOf()): ReviewQL {
+        return ReviewQL(
             id!!,
             description,
             requirements,
@@ -28,7 +28,7 @@ data class Review(
         )
     }
 
-    fun update(input: cz.fei.upce.checkman.dto.graphql.input.course.challenge.ReviewInputQL): Review {
+    fun update(input: ReviewInputQL): Review {
         description = input.description
         return this
     }

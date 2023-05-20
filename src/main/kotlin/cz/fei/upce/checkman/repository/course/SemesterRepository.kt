@@ -1,8 +1,10 @@
 package cz.fei.upce.checkman.repository.course
 
+import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_SORT_FIELD
 import cz.fei.upce.checkman.domain.course.Semester
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveSortingRepository
@@ -89,5 +91,5 @@ interface SemesterRepository : ReactiveSortingRepository<Semester, Long> {
         where cs.course_id = :courseId and aucsr.app_user_id = :userId and aucsr.course_semester_role_id in (:rolesIds)
     """
     )
-    fun findAllByUserHasRolesInCourse(courseId: Long, userId: Long, rolesIds: Collection<Long>): Flux<Semester>
+    fun findAllByUserHasRolesInCourse(courseId: Long, userId: Long, rolesIds: Collection<Long>, pageable: Pageable = CheckManApplication.DEFAULT_PAGEABLE): Flux<Semester>
 }

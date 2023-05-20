@@ -1,11 +1,13 @@
 package cz.fei.upce.checkman.service.course.security
 
+import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.domain.course.AppUserCourseSemesterRole
 import cz.fei.upce.checkman.domain.course.Semester
 import cz.fei.upce.checkman.domain.course.CourseSemesterAccessRequest
 import cz.fei.upce.checkman.domain.course.CourseSemesterAccessRequest.Companion.EXPIRATION
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.user.AppUser
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.course.SemesterService
 import cz.fei.upce.checkman.service.course.security.annotation.PreCourseSemesterAuthorize
@@ -46,8 +48,19 @@ class CourseAuthorizationService(
             .all()
     }
 
-    fun findAllCoursesWhereUserHasRoles(courseId: Long, appUser: AppUser, requestedRoles: List<Long>): Flux<Semester> {
-        return semesterService.findAllByUserHasRolesInCourse(courseId, appUser.id!!, requestedRoles)
+    fun findAllCoursesWhereUserHasRoles(
+        courseId: Long, appUser:
+        AppUser, requestedRoles: List<Long>,
+        pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        page: Int? = CheckManApplication.DEFAULT_PAGE,
+    ): Flux<Semester> {
+        return semesterService.findAllByUserHasRolesInCourse(
+            courseId,
+            appUser.id!!,
+            requestedRoles,
+            pageSize,
+            page
+        )
     }
 
     fun hasCourseAccess(semesterId: Long, appUser: AppUser, requestedRoles: List<Long>): Mono<Boolean> {
@@ -67,7 +80,7 @@ class CourseAuthorizationService(
         return hasCourseAccess(semesterId, appUser, requestedRoles)
     }
 
-    fun createCourseAccessRequest(appUser: AppUser, semesterId: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL> {
+    fun createCourseAccessRequest(appUser: AppUser, semesterId: Long): Mono<CourseSemesterAccessRequestQL> {
         return checkAlreadyRequested(semesterId, appUser)
             .flatMap { semesterService.findById(semesterId) }
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
@@ -84,7 +97,7 @@ class CourseAuthorizationService(
     fun storeCourseAccessRequestToCache(
         appUser: AppUser,
         semesterId: Long
-    ): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL> {
+    ): Mono<CourseSemesterAccessRequestQL> {
         val accessRequest = CourseSemesterAccessRequest(appUser, semesterId)
 
         return cacheFactory.reactiveConnection
@@ -97,23 +110,23 @@ class CourseAuthorizationService(
             .map { accessRequest.toQL() }
     }
 
-    fun findAllCourseAccessRequestsBySemester(semesterId: Long): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL> {
+    fun findAllCourseAccessRequestsBySemester(semesterId: Long): Flux<CourseSemesterAccessRequestQL> {
         return courseAccessOps.keys(CourseSemesterAccessRequest.cacheKeyPatternSemester(semesterId))
             .flatMap { courseAccessOps.opsForValue().get(it) }
             .map { it.toQL() }
     }
 
-    fun findAllCourseAccessRequestsByAppUser(appUserId: Long): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL> {
+    fun findAllCourseAccessRequestsByAppUser(appUserId: Long): Flux<CourseSemesterAccessRequestQL> {
         return courseAccessOps.keys(CourseSemesterAccessRequest.cacheKeyPatternAppUser(appUserId))
             .flatMap { courseAccessOps.opsForValue().get(it) }
             .map { it.toQL() }
     }
 
-    fun findAllCourseAccessRequestsBySemester(appUser: cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL> {
+    fun findAllCourseAccessRequestsBySemester(appUser: cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL): Flux<CourseSemesterAccessRequestQL> {
         return findAllCourseAccessRequestsByAppUser(appUser.id!!)
     }
 
-    fun findAllCourseAccessRequests(appUserId: Long, semesterId: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL> {
+    fun findAllCourseAccessRequests(appUserId: Long, semesterId: Long): Mono<CourseSemesterAccessRequestQL> {
         return courseAccessOps.keys(CourseSemesterAccessRequest.cacheKeyPattern(semesterId, appUserId))
             .flatMap { courseAccessOps.opsForValue().get(it) }
             .next()

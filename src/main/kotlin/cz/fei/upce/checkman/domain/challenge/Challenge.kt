@@ -21,8 +21,8 @@ data class Challenge(
     var courseSemesterId: Long? = null,
     var challengeKindId: Long = 0
 ) {
-    fun toQL(author: cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL? = null, requirements: List<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.RequirementQL> = emptyList()) =
-        cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL(
+    fun toQL(author: AppUserQL? = null, requirements: List<RequirementQL> = emptyList()) =
+        ChallengeQL(
             id,
             name,
             description,

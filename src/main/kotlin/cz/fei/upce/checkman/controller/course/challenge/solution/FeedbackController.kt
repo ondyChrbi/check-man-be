@@ -2,7 +2,10 @@ package cz.fei.upce.checkman.controller.course.challenge.solution
 
 import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.domain.review.Feedback
+import cz.fei.upce.checkman.dto.graphql.input.course.challenge.solution.FeedbackInputQL
 import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.FeedbackQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.TestResultQL
 import cz.fei.upce.checkman.service.course.challenge.solution.FeedbackService
 import cz.fei.upce.checkman.service.course.challenge.solution.TestResultService
 import org.springframework.graphql.data.method.annotation.Argument
@@ -43,12 +46,12 @@ class FeedbackController(
     }
 
     @MutationMapping
-    fun createFeedback(@Argument feedback: cz.fei.upce.checkman.dto.graphql.input.course.challenge.solution.FeedbackInputQL): Mono<Feedback> {
+    fun createFeedback(@Argument feedback: FeedbackInputQL): Mono<Feedback> {
         return feedbackService.create(feedback)
     }
 
     @SchemaMapping(typeName = "TestResult", field = "feedbacks")
-    fun testResultsFeedbacks(testResult: cz.fei.upce.checkman.dto.graphql.output.challenge.solution.TestResultQL?) : Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.FeedbackQL> {
+    fun testResultsFeedbacks(testResult: TestResultQL?) : Flux<FeedbackQL> {
         if (testResult?.id == null) {
             return Flux.empty()
         }
@@ -59,7 +62,7 @@ class FeedbackController(
     }
 
     @SchemaMapping(typeName = "Review", field = "feedbacks")
-    fun reviewFeedbacks(review: cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.FeedbackQL> {
+    fun reviewFeedbacks(review: ReviewQL): Flux<FeedbackQL> {
         return feedbackService.findAllByReviewIdAsQL(review.id)
     }
 }

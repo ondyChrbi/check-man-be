@@ -20,8 +20,8 @@ data class CourseSemesterAccessRequest(
     fun toQL(
         dateCreation: LocalDateTime = LocalDateTime.now(),
         expirationDate: LocalDateTime = LocalDateTime.now().plusSeconds(EXPIRATION)
-    ): cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL {
-        return cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL(
+    ): CourseSemesterAccessRequestQL {
+        return CourseSemesterAccessRequestQL(
             appUser.toQL(),
             semesterId,
             dateCreation,
@@ -30,8 +30,8 @@ data class CourseSemesterAccessRequest(
         )
     }
 
-    fun toQL(): cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL {
-        return cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterAccessRequestQL(
+    fun toQL(): CourseSemesterAccessRequestQL {
+        return CourseSemesterAccessRequestQL(
             appUser.toQL(),
             semesterId,
             dateCreation,

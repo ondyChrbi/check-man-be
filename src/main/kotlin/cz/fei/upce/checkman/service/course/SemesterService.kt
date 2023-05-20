@@ -1,9 +1,10 @@
 package cz.fei.upce.checkman.service.course
 
 import cz.fei.upce.checkman.CheckManApplication
-import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_PAGE
 import cz.fei.upce.checkman.domain.course.Semester
 import cz.fei.upce.checkman.dto.graphql.input.course.SemesterInputQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.repository.course.SemesterRepository
 import cz.fei.upce.checkman.repository.review.statistic.FeedbackStatisticsRepository
 import cz.fei.upce.checkman.repository.review.statistic.FeedbackStatisticsRepository.Companion.DEFAULT_PAGEABLE
@@ -57,16 +58,16 @@ class SemesterService(
         oderBy: Semester.OrderByField? = Semester.OrderByField.id,
         sortOrder: Sort.Direction? = Sort.Direction.ASC,
         pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
-        page: Int? = DEFAULT_PAGE,
+        page: Int? = CheckManApplication.DEFAULT_PAGE,
     ): Flux<Semester> {
         val sortField = oderBy ?: Semester.OrderByField.id
         val sort = Sort.by(Sort.Order(sortOrder ?: Sort.Direction.ASC, sortField.toString()))
-        val pageable = PageRequest.of(page ?: DEFAULT_PAGE, pageSize ?: CheckManApplication.DEFAULT_PAGE_SIZE)
+        val pageable = PageRequest.of(page ?: CheckManApplication.DEFAULT_PAGE, pageSize ?: CheckManApplication.DEFAULT_PAGE_SIZE)
 
         return semesterRepository.findAllByCourseIdEquals(courseId, sort, pageable)
     }
 
-    fun add(courseId: Long, input: SemesterInputQL): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL> {
+    fun add(courseId: Long, input: SemesterInputQL): Mono<CourseSemesterQL> {
         val courseExistMono = courseService.existById(courseId)
             .flatMap {
                 if (!it)
@@ -80,7 +81,7 @@ class SemesterService(
         }.map { it.toQL() }
     }
 
-    fun makeStatistic(semesters: cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL> {
+    fun makeStatistic(semesters: CourseSemesterQL): Flux<FeedbackStatisticsQL> {
         return feedbackStatisticsRepository.findDistinctBySemesterIdEquals(semesters.id)
             .map { it.toQL() }
     }
@@ -90,7 +91,7 @@ class SemesterService(
         order: Sort.Direction? = Sort.Direction.ASC,
         limit: Int? = DEFAULT_LIMIT,
         description: String?,
-    ): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL> {
+    ): Flux<FeedbackStatisticsQL> {
         val sort = if (order != null) Sort.by(order, "count") else DEFAULT_SORT
         val pageable = if (limit != null) PageRequest.of(0, limit) else DEFAULT_PAGEABLE
 
@@ -123,8 +124,20 @@ class SemesterService(
         return semesterRepository.findById(id)
     }
 
-    fun findAllByUserHasRolesInCourse(courseId: Long, appUserId: Long, requestedRoles: List<Long> = listOf()): Flux<Semester> {
-        return semesterRepository.findAllByUserHasRolesInCourse(courseId, appUserId, requestedRoles)
+    fun findAllByUserHasRolesInCourse(
+        courseId: Long, appUserId: Long,
+        requestedRoles: List<Long> = listOf(),
+        pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        page: Int? = CheckManApplication.DEFAULT_PAGE,
+    ): Flux<Semester> {
+        val pageable = PageRequest.of(page ?: CheckManApplication.DEFAULT_PAGE, pageSize ?: CheckManApplication.DEFAULT_PAGE_SIZE)
+
+        return semesterRepository.findAllByUserHasRolesInCourse(
+            courseId,
+            appUserId,
+            requestedRoles,
+            pageable
+        )
     }
 
     fun edit(id: Long, input: SemesterInputQL): Mono<Semester> {

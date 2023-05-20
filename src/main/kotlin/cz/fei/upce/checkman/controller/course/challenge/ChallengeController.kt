@@ -1,5 +1,6 @@
 package cz.fei.upce.checkman.controller.course.challenge
 
+import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.dto.graphql.output.challenge.ChallengeQL
 import cz.fei.upce.checkman.dto.graphql.output.challenge.PermittedAppUserChallengeQL
@@ -29,6 +30,8 @@ class ChallengeController(
     @PreCourseSemesterAuthorize
     fun challenges(
         @SemesterId @Argument semesterId: Long,
+        @Argument pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        @Argument page: Int? = CheckManApplication.DEFAULT_PAGE,
         authentication: Authentication
     ): Flux<ChallengeQL> {
         return challengeService.findAllBySemesterIdAsQL(semesterId, authenticationService.extractAuthenticateUser(authentication))

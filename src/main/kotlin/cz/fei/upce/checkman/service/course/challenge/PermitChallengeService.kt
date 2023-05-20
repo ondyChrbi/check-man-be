@@ -1,5 +1,6 @@
 package cz.fei.upce.checkman.service.course.challenge
 
+import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.domain.challenge.Challenge
 import cz.fei.upce.checkman.domain.challenge.PermittedAppUserChallenge
 import cz.fei.upce.checkman.domain.user.AppUser
@@ -19,7 +20,7 @@ class PermitChallengeService(
     private val permittedPermittedAppUserChallengeRepository: PermittedAppUserChallengeRepository,
     private val appUserService: AppUserService,
 ) {
-    fun permitToAccessAsQL(challengeId: Long, appUserId: Long, accessTo: LocalDateTime): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.PermittedAppUserChallengeQL> {
+    fun permitToAccessAsQL(challengeId: Long, appUserId: Long, accessTo: LocalDateTime): Mono<PermittedAppUserChallengeQL> {
         val checkExist = checkNotExist(challengeId, appUserId)
 
         return checkExist.flatMap {
@@ -44,20 +45,30 @@ class PermitChallengeService(
         }
     }
 
-    fun findAllToPermitAsQL(challengeId: Long, search: String = ""): Flux<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
+    fun findAllToPermitAsQL(
+        challengeId: Long,
+        search: String = "",
+        pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        page: Int? = CheckManApplication.DEFAULT_PAGE,
+    ): Flux<AppUserQL> {
         val disable = disableAccessToOutdated(challengeId)
 
          return disable.flatMapMany {
-                 appUserService.searchAllPermitToChallenge(challengeId, search)
+                 appUserService.searchAllPermitToChallenge(challengeId, search, pageSize, page)
                      .map { it.toQL() }
              }
     }
 
-    fun finaAllPermittedAsQL(challengeId: Long, search: String = ""): Flux<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
+    fun finaAllPermittedAsQL(
+        challengeId: Long,
+        search: String = "",
+        pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        page: Int? = CheckManApplication.DEFAULT_PAGE,
+    ): Flux<AppUserQL> {
         val disable = disableAccessToOutdated(challengeId)
 
         return disable.flatMapMany {
-                appUserService.searchAllPermittedToChallenge(challengeId, search)
+                appUserService.searchAllPermittedToChallenge(challengeId, search, pageSize, page)
                     .map { it.toQL() }
             }
     }

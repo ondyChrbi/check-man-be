@@ -4,7 +4,7 @@ import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
 import java.time.LocalDateTime
 
 data class CourseSemesterAccessRequestQL(
-    val appUser: cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL,
+    val appUser: AppUserQL,
     val semesterId: Long,
     val creationDate: LocalDateTime,
     val expirationDate: LocalDateTime,

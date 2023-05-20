@@ -65,8 +65,14 @@ interface AppUserRepository : ReactiveCrudRepository<AppUser, Long> {
                 OR au.mail LIKE ('%' || :search || '%')
                 OR au.stag_id LIKE ('%' || :search || '%')
         )
+        limit :pageSize offset :page
     """)
-    fun searchAllPermittedToChallenge(challengeId: Long, search: String = ""): Flux<AppUser>
+    fun searchAllPermittedToChallenge(
+        challengeId: Long,
+        search: String = "",
+        pageSize: Int = DEFAULT_PAGE_SIZE,
+        page: Int = DEFAULT_PAGE
+    ): Flux<AppUser>
 
     @Query("""
         select distinct au.* from app_user au
@@ -81,8 +87,15 @@ interface AppUserRepository : ReactiveCrudRepository<AppUser, Long> {
                 OR au.mail LIKE ('%' || :search || '%')
                 OR au.stag_id LIKE ('%' || :search || '%')
         )
+        limit :pageSize offset :page
     """)
-    fun searchAllPermitToChallenge(challengeId: Long, roleId: Long = CourseSemesterRole.Value.ACCESS.id, search: String = "") : Flux<AppUser>
+    fun searchAllPermitToChallenge(
+        challengeId: Long,
+        roleId: Long = CourseSemesterRole.Value.ACCESS.id,
+        search: String = "",
+        pageSize: Int = DEFAULT_PAGE_SIZE,
+        page: Int = DEFAULT_PAGE
+    ) : Flux<AppUser>
 
     @Query("""
         select distinct au.* from app_user au

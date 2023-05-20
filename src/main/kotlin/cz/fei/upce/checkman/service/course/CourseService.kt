@@ -10,15 +10,18 @@ import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_COURSE_MANAGE
 import cz.fei.upce.checkman.domain.user.GlobalRole.Companion.ROLE_COURSE_VIEW
 import cz.fei.upce.checkman.dto.course.CourseRequestDtoV1
 import cz.fei.upce.checkman.dto.course.CourseResponseDtoV1
-import cz.fei.upce.checkman.dto.course.CourseSemesterRequestDtoV1
 import cz.fei.upce.checkman.dto.course.CourseSemesterResponseDtoV1
 import cz.fei.upce.checkman.dto.graphql.input.course.CourseInputQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseRequirementsQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.repository.course.AppUserCourseSemesterRoleRepository
 import cz.fei.upce.checkman.repository.course.CourseRepository
 import cz.fei.upce.checkman.repository.course.CourseRequirementsRepository
 import cz.fei.upce.checkman.repository.course.SemesterRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.course.security.exception.NotAssociatedSemesterWithCourseException
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort.Order.desc
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.data.relational.core.query.Query.query
@@ -63,26 +66,18 @@ class CourseService(
     fun findAllAsQL(
         pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
         page: Int? = CheckManApplication.DEFAULT_PAGE,
-    ): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
-
-        return courseRepository.findAllPageable(pageSize ?: CheckManApplication.DEFAULT_PAGE_SIZE, page ?: CheckManApplication.DEFAULT_PAGE)
+    ): Flux<CourseQL> {
+        return courseRepository.findAllPageable(pageSize ?: CheckManApplication.DEFAULT_PAGE_SIZE, CheckManApplication.getPage(pageSize, page))
             .map { it.toQL() }
     }
 
-    fun findAsDto(id: Long): Mono<CourseResponseDtoV1> {
-        return courseRepository.findById(id)
-            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-            .map { CourseResponseDtoV1.fromEntity(it) }
-            .flatMap { assignSemesters(it) }
-    }
-
-    fun findAsQL(id: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
+    fun findAsQL(id: Long): Mono<CourseQL> {
         return courseRepository.findById(id).map { it.toQL() }
     }
 
     fun add(courseDto: CourseRequestDtoV1): Mono<CourseResponseDtoV1> = add(courseDto.toResponseDto())
 
-    fun add(input: cz.fei.upce.checkman.dto.graphql.input.course.CourseInputQL): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
+    fun add(input: CourseInputQL): Mono<CourseQL> {
         return courseRepository.save(input.toEntity())
             .flatMap { course ->
                 semesterRepository.saveAll(input.semesters.map { it.toEntity(course.id!!) })
@@ -122,39 +117,6 @@ class CourseService(
         }
     }
 
-    fun searchSemesters(search: String?, courseId: Long): Flux<CourseSemesterResponseDtoV1> {
-        val semesters = if (search == null || search.isEmpty())
-            semesterRepository.findAll()
-        else
-            entityTemplate.select(Semester::class.java)
-                .matching(reactiveCriteriaRSQLSpecification.createCriteria(search))
-                .all()
-
-        return semesters.map { CourseSemesterResponseDtoV1.fromEntity(it) }
-    }
-
-    fun findSemester(courseId: Long, semesterId: Long): Mono<CourseSemesterResponseDtoV1> {
-        return semesterRepository.findById(semesterId)
-            .flatMap { checkCourseSemesterAssociation(courseId, it) }
-            .map { CourseSemesterResponseDtoV1.fromEntity(it) }
-    }
-
-    fun addSemester(courseId: Long, courseSemesterDto: CourseSemesterRequestDtoV1): Mono<CourseSemesterResponseDtoV1> {
-        return addSemester(courseId, courseSemesterDto.toResponseDto())
-    }
-
-    fun addSemester(
-        courseId: Long, courseSemesterDtoV1: CourseSemesterResponseDtoV1
-    ): Mono<CourseSemesterResponseDtoV1> {
-        return courseRepository.findById(courseId)
-            .switchIfEmpty(Mono.error(ResourceNotFoundException()))
-            .flatMap { semesterRepository.save(courseSemesterDtoV1.toEntity(courseId)) }
-            .map { courseSemesterDtoV1.withId(it.id) }
-    }
-
-    fun updateSemester(courseId: Long, semesterId: Long, courseSemesterDto: CourseSemesterRequestDtoV1) =
-        updateSemester(courseId, semesterId, courseSemesterDto.toResponseDto())
-
     fun updateSemester(
         courseId: Long, semesterId: Long,
         courseSemesterDto: CourseSemesterResponseDtoV1
@@ -166,48 +128,39 @@ class CourseService(
             .map { courseSemesterDto.withId(it.id) }
     }
 
-    fun deleteSemester(courseId: Long, semesterId: Long): Mono<Void> {
-        return semesterRepository.findFirstByIdEqualsAndCourseIdEquals(semesterId, courseId)
-            .switchIfEmpty(Mono.error(NotAssociatedSemesterWithCourseException(semesterId, courseId)))
-            .flatMap { semesterRepository.deleteById(it.id!!) }
-    }
-
-    fun findAllRelatedToAsDto(appUser: AppUser): Flux<CourseResponseDtoV1> {
-        return findAllRelatedTo(appUser)
-            .flatMap { groupSemestersByCourseAsDto(it.key(), it.collectList()) }
-    }
-
-    fun findAllRelatedToAsQL(appUser: AppUser): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
-        return findAllRelatedTo(appUser)
+    fun findAllRelatedToAsQL(
+        appUser: AppUser,
+        pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        page: Int? = CheckManApplication.DEFAULT_PAGE
+    ): Flux<CourseQL> {
+        return findAllRelatedTo(appUser, pageSize, page)
             .flatMap { groupSemestersByCourseAsQL(it.key(), it.collectList()) }
     }
 
-    fun findAvailableToAsDto(appUser: AppUser): Flux<CourseResponseDtoV1> {
-        return semesterRepository.findAllAvailableToAppUser(LocalDateTime.now(), appUser.id!!)
-            .groupBy { it.courseId!! }
-            .flatMap { groupSemestersByCourseAsDto(it.key(), it.collectList()) }
-    }
-
-    fun findAvailableToAsQL(appUser: AppUser): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
+    fun findAvailableToAsQL(
+        appUser: AppUser,
+        pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        page: Int? = CheckManApplication.DEFAULT_PAGE
+    ): Flux<CourseQL> {
         return this.findAllAvailableToAppUser(appUser, LocalDateTime.now())
             .groupBy { it.courseId!! }
             .flatMap { groupSemestersByCourseAsQL(it.key(), it.collectList()) }
     }
 
-    fun findSemesterAsQL(id: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL> {
+    fun findSemesterAsQL(id: Long): Mono<CourseSemesterQL> {
         return semesterRepository.findById(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { it.toQL() }
     }
 
-    fun editRequirementsAsQL(semesterId: Long, input: cz.fei.upce.checkman.dto.graphql.input.course.CourseRequirementsInputQL) : Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL> {
+    fun editRequirementsAsQL(semesterId: Long, input: cz.fei.upce.checkman.dto.graphql.input.course.CourseRequirementsInputQL) : Mono<CourseSemesterQL> {
         return semesterRepository.findById(semesterId)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .flatMap { courseSemester -> saveCourseSemesterRequirements(semesterId, input, courseSemester) }
             .map { it.toQL() }
     }
 
-    fun findSemesterRequirements(semesterId: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseRequirementsQL> {
+    fun findSemesterRequirements(semesterId: Long): Mono<CourseRequirementsQL> {
         return courseRequirementsRepository.findFirstByCourseSemesterIdEquals(semesterId)
             .map { it.toDto() }
     }
@@ -239,7 +192,7 @@ class CourseService(
     private fun groupSemestersByCourseAsQL(
         courseId: Long,
         semesters: Mono<List<Semester>>
-    ): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
+    ): Mono<CourseQL> {
         return semesters.flatMap { semesters ->
             courseRepository.findById(courseId)
                 .map { course -> course.toQL(semesters.map { it.toQL() }) }
@@ -253,15 +206,14 @@ class CourseService(
             .map { courseDto.withSemesters(it) }
     }
 
-    private fun assignSemesters(course: Course): Mono<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
-        return semesterRepository.findAllByCourseIdEquals(course.id!!)
-            .map { it.toQL() }
-            .collectList()
-            .map { course.toQL(it) }
-    }
+    private fun findAllRelatedTo(
+        appUser: AppUser,
+        pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        page: Int? = CheckManApplication.DEFAULT_PAGE
+    ): Flux<GroupedFlux<Long, Semester>> {
+        val pageable = PageRequest.of(page ?: CheckManApplication.DEFAULT_PAGE, pageSize ?: CheckManApplication.DEFAULT_PAGE_SIZE)
 
-    private fun findAllRelatedTo(appUser: AppUser): Flux<GroupedFlux<Long, Semester>> {
-        return appUserCourseSemesterRoleRepository.findDistinctByAppUserIdEqualsAndCourseSemesterRoleIdEquals(appUser.id!!, CourseSemesterRole.Value.ACCESS.id)
+        return appUserCourseSemesterRoleRepository.findDistinctByAppUserIdEqualsAndCourseSemesterRoleIdEquals(appUser.id!!, CourseSemesterRole.Value.ACCESS.id, pageable)
             .flatMap { semesterRepository.findById(it.courseSemesterId) }
             .groupBy { it.courseId!! }
     }

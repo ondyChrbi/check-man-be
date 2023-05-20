@@ -1,8 +1,8 @@
 package cz.fei.upce.checkman.service.appuser
 
+import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole.Value.Companion.IDS_MAP
 import cz.fei.upce.checkman.domain.user.AppUser
-import cz.fei.upce.checkman.dto.course.CourseResponseDtoV1
 import cz.fei.upce.checkman.dto.graphql.output.course.CourseQL
 import cz.fei.upce.checkman.service.course.CourseService
 import cz.fei.upce.checkman.service.course.security.CourseAuthorizationService
@@ -14,19 +14,18 @@ class MeService(
     private val courseService: CourseService,
     private val authorizationServiceV1: CourseAuthorizationService
     ) {
-    fun myCoursesAsDto(appUser: AppUser): Flux<CourseResponseDtoV1> {
-        return courseService.findAllRelatedToAsDto(appUser)
+    fun myCoursesAsQL(appUser: AppUser,
+                      pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+                      page: Int? = CheckManApplication.DEFAULT_PAGE
+    ): Flux<CourseQL> {
+        return courseService.findAllRelatedToAsQL(appUser, pageSize, page)
     }
 
-    fun myCoursesAsQL(appUser: AppUser): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
-        return courseService.findAllRelatedToAsQL(appUser)
-    }
-
-    fun availableCoursesAsDto(appUser: AppUser): Flux<CourseResponseDtoV1> {
-        return courseService.findAvailableToAsDto(appUser)
-    }
-
-    fun availableCoursesAsQL(appUser: AppUser): Flux<cz.fei.upce.checkman.dto.graphql.output.course.CourseQL> {
+    fun availableCoursesAsQL(
+        appUser: AppUser,
+        pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+        page: Int? = CheckManApplication.DEFAULT_PAGE
+    ): Flux<CourseQL> {
         return courseService.findAvailableToAsQL(appUser)
     }
 

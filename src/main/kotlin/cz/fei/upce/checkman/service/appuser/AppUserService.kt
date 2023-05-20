@@ -2,9 +2,12 @@ package cz.fei.upce.checkman.service.appuser
 
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_PAGE
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_PAGE_SIZE
+import cz.fei.upce.checkman.CheckManApplication.Companion.getPage
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.appuser.AppUserResponseDtoV1
 import cz.fei.upce.checkman.dto.appuser.GlobalRoleResponseDtoV1
+import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
+import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL
 import cz.fei.upce.checkman.repository.user.AppUserRepository
 import cz.fei.upce.checkman.service.ResourceNotFoundException
 import cz.fei.upce.checkman.service.role.CourseSemesterRoleService
@@ -27,7 +30,7 @@ class AppUserService(
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
     }
 
-    fun findByIdAsQL(id: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
+    fun findByIdAsQL(id: Long): Mono<AppUserQL> {
         return appUserRepository.findById(id)
             .map { it.toQL() }
     }
@@ -57,7 +60,7 @@ class AppUserService(
             .map { responseDto.withCourseRoles(it) }
     }
 
-    fun meAsQL(loggedUser: AppUser): Mono<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
+    fun meAsQL(loggedUser: AppUser): Mono<AppUserQL> {
         val ql = loggedUser.toQL()
 
         return globalRoleService.rolesByUser(loggedUser)
@@ -96,7 +99,7 @@ class AppUserService(
             }
     }
 
-    fun findAllRelatedToCourseByQL(semesterQL : cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL, offset: Int = DEFAULT_PAGE, size: Int = DEFAULT_PAGE_SIZE): Flux<AppUser> {
+    fun findAllRelatedToCourseByQL(semesterQL : CourseSemesterQL, offset: Int = DEFAULT_PAGE, size: Int = DEFAULT_PAGE_SIZE): Flux<AppUser> {
         return appUserRepository.findAllByCourseSemester(semesterQL.id, offset, size)
     }
 
@@ -104,23 +107,41 @@ class AppUserService(
         return appUserRepository.findAuthorByChallengeId(challengeId)
     }
 
-    fun findAllPermitToChallenge(challengeId: Long): Flux<AppUser> {
-        return appUserRepository.findAllPermitToChallenge(challengeId)
-    }
+    fun searchAllPermitToChallenge(
+        challengeId: Long,
+        search: String = "",
+        pageSize: Int? = DEFAULT_PAGE_SIZE,
+        page: Int? = DEFAULT_PAGE,
+    ): Flux<AppUser> {
 
-    fun searchAllPermitToChallenge(challengeId: Long, search: String = ""): Flux<AppUser> {
-        return appUserRepository.searchAllPermitToChallenge(challengeId, search = search)
+
+        return appUserRepository.searchAllPermitToChallenge(
+            challengeId,
+            search = search,
+            pageSize = pageSize ?: DEFAULT_PAGE_SIZE,
+            page = getPage(page, pageSize)
+        )
     }
 
     fun findAllPermittedToChallenge(challengeId: Long): Flux<AppUser> {
         return appUserRepository.findAllPermittedToChallenge(challengeId)
     }
 
-    fun searchAllPermittedToChallenge(challengeId: Long, search: String = ""): Flux<AppUser> {
-        return appUserRepository.searchAllPermittedToChallenge(challengeId, search)
+    fun searchAllPermittedToChallenge(
+        challengeId: Long,
+        search: String = "",
+        pageSize: Int? = DEFAULT_PAGE_SIZE,
+        page: Int? = DEFAULT_PAGE,
+    ): Flux<AppUser> {
+        return appUserRepository.searchAllPermittedToChallenge(
+            challengeId,
+            search,
+            pageSize ?: DEFAULT_PAGE_SIZE,
+            getPage(pageSize, page)
+        )
     }
 
-    fun findByPermittedAppUserChallengeIdAsQL(id: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL> {
+    fun findByPermittedAppUserChallengeIdAsQL(id: Long): Mono<AppUserQL> {
         return appUserRepository.findByPermittedChallengeId(id)
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
             .map { it.toQL() }

@@ -7,6 +7,9 @@ import cz.fei.upce.checkman.domain.course.CourseSemesterRole
 import cz.fei.upce.checkman.domain.review.Requirement
 import cz.fei.upce.checkman.domain.user.AppUser
 import cz.fei.upce.checkman.dto.graphql.output.appuser.AppUserQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.ReviewedRequirementQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL
+import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL
 import cz.fei.upce.checkman.repository.challenge.solution.SolutionRepository
 import cz.fei.upce.checkman.repository.review.FeedbackRepository
 import cz.fei.upce.checkman.repository.review.RequirementRepository
@@ -36,7 +39,7 @@ class SolutionService(
             .switchIfEmpty(Mono.error(ResourceNotFoundException()))
     }
 
-    fun findById(id: Long, requester: AppUser): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL> {
+    fun findById(id: Long, requester: AppUser): Mono<SolutionQL> {
         val hasReviewAccess = courseService.findBySolutionId(id)
             .flatMap {
                 authorizationService.hasCourseAccess(
@@ -70,12 +73,19 @@ class SolutionService(
             }
     }
 
-    fun findAllByChallengeAndUser(challengeId: Long, appUser: AppUser): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL> {
+    fun findAllByChallengeAndUser(
+        challengeId: Long,
+        appUser: AppUser,
+        pageSize: Int? = DEFAULT_PAGE_SIZE,
+        page: Int? = DEFAULT_PAGE,
+    ): Flux<SolutionQL> {
+
+
         return solutionRepository.findAllByChallengeIdEqualsAndUserIdEquals(challengeId, appUser.id!!)
             .flatMap { toSolutionQL(it) }
     }
 
-    fun findAllByChallengeAndUser(challengeId: Long, appUser: AppUserQL): Flux<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL> {
+    fun findAllByChallengeAndUser(challengeId: Long, appUser: AppUserQL): Flux<SolutionQL> {
         return findAllByChallengeAndUser(challengeId, appUser.toEntity())
     }
 
@@ -91,7 +101,7 @@ class SolutionService(
         return solutionRepository.countAllWithoutReview(challengeId)
     }
 
-    private fun toSolutionQL(solution: Solution): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.SolutionQL> {
+    private fun toSolutionQL(solution: Solution): Mono<SolutionQL> {
         val monoAuthor = appUserService.findById(solution.userId)
 
         val monoReview = findReviewAsQL(solution.id!!)
@@ -115,7 +125,7 @@ class SolutionService(
         }
     }
 
-    fun findReviewAsQL(solutionId: Long): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.solution.ReviewQL> {
+    fun findReviewAsQL(solutionId: Long): Mono<ReviewQL> {
         return reviewRepository.findFirstBySolutionIdEquals(solutionId)
             .flatMap { review ->
                 feedbackRepository.findAllByReviewIdEquals(review.id!!)
@@ -138,7 +148,7 @@ class SolutionService(
         return requirementRepository.findAllByChallengeIdEquals(challengeId)
     }
 
-    private fun findReviewToRequirementsAsQL(reviewId: Long, requirement: Requirement): Mono<cz.fei.upce.checkman.dto.graphql.output.challenge.requirement.ReviewedRequirementQL> {
+    private fun findReviewToRequirementsAsQL(reviewId: Long, requirement: Requirement): Mono<ReviewedRequirementQL> {
         return requirementReviewRepository.findFirstByReviewIdEqualsAndRequirementIdEquals(
             reviewId,
             requirement.id!!

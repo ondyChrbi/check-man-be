@@ -38,8 +38,10 @@ class SolutionController(
     @QueryMapping
     @PreCourseSemesterAuthorize
     fun mySolutions(@ChallengeId @Argument challengeId: Long,
+                    @Argument pageSize: Int? = CheckManApplication.DEFAULT_PAGE_SIZE,
+                    @Argument page: Int? = CheckManApplication.DEFAULT_PAGE,
                   authentication: Authentication): Flux<SolutionQL> {
-        return solutionService.findAllByChallengeAndUser(challengeId, authenticationService.extractAuthenticateUser(authentication))
+        return solutionService.findAllByChallengeAndUser(challengeId, authenticationService.extractAuthenticateUser(authentication), pageSize, page)
     }
 
     @QueryMapping
