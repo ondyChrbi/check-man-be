@@ -10,10 +10,10 @@ databaseChangeLog:
                   value: 100
               - column:
                   name: name
-                  value: Example requirement no. 1.1
+                  value: Programování proti rozhranní
               - column:
                   name: description
-                  value: Description of example requirement no. 1.1
+                  value: Ke všem třídám vytvořte rozhraní, které bude obsahovat metodu toString().
               - column:
                   name: min_point
                   value: 1
@@ -35,10 +35,10 @@ databaseChangeLog:
                   value: 101
               - column:
                   name: name
-                  value: Example requirement no. 1.2
+                  value: Datové struktury
               - column:
                   name: description
-                  value: Description of example requirement no. 1.2
+                  value: Vhodně zvolte datovou strukturu pro uchování dat.
               - column:
                   name: min_point
                   value: 1
@@ -60,10 +60,10 @@ databaseChangeLog:
                   value: 102
               - column:
                   name: name
-                  value: Example requirement no. 1.3
+                  value: Výkon
               - column:
                   name: description
-                  value: Description of example requirement no. 1.3
+                  value: Operace nad daty realizujte co nejkvalitněji. Naivní algoritmy budou penalizovány.
               - column:
                   name: min_point
                   value: 1

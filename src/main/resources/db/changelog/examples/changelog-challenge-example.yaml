@@ -10,10 +10,10 @@ databaseChangeLog:
                   value: 100
               - column:
                   name: name
-                  value: Example challenge no. 1
+                  value: Rezervační systém 2.0
               - column:
                   name: description
-                  value: Some description about this challenge taller than some limit.
+                  value: Nejmenovaná vlaková společnost si vyžádala tvorbu rezervačního systému pro místenky.
               - column:
                   name: author_id
                   value: 100
@@ -31,10 +31,10 @@ databaseChangeLog:
                   value: 101
               - column:
                   name: name
-                  value: Example challenge no. 2
+                  value: Canvas vlajka
               - column:
                   name: description
-                  value: Some description about this challenge taller than some limit.
+                  value: Pomocí komponenty Canvas vytvořte vlajku České republiky v JavaFX.
               - column:
                   name: author_id
                   value: 100
@@ -52,10 +52,10 @@ databaseChangeLog:
                   value: 102
               - column:
                   name: name
-                  value: Example challenge no. 3
+                  value: ADT Graf
               - column:
                   name: description
-                  value: Some description about this challenge taller than some limit.
+                  value: Vytvořte rozhraní a implementaci pro dataovou strukturu graf.
               - column:
                   name: author_id
                   value: 100
@@ -73,10 +73,10 @@ databaseChangeLog:
                   value: 103
               - column:
                   name: name
-                  value: Example challenge no. 4
+                  value: Box na zásilky
               - column:
                   name: description
-                  value: Some description about this challenge taller than some limit.
+                  value: Implementujte software pro zasílání a vyzvednutí zásilek.
               - column:
                   name: author_id
                   value: 100

@@ -4,6 +4,7 @@ import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_PAGE
 import cz.fei.upce.checkman.CheckManApplication.Companion.DEFAULT_PAGE_SIZE
 import cz.fei.upce.checkman.domain.course.Semester
 import cz.fei.upce.checkman.domain.course.CourseSemesterRole
+import cz.fei.upce.checkman.domain.review.Feedback
 import cz.fei.upce.checkman.domain.user.GlobalRole
 import cz.fei.upce.checkman.dto.graphql.input.course.CourseRequirementsInputQL
 import cz.fei.upce.checkman.dto.graphql.input.course.SemesterInputQL
@@ -143,10 +144,13 @@ class SemesterController(
 
     @QueryMapping("statistic")
     @PreCourseSemesterAuthorize([CourseSemesterRole.Value.VIEW_STATISTICS])
-    fun statisticQuery(@Argument @SemesterId semesterId: Long, @Argument direction : Sort.Direction?,
-                       @Argument limit: Int?, @Argument description: String?,
+    fun statisticQuery(@Argument @SemesterId semesterId: Long,
+                       @Argument direction : Sort.Direction?,
+                       @Argument limit: Int?,
+                       @Argument description: String?,
+                       @Argument type: Feedback.FeedbackType?,
                        authentication: Authentication): Flux<FeedbackStatisticsQL> {
-        return semesterService.findAllStatistics(semesterId, direction, limit, description)
+        return semesterService.findAllStatistics(semesterId, direction, limit, description, type)
     }
 
     @QueryMapping

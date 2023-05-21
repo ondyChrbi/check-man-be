@@ -2,6 +2,7 @@ package cz.fei.upce.checkman.service.course
 
 import cz.fei.upce.checkman.CheckManApplication
 import cz.fei.upce.checkman.domain.course.Semester
+import cz.fei.upce.checkman.domain.review.Feedback
 import cz.fei.upce.checkman.dto.graphql.input.course.SemesterInputQL
 import cz.fei.upce.checkman.dto.graphql.output.challenge.solution.statistic.FeedbackStatisticsQL
 import cz.fei.upce.checkman.dto.graphql.output.course.CourseSemesterQL
@@ -82,7 +83,7 @@ class SemesterService(
     }
 
     fun makeStatistic(semesters: CourseSemesterQL): Flux<FeedbackStatisticsQL> {
-        return feedbackStatisticsRepository.findDistinctBySemesterIdEquals(semesters.id)
+        return feedbackStatisticsRepository.findDistinctBySemesterIdEqualsAndFeedbackTypeIdEquals(semesters.id)
             .map { it.toQL() }
     }
 
@@ -91,17 +92,24 @@ class SemesterService(
         order: Sort.Direction? = Sort.Direction.ASC,
         limit: Int? = DEFAULT_LIMIT,
         description: String?,
+        type: Feedback.FeedbackType? = Feedback.FeedbackType.POSITIVE,
     ): Flux<FeedbackStatisticsQL> {
         val sort = if (order != null) Sort.by(order, "count") else DEFAULT_SORT
         val pageable = if (limit != null) PageRequest.of(0, limit) else DEFAULT_PAGEABLE
 
         val resultFlux = if (description == null)
-            feedbackStatisticsRepository.findDistinctBySemesterIdEquals(semesterId, sort, pageable)
+            feedbackStatisticsRepository.findDistinctBySemesterIdEqualsAndFeedbackTypeIdEquals(
+                semesterId,
+                sort,
+                type?.id ?: Feedback.FeedbackType.POSITIVE.id,
+                pageable
+            )
         else
-            feedbackStatisticsRepository.findDistinctBySemesterIdEqualsAndDescriptionContainingIgnoreCase(
+            feedbackStatisticsRepository.findDistinctBySemesterIdEqualsAndDescriptionContainingIgnoreCaseAndFeedbackTypeIdEquals(
                 semesterId,
                 description,
                 sort,
+                type?.id ?: Feedback.FeedbackType.POSITIVE.id,
                 pageable
             )
 

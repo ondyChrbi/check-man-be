@@ -1,6 +1,7 @@
 package cz.fei.upce.checkman.repository.review.statistic
 
 import cz.fei.upce.checkman.CheckManApplication
+import cz.fei.upce.checkman.domain.review.Feedback
 import cz.fei.upce.checkman.domain.statistic.FeedbackStatistics
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -10,16 +11,18 @@ import reactor.core.publisher.Flux
 
 @Repository
 interface FeedbackStatisticsRepository : ReactiveCrudRepository<FeedbackStatistics, Long> {
-    fun findDistinctBySemesterIdEquals(
+    fun findDistinctBySemesterIdEqualsAndFeedbackTypeIdEquals(
         semesterId: Long,
         sort: Sort = DEFAULT_SORT,
+        type: Long = Feedback.FeedbackType.POSITIVE.id,
         pageable: PageRequest = DEFAULT_PAGEABLE,
     ): Flux<FeedbackStatistics>
 
-    fun findDistinctBySemesterIdEqualsAndDescriptionContainingIgnoreCase(
+    fun findDistinctBySemesterIdEqualsAndDescriptionContainingIgnoreCaseAndFeedbackTypeIdEquals(
         semesterId: Long,
         description: String,
         sort: Sort = DEFAULT_SORT,
+        type: Long = Feedback.FeedbackType.POSITIVE.id,
         pageable: PageRequest = DEFAULT_PAGEABLE,
     ): Flux<FeedbackStatistics>
 
