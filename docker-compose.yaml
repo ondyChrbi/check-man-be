@@ -23,16 +23,3 @@ services:
       discovery.type: single-node
       bootstrap.memory_lock: true
       "ES_JAVA_OPTS": "-Xmx256m -Xms256m"
-
-  logstash:
-    image: mylogstash
-    container_name: logstash
-    environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-    ports:
-      - 5001:5000
-    volumes:
-      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-    depends_on:
-      - elasticsearch
-

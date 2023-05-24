@@ -36,7 +36,7 @@ type Query {
     solutionsToReview(challengeId: ID!, page: Int, pageSize: Int): [Solution!]!
     allSolutionsToReview(courseId: ID!, page: Int, pageSize: Int): [CoursesReviewList]
 
-    statistic(semesterId: ID!, direction: Order, limit: Int, description: String): [FeedbackStatistics!]!
+    statistic(semesterId: ID!, direction: Order, limit: Int, description: String, type: String): [FeedbackStatistics!]!
     testResult(id: ID!): TestResult
 
     courseRoles(id: ID!): [String!]!
