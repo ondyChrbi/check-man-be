@@ -1,0 +1,79 @@
+databaseChangeLog:
+  - changeSet:
+      id: requirement-example-insert-1
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 100
+              - column:
+                  name: name
+                  value: Programování proti rozhranní
+              - column:
+                  name: description
+                  value: Ke všem třídám vytvořte rozhraní, které bude obsahovat metodu toString().
+              - column:
+                  name: min_point
+                  value: 1
+              - column:
+                  name: max_point
+                  value: 10
+              - column:
+                  name: removed
+                  value: false
+              - column:
+                  name: challenge_id
+                  value: 100
+            tableName: requirement
+
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 101
+              - column:
+                  name: name
+                  value: Datové struktury
+              - column:
+                  name: description
+                  value: Vhodně zvolte datovou strukturu pro uchování dat.
+              - column:
+                  name: min_point
+                  value: 1
+              - column:
+                  name: max_point
+                  value: 10
+              - column:
+                  name: removed
+                  value: false
+              - column:
+                  name: challenge_id
+                  value: 100
+            tableName: requirement
+
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 102
+              - column:
+                  name: name
+                  value: Výkon
+              - column:
+                  name: description
+                  value: Operace nad daty realizujte co nejkvalitněji. Naivní algoritmy budou penalizovány.
+              - column:
+                  name: min_point
+                  value: 1
+              - column:
+                  name: max_point
+                  value: 10
+              - column:
+                  name: removed
+                  value: false
+              - column:
+                  name: challenge_id
+                  value: 100
+            tableName: requirement

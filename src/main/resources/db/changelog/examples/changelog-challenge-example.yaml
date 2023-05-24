@@ -1,0 +1,89 @@
+databaseChangeLog:
+  - changeSet:
+      id: challenge-example-insert-1
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 100
+              - column:
+                  name: name
+                  value: Rezervační systém 2.0
+              - column:
+                  name: description
+                  value: Nejmenovaná vlaková společnost si vyžádala tvorbu rezervačního systému pro místenky.
+              - column:
+                  name: author_id
+                  value: 100
+              - column:
+                  name: course_semester_id
+                  value: 100
+              - column:
+                  name: challenge_kind_id
+                  value: 0
+            tableName: challenge
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 101
+              - column:
+                  name: name
+                  value: Canvas vlajka
+              - column:
+                  name: description
+                  value: Pomocí komponenty Canvas vytvořte vlajku České republiky v JavaFX.
+              - column:
+                  name: author_id
+                  value: 100
+              - column:
+                  name: course_semester_id
+                  value: 100
+              - column:
+                  name: challenge_kind_id
+                  value: 1
+            tableName: challenge
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 102
+              - column:
+                  name: name
+                  value: ADT Graf
+              - column:
+                  name: description
+                  value: Vytvořte rozhraní a implementaci pro dataovou strukturu graf.
+              - column:
+                  name: author_id
+                  value: 100
+              - column:
+                  name: course_semester_id
+                  value: 100
+              - column:
+                  name: challenge_kind_id
+                  value: 2
+            tableName: challenge
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 103
+              - column:
+                  name: name
+                  value: Box na zásilky
+              - column:
+                  name: description
+                  value: Implementujte software pro zasílání a vyzvednutí zásilek.
+              - column:
+                  name: author_id
+                  value: 100
+              - column:
+                  name: course_semester_id
+                  value: 100
+              - column:
+                  name: challenge_kind_id
+                  value: 3
+            tableName: challenge

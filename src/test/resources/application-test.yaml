@@ -1,0 +1,47 @@
+spring:
+  test:
+    database:
+      replace: none
+  liquibase:
+    change-log: classpath:db/changelog/changelog-master.yaml
+    url: jdbc:h2:mem:~/db/testdb;DB_CLOSE_DELAY=-1
+  r2dbc:
+    url: r2dbc:h2:mem:///~/db/testdb
+
+login:
+  provider:
+    oauth2:
+      microsoft:
+        client_id: test_id
+        client_secret: test_secret
+        authorization_endpoint: http://localhost:8084/common/oauth2/v2.0/authorize
+        token_endpoint: http://localhost:8084/common/oauth2/v2.0/token
+  permit:
+    domains: test.com
+
+third_party:
+  provider:
+    api:
+      microsoft:
+        me_endpoint: http://localhost:8084/v1.0/me
+
+wiremock:
+  server:
+    httpsPort: -1
+    
+logging:
+  level:
+    reactor:
+      netty:
+        http:
+          client:
+            HttpClient: DEBUG
+
+server:
+  ssl:
+    enabled: false
+
+check-man:
+  challenge:
+    file-attachment:
+      path: /tmp/check-man

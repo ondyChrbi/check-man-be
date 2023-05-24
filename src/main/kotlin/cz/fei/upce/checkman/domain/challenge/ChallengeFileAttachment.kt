@@ -6,6 +6,6 @@ import org.springframework.data.relational.core.mapping.Table
 @Table("challenge_file_attachment")
 data class ChallengeFileAttachment(
     @Id var id: Long? = null,
-    var challenge: Challenge? = null,
-    var fileAttachment: FileAttachment? = null
+    var challengeId: Long = -1,
+    var fileAttachmentId: Long = -1
 )

@@ -1,0 +1,23 @@
+{
+  "properties": [
+    {
+      "name": "check-man.team.private.post-fix",
+      "type": "java.lang.String",
+      "description": "The postfix of private team names (team for specific user)."
+    },
+    {
+      "name": "spring.security.permit_paths",
+      "type": "java.lang.String[]",
+      "description": "URLs not requiring user authentication process or authorities."
+    },
+    {
+      "name": "jwt.expiration",
+      "type": "java.lang.String",
+      "description": "JWT token expiration time in milliseconds."
+    },
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "Asymetric key used for encrypting and decrypting JWT tokens."
+    }
+  ] }

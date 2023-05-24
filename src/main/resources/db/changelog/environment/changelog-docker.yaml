@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - include:
+      file: classpath:db/changelog/changelog-master.yaml
+  - include:
+      file: classpath:db/changelog/examples/changelog-course-example.yaml
+
+  - include:
+      file: classpath:db/changelog/examples/changelog-app-user.yaml
+  - include:
+      file: classpath:db/changelog/examples/changelog-app-user-course-semester-role.yaml
+
+  - include:
+      file: classpath:db/changelog/examples/changelog-challenge-example.yaml
+
+  - include:
+      file: classpath:db/changelog/examples/changelog-requirement-example.yaml
+
+  - include:
+      file: classpath:db/changelog/examples/changelog-solution-review-example.yaml

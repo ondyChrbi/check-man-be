@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+/src/main/resources/db/changelog/examples/changelog-solution-example.yaml
+/src/main/resources/db/changelog/examples/changelog-review-example.yaml
+/src/main/resources/db/changelog/examples/changelog-feedback-review-example.yaml
+/src/main/resources/db/changelog/examples/changelog-feedback-example.yaml

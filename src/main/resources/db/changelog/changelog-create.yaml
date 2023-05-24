@@ -1,0 +1,1493 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-1
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: app_user
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name : stag_id
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name : mail
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name : display_name
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name : registration_date
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+              - column:
+                  name : last_access_date
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+              - column:
+                  name: disabled
+                  type: bool
+                  constraints:
+                    nullable: false
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: app_user_id_seq
+
+  - changeSet:
+      id: create-2
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: access_token
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: value
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: creation_date
+                  type: timestamptz
+                  constraints:
+                    defaultValue: now()
+                    nullable: false
+              - column:
+                  name: valid_to
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+              - column:
+                  name: disabled
+                  type: bool
+                  constraints:
+                    defaultValue: false
+                    nullable: false
+              - column:
+                  name: app_user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: app_user_id
+            baseTableName: access_token
+            constraintName: access_token_app_user_id_fk
+            referencedColumnNames: id
+            referencedTableName: app_user
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: access_token_id_seq
+
+  - changeSet:
+      id: create-3
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: global_role
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: global_role_id_seq
+
+        - createIndex:
+            clustered: true
+            columns:
+              - column:
+                  descending: true
+                  name: name
+            indexName: idx_global_role_name
+            tableName: global_role
+            unique: true
+
+  - changeSet:
+      id: create-4
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: app_user_global_role
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: app_user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: global_role_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - createIndex:
+            clustered: true
+            columns:
+              - column:
+                  descending: true
+                  name: app_user_id
+            indexName: idx_app_user_global_role_app_user_id
+            tableName: app_user_global_role
+            unique: false
+
+        - createIndex:
+            clustered: true
+            columns:
+              - column:
+                  descending: true
+                  name: global_role_id
+            indexName: idx_app_user_global_role_global_role_id
+            tableName: app_user_global_role
+            unique: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: app_user_id
+            baseTableName: app_user_global_role
+            constraintName: app_user_global_role_app_user_id_fk
+            referencedColumnNames: id
+            referencedTableName: app_user
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - addForeignKeyConstraint:
+            baseColumnNames: global_role_id
+            baseTableName: app_user_global_role
+            constraintName: app_user_global_role_global_role_id_fk
+            referencedColumnNames: id
+            referencedTableName: global_role
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: app_global_role_id_seq
+
+  - changeSet:
+      id: create-7
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: course_semester_role
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: course_semester_role_id_seq
+
+  - changeSet:
+      id: create-8
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: course
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: stag_id
+                  type: varchar(128)
+              - column:
+                  name: name
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_creation
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+              - column:
+                  name: icon
+                  type: varchar(1024)
+              - column:
+                  name: template
+                  type: varchar(256)
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: course_id_seq
+
+  - changeSet:
+      id: create-9
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: course_semester
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: note
+                  type: text
+              - column:
+                  name: date_start
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_end
+                  type: timestamptz
+              - column:
+                  name: course_id
+                  type: bigint
+
+        - addForeignKeyConstraint:
+            baseColumnNames: course_id
+            baseTableName: course_semester
+            constraintName: course_semester_course_id_fk
+            referencedColumnNames: id
+            referencedTableName: course
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: course_semester_id_seq
+
+  - changeSet:
+      id: create-10
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: app_user_course_semester_role
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: app_user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: course_semester_role_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: course_semester_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: app_user_id
+            baseTableName: app_user_course_semester_role
+            constraintName: app_user_course_semester_role_app_user_id_fk
+            referencedColumnNames: id
+            referencedTableName: app_user
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - addForeignKeyConstraint:
+            baseColumnNames: course_semester_role_id
+            baseTableName: app_user_course_semester_role
+            constraintName: app_user_course_semester_role_course_semester_role_id_fk
+            referencedColumnNames: id
+            referencedTableName: course_semester_role
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - addForeignKeyConstraint:
+            baseColumnNames: course_semester_id
+            baseTableName: app_user_course_semester_role
+            constraintName: app_user_course_semester_role_course_semester_id_fk
+            referencedColumnNames: id
+            referencedTableName: course_semester
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: app_user_course_semester_role_id_seq
+
+  - changeSet:
+      id: create-11
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: challenge_kind
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: private
+                  type: bool
+                  constraints:
+                    nullable: false
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: challenge_kind_id_seq
+
+  - changeSet:
+      id: create-12
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: challenge
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: deadline_date
+                  type: timestamp
+              - column:
+                  name: start_date
+                  type: timestamp
+              - column:
+                  name: active
+                  type: boolean
+                  defaultValue: true
+              - column:
+                  name: published
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: author_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: course_semester_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: challenge_kind_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: author_id
+            baseTableName: challenge
+            constraintName: challenge_author_id_fk
+            referencedColumnNames: id
+            referencedTableName: app_user
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - addForeignKeyConstraint:
+            baseColumnNames: course_semester_id
+            baseTableName: challenge
+            constraintName: challenge_course_semester_id_fk
+            referencedColumnNames: id
+            referencedTableName: course_semester
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - addForeignKeyConstraint:
+            baseColumnNames: challenge_kind_id
+            baseTableName: challenge
+            constraintName: challenge_challenge_kind_id_fk
+            referencedColumnNames: id
+            referencedTableName: challenge_kind
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: challenge_id_seq
+
+  - changeSet:
+      id: create-13
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: file_attachment
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: path
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: available
+                  type: bool
+                  constraints:
+                    nullable: false
+                    defaultValue: true
+              - column:
+                  name: creation_date
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+                    defaultValue: now()
+              - column:
+                  name: author_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: author_id
+            baseTableName: file_attachment
+            constraintName: file_attachment_author_id_fk
+            referencedColumnNames: id
+            referencedTableName: app_user
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: file_attachment_id_seq
+
+  - changeSet:
+      id: create-14
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: challenge_file_attachment
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: challenge_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file_attachment_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: challenge_id
+            baseTableName: challenge_file_attachment
+            constraintName: challenge_file_attachment_challenge_id_fk
+            referencedColumnNames: id
+            referencedTableName: challenge
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - addForeignKeyConstraint:
+            baseColumnNames: file_attachment_id
+            baseTableName: challenge_file_attachment
+            constraintName: challenge_file_attachment_file_attachment_id_fk
+            referencedColumnNames: id
+            referencedTableName: file_attachment
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: challenge_file_attachment_id_seq
+
+  - changeSet:
+      id: create-15
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: permitted_app_user_challenge
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: access_to
+                  type: timestamp
+              - column:
+                  name: app_user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: challenge_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: app_user_id
+            baseTableName: permitted_app_user_challenge
+            constraintName: permitted_app_user_challenge_app_user_id_fk
+            referencedColumnNames: id
+            referencedTableName: app_user
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - addForeignKeyConstraint:
+            baseColumnNames: challenge_id
+            baseTableName: permitted_app_user_challenge
+            constraintName: permitted_app_user_challenge_challenge_id_fk
+            referencedColumnNames: id
+            referencedTableName: challenge
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: permitted_app_user_challenge_id_seq
+
+  - changeSet:
+      id: create-16
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: review_template
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: template
+                  type: text
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: create-17
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: feedback_type
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: feedback_type_id_seq
+
+  - changeSet:
+      id: create-18
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: status
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: approved
+                  type: bool
+                  constraints:
+                    nullable: false
+                    defaultValue: false
+
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: status_id_seq
+
+  - changeSet:
+      id: create-26
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: test_status
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(32)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: approved
+                  type: bool
+                  constraints:
+                    nullable: false
+                    defaultValue: false
+  - changeSet:
+      id: create-19
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: solution
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: path
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: upload_date
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+                    defaultValue: now()
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: test_status_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: challenge_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: solution
+            constraintName: solution_user_id_fk
+            referencedColumnNames: id
+            referencedTableName: app_user
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - addForeignKeyConstraint:
+            baseColumnNames: status_id
+            baseTableName: solution
+            constraintName: solution_status_id_fk
+            referencedColumnNames: id
+            referencedTableName: status
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - addForeignKeyConstraint:
+            baseColumnNames: test_status_id
+            baseTableName: solution
+            constraintName: solution_test_status_id_fk
+            referencedColumnNames: id
+            referencedTableName: test_status
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - addForeignKeyConstraint:
+            baseColumnNames: challenge_id
+            baseTableName: solution
+            constraintName: solution_challenge_id_fk
+            referencedColumnNames: id
+            referencedTableName: challenge
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: solution_id_seq
+
+  - changeSet:
+      id: create-20
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: review
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: solution_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: app_user_id
+                  type: bigint
+              - column:
+                  name: review_template_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: active
+                  type: boolean
+                  defaultValue: true
+              - column:
+                  name: published
+                  type: boolean
+                  defaultValue: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: solution_id
+            baseTableName: review
+            constraintName: review_solution_id_fk
+            referencedColumnNames: id
+            referencedTableName: solution
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - addForeignKeyConstraint:
+            baseColumnNames: app_user_id
+            baseTableName: review
+            constraintName: review_app_user_id_fk
+            referencedColumnNames: id
+            referencedTableName: app_user
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - addForeignKeyConstraint:
+            baseColumnNames: review_template_id
+            baseTableName: review
+            constraintName: review_review_template_id_fk
+            referencedColumnNames: id
+            referencedTableName: review_template
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: review_id_seq
+
+  - changeSet:
+      id: create-21
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: requirement
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(1024)
+              - column:
+                  name: active
+                  type: boolean
+                  defaultValue: true
+              - column:
+                  name: min_point
+                  type: int2
+              - column:
+                  name: max_point
+                  type: int2
+              - column:
+                  name: removed
+                  type: bool
+                  constraints:
+                    nullable: false
+                    defaultValue: false
+              - column:
+                  name: challenge_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: challenge_id
+            baseTableName: requirement
+            constraintName: requirement_challenge_id_fk
+            referencedColumnNames: id
+            referencedTableName: challenge
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: requirement_id_seq
+
+  - changeSet:
+      id: create-22
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: requirement_review
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: point
+                  type: int2
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: requirement_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: review_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: requirement_id
+            baseTableName: requirement_review
+            constraintName: requirement_review_requirement_id_fk
+            referencedColumnNames: id
+            referencedTableName: requirement
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - addForeignKeyConstraint:
+            baseColumnNames: review_id
+            baseTableName: requirement_review
+            constraintName: requirement_review_review_id_fk
+            referencedColumnNames: id
+            referencedTableName: review
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - createSequence:
+            dataType: bigint
+            incrementBy: 1
+            startValue: 0
+            minValue: 0
+            sequenceName: requirement_review_id_seq
+
+  - changeSet:
+      id: create-23
+      author: ondrej.chrbolka
+      changes:
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: app_user
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: access_token
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: global_role
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: app_user_global_role
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: app_user_global_role
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: course_semester_role
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: course
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: course_semester
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: app_user_course_semester_role
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: challenge_kind
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: challenge
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: file_attachment
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: challenge_file_attachment
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: permitted_app_user_challenge
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: review_template
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: status
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: solution
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 1000
+            minvalue: 1000
+            tableName: review
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 0
+            tableName: requirement
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 1000
+            tableName: requirement_review
+
+  - changeSet:
+      id: create-24
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: feedback
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: description
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: feedback_type_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: creation_date
+                  type: timestamptz
+        -  addDefaultValue:
+             columnName: creation_date
+             defaultValueComputed: now()
+             tableName:  feedback
+
+        - addForeignKeyConstraint:
+            baseColumnNames: feedback_type_id
+            baseTableName: feedback
+            constraintName: feedback_type_id_fk
+            referencedColumnNames: id
+            referencedTableName: feedback_type
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 1000
+            tableName: feedback
+
+  - changeSet:
+      id: create-25
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: feedback_review
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: feedback_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: review_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: feedback_id
+            baseTableName: feedback_review
+            constraintName: feedback_review_feedback_id_fk
+            referencedColumnNames: id
+            referencedTableName: feedback
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - addForeignKeyConstraint:
+            baseColumnNames: review_id
+            baseTableName: feedback_review
+            constraintName: feedback_review_review_id_fk
+            referencedColumnNames: id
+            referencedTableName: review
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 1000
+            tableName: feedback_review
+
+  - changeSet:
+      id: create-28
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: test_configuration
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: template_path
+                  type: text
+              - column:
+                  name: docker_file_path
+                  type: text
+              - column:
+                  name: test_module_class
+                  type: text
+              - column:
+                  name: active
+                  type: boolean
+                  defaultValue: true
+              - column:
+                  name: creation_date
+                  type: timestamptz
+                  constraints:
+                    defaultValue: now()
+                    nullable: false
+              - column:
+                  name: update_date
+                  type: timestamptz
+              - column:
+                  name: challenge_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: challenge_id
+            baseTableName: test_configuration
+            constraintName: test_configuration_challenge_id_fk
+            referencedColumnNames: id
+            referencedTableName: challenge
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - addAutoIncrement:
+            columnDataType: bigint
+            columnName: id
+            generationType: ALWAYS
+            incrementBy: 1
+            startWith: 1000
+            tableName: test_configuration
+
+  - changeSet:
+      id: create-29
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: course_requirements
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: min_optional
+                  type: integer
+                  defaultValueNumeric: 0
+              - column:
+                  name: min_mandatory
+                  type: integer
+                  defaultValueNumeric: 0
+              - column:
+                  name: min_credit
+                  type: integer
+                  defaultValueNumeric: 0
+              - column:
+                  name: min_exam
+                  type: integer
+                  defaultValueNumeric: 0
+              - column:
+                  name: course_semester_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: course_semester_id
+            baseTableName: course_requirements
+            constraintName: course_requirements_course_semester_id_fk
+            referencedColumnNames: id
+            referencedTableName: course_semester
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+  - changeSet:
+      id: create-30
+      author: ondrej.chrbolka
+      changes:
+        - createTable:
+            tableName: test_result
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: log
+                  type: text
+                  defaultValueNumeric: 0
+              - column:
+                  name: creation_date
+                  type: timestamptz
+                  constraints:
+                    defaultValue: now()
+                    nullable: false
+              - column:
+                  name: update_date
+                  type: timestamptz
+              - column:
+                  name: test_status_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: solution_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+
+        - addForeignKeyConstraint:
+            baseColumnNames: solution_id
+            baseTableName: test_result
+            constraintName: test_result_solution_id_fk
+            referencedColumnNames: id
+            referencedTableName: solution
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+        - addForeignKeyConstraint:
+            baseColumnNames: test_status_id
+            baseTableName: test_result
+            constraintName: test_result_test_status_id_fk
+            referencedColumnNames: id
+            referencedTableName: test_status
+            validate: true
+            onDelete: CASCADE
+            onUpdate: RESTRICT
+
+  - changeSet:
+      id: create-31
+      author: ondrej.chrbolka
+      changes:
+        - createView:
+            viewName: feedback_statistics
+            selectQuery: >
+              select cs.id as semester_id, c.id as challenge_id, f.description, f.feedback_type_id, ft.name as feedback_name, count(*) as count
+              from feedback f
+              inner join feedback_review fr on f.id = fr.feedback_id
+              inner join review r on fr.review_id = r.id
+              inner join solution s on r.solution_id = s.id
+              inner join challenge c on s.challenge_id = c.id
+              inner join course_semester cs on c.course_semester_id = cs.id
+              inner join feedback_type ft on f.feedback_type_id = ft.id
+              group by f.description, cs.id, c.id, f.feedback_type_id, ft.name
+              order by count desc
+
+  - changeSet:
+      id: create-33
+      author: ondrej.chrbolka
+      changes:
+        - createView:
+            viewName: to_permit_app_user_challenge
+            selectQuery: >
+              select distinct au.*, aucsr.course_semester_role_id as role, c.id as challengeId from app_user au
+              inner join app_user_course_semester_role aucsr on au.id = aucsr.app_user_id
+              inner join challenge c on c.course_semester_id = aucsr.course_semester_id
+              where aucsr.app_user_id not in (
+              select distinct au.id from app_user au
+              inner join permitted_app_user_challenge pauc on au.id = pauc.app_user_id
+              where pauc.challenge_id = c.id
+              );
+
+  - changeSet:
+      id: create-34
+      author: ondrej.chrbolka
+      changes:
+        - createView:
+            viewName: challenge_summary
+            selectQuery: >
+              select distinct cs.id as course_id, ch.id as challenge_id, st.id as status_id, st.name as status_name, au.id as app_user_id, count(st.id) as count from app_user au
+              inner join solution s on au.id = s.user_id
+              inner join challenge ch on s.challenge_id = ch.id
+              inner join course_semester cs on cs.id = ch.course_semester_id
+              inner join status st on s.status_id = st.id
+              group by cs.id, au.id, ch.id, st.name, st.id

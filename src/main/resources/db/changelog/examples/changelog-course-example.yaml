@@ -1,0 +1,83 @@
+databaseChangeLog:
+  - changeSet:
+      id: course-example-insert-1
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 100
+              - column:
+                  name: stag_id
+                  value: EXAMPLE-COURSE-1
+              - column:
+                  name: name
+                  value: Základy programování
+              - column:
+                  name: date_creation
+                  value: 2022-07-10 00:00:00.000000
+              - column:
+                  name: icon
+                  value: /icons/cube.svg
+              - column:
+                  name: template
+                  value: f5f7dc
+            tableName: course
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 101
+              - column:
+                  name: stag_id
+                  value: EXAMPLE-COURSE-2
+              - column:
+                  name: name
+                  value: Operační systémy 1
+              - column:
+                  name: date_creation
+                  value: 2022-01-01 00:00:00.000000
+              - column:
+                  name: icon
+                  value: /icons/cube.svg
+              - column:
+                  name: template
+                  value: 777777
+            tableName: course
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 100
+              - column:
+                  name: note
+                  value: Studenti se v předmětu naučí analyzovat základní úlohy a následně je implementovat pomocí vyššího programovacího jazyka Java.
+              - column:
+                  name: date_start
+                  value: 2021-01-01 00:00:00.000000
+              - column:
+                  name: date_end
+                  value: 2024-01-01 00:00:00.000000
+              - column:
+                  name: course_id
+                  value: 100
+            tableName: course_semester
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 101
+              - column:
+                  name: note
+                  value: Cílem předmětu je seznámit studenty se základy teorie operačních systémů a praktickým použitím teorie v posixových operačních systémech. Umožnit studentům získat základní praktické zkušenosti a dovednosti při řešení problémů souběhu v posixových OS (se zaměřením na Linux).
+              - column:
+                  name: date_start
+                  value: 2021-01-01 00:00:00.000000
+              - column:
+                  name: date_end
+                  value: 2024-01-01 00:00:00.000000
+              - column:
+                  name: course_id
+                  value: 101
+            tableName: course_semester

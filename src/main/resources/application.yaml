@@ -1,0 +1,43 @@
+jwt:
+  secret: MIICXgIBAAKBgQCUMQwvELcqmvcsCfOVEGjqBFX8ckLYuNDq2PrbEw32XnXAnuQE
+  expiration: 28800000
+
+spring:
+  security:
+    permit_paths: /v1/authentication/**
+    cors:
+      enabled: true
+  liquibase:
+    change-log: classpath:db/changelog/changelog-master.yaml
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+login:
+  provider:
+    oauth2:
+      microsoft:
+        response_type: code
+        redirect_uri: https://localhost:${server.port}/v1/authentication/microsoft/finish
+        response_mode: query
+        authorization_endpoint: https://login.microsoftonline.com/common/oauth2/v2.0/authorize
+        token_endpoint: https://login.microsoftonline.com/common/oauth2/v2.0/token
+        scopes: openid,profile,email
+  permit:
+    domains: student.upce.cz,upce.cz
+
+third_party:
+  provider:
+    api:
+      microsoft:
+        me_endpoint: https://graph.microsoft.com/v1.0/me
+
+check-man:
+  team:
+    private:
+      post-fix: private
+  security:
+    authentication:
+      microsoft:
+        request-timeout: 60000

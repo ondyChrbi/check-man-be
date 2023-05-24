@@ -8,3 +8,18 @@ services:
       POSTGRES_PASSWORD: checkman
     ports:
       - 5432:5432
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      discovery.type: single-node
+      bootstrap.memory_lock: true
+      "ES_JAVA_OPTS": "-Xmx256m -Xms256m"

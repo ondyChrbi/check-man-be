@@ -1,0 +1,293 @@
+databaseChangeLog:
+  - changeSet:
+      id: solution-review-example-insert-1
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 100
+              - column:
+                  name: path
+                  value: /tmp/check-man/solution/a2f8dee6-c114-4b73-bb9c-8b80a1946b7c.zip
+              - column:
+                  name: upload_date
+                  value: 2022-07-30 16:47:10.101896 +00:00
+              - column:
+                  name: user_id
+                  value: 100
+              - column:
+                  name: status_id
+                  value: 1
+              - column:
+                  name: test_status_id
+                  value: 0
+              - column:
+                  name: challenge_id
+                  value: 100
+            tableName: solution
+
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 101
+              - column:
+                  name: path
+                  value: /tmp/check-man/solution/0c0321b6-7f1c-41d4-9afc-b473bb420598.zip
+              - column:
+                  name: upload_date
+                  value: 2022-08-02 16:47:10.101896 +00:00
+              - column:
+                  name: user_id
+                  value: 100
+              - column:
+                  name: status_id
+                  value: 1
+              - column:
+                  name: test_status_id
+                  value: 0
+              - column:
+                  name: challenge_id
+                  value: 100
+            tableName: solution
+
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 102
+              - column:
+                  name: path
+                  value: /tmp/check-man/solution/fc55ac7a-5d68-49cb-abf3-7d00dc55e06a.zip
+              - column:
+                  name: upload_date
+                  value: 2022-08-05 16:47:10.101896 +00:00
+              - column:
+                  name: user_id
+                  value: 100
+              - column:
+                  name: status_id
+                  value: 2
+              - column:
+                  name: test_status_id
+                  value: 0
+              - column:
+                  name: challenge_id
+                  value: 100
+            tableName: solution
+
+  - changeSet:
+      id: solution-review-example-insert-2
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 100
+              - column:
+                  name: description
+                  value: Requirement description N 0
+              - column:
+                  name: solution_id
+                  value: 100
+              - column:
+                  name: app_user_id
+                  value: 100
+            tableName: review
+
+  - changeSet:
+      id: solution-review-example-insert-3
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 100
+              - column:
+                  name: point
+                  value: 3
+              - column:
+                  name: description
+                  value: Some D to R 0
+              - column:
+                  name: requirement_id
+                  value: 100
+              - column:
+                  name: review_id
+                  value: 100
+            tableName: requirement_review
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 101
+              - column:
+                  name: point
+                  value: 0
+              - column:
+                  name: description
+                  value: Some D to R 1
+              - column:
+                  name: requirement_id
+                  value: 101
+              - column:
+                  name: review_id
+                  value: 100
+            tableName: requirement_review
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 102
+              - column:
+                  name: point
+                  value: 7
+              - column:
+                  name: description
+                  value: Some D to R 2
+              - column:
+                  name: requirement_id
+                  value: 102
+              - column:
+                  name: review_id
+                  value: 100
+            tableName: requirement_review
+
+  - changeSet:
+      id: solution-review-example-insert-4
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 100
+              - column:
+                  name: description
+                  value: The classes are missing interfaces
+              - column:
+                  name: feedback_type_id
+                  value: 3
+            tableName: feedback
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 101
+              - column:
+                  name: description
+                  value: Code could be more refactored
+              - column:
+                  name: feedback_type_id
+                  value: 2
+            tableName: feedback
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 102
+              - column:
+                  name: description
+                  value: All methods with inner class logic has private access
+              - column:
+                  name: feedback_type_id
+                  value: 1
+            tableName: feedback
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 103
+              - column:
+                  name: description
+                  value: Performance of algorithm is one of the best
+              - column:
+                  name: feedback_type_id
+                  value: 0
+            tableName: feedback
+
+  - changeSet:
+      id: solution-review-example-insert-5
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 100
+              - column:
+                  name: feedback_id
+                  value: 100
+              - column:
+                  name: review_id
+                  value: 100
+            tableName: feedback_review
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 101
+              - column:
+                  name: feedback_id
+                  value: 101
+              - column:
+                  name: review_id
+                  value: 100
+            tableName: feedback_review
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 102
+              - column:
+                  name: feedback_id
+                  value: 102
+              - column:
+                  name: review_id
+                  value: 100
+            tableName: feedback_review
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 103
+              - column:
+                  name: feedback_id
+                  value: 103
+              - column:
+                  name: review_id
+                  value: 100
+            tableName: feedback_review
+
+  - changeSet:
+      id: solution-review-example-insert-6
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            tableName: test_configuration
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: template_path
+                  value: /tmp/check-man/template/8494f427-fa0b-4a65-8bc9-0748b39bb69b.zip
+              - column:
+                  name: docker_file_path
+                  value: /tmp/check-man/docker-files/DockerFile-6a2ac801-7657-4ba8-91fe-363a44b71236
+              - column:
+                  name: active
+                  valueBoolean: true
+              - column:
+                  name: creation_date
+                  value: 2022-07-30 16:47:10.227843 +00:00
+              - column:
+                  name: update_date
+                  value: 2022-07-30 16:47:10.227843 +00:00
+              - column:
+                  name: challenge_id
+                  valueNumeric: 100

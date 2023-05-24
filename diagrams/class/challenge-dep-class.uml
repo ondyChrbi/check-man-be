@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="-167.0" y="-23.0">cz.fei.upce.checkman.service.appuser.AppUserService</node>
+    <node x="21.0" y="-23.0">cz.fei.upce.checkman.service.course.challenge.ChallengeAuthorizationService</node>
+    <node x="315.0" y="-23.0">cz.fei.upce.checkman.service.course.SemesterService</node>
+    <node x="132.60526315789474" y="-102.0">cz.fei.upce.checkman.repository.challenge.ChallengeRepository</node>
+    <node x="215.5" y="56.0">cz.fei.upce.checkman.service.course.challenge.ChallengeService</node>
+    <node x="207.5" y="133.0">cz.fei.upce.checkman.controller.course.challenge.ChallengeController</node>
+    <node x="509.0" y="-23.0">cz.fei.upce.checkman.repository.challenge.PermittedAppUserChallengeRepository</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="cz.fei.upce.checkman.service.course.challenge.ChallengeService" target="cz.fei.upce.checkman.repository.challenge.PermittedAppUserChallengeRepository" relationship="TO_ONE">
+      <point x="0.0" y="-13.5" />
+      <point x="304.5" y="30.0" />
+      <point x="676.0" y="30.0" />
+      <point x="0.0" y="13.5" />
+    </edge>
+    <edge source="cz.fei.upce.checkman.service.course.challenge.ChallengeAuthorizationService" target="cz.fei.upce.checkman.repository.challenge.ChallengeRepository" relationship="TO_ONE">
+      <point x="0.0" y="-13.5" />
+      <point x="157.5" y="-49.0" />
+      <point x="233.10526315789474" y="-49.0" />
+      <point x="0.0" y="13.5" />
+    </edge>
+    <edge source="cz.fei.upce.checkman.controller.course.challenge.ChallengeController" target="cz.fei.upce.checkman.service.course.challenge.ChallengeService" relationship="TO_ONE">
+      <point x="0.0" y="-13.5" />
+      <point x="0.0" y="13.5" />
+    </edge>
+    <edge source="cz.fei.upce.checkman.service.course.challenge.ChallengeService" target="cz.fei.upce.checkman.service.course.SemesterService" relationship="TO_ONE">
+      <point x="0.0" y="-13.5" />
+      <point x="304.5" y="30.0" />
+      <point x="402.0" y="30.0" />
+      <point x="0.0" y="13.5" />
+    </edge>
+    <edge source="cz.fei.upce.checkman.service.course.challenge.ChallengeService" target="cz.fei.upce.checkman.service.appuser.AppUserService" relationship="TO_ONE">
+      <point x="0.0" y="-13.5" />
+      <point x="304.5" y="30.0" />
+      <point x="-83.0" y="30.0" />
+      <point x="0.0" y="13.5" />
+    </edge>
+    <edge source="cz.fei.upce.checkman.service.course.challenge.ChallengeService" target="cz.fei.upce.checkman.service.course.challenge.ChallengeAuthorizationService" relationship="TO_ONE">
+      <point x="0.0" y="-13.5" />
+      <point x="304.5" y="30.0" />
+      <point x="157.5" y="30.0" />
+      <point x="0.0" y="13.5" />
+    </edge>
+    <edge source="cz.fei.upce.checkman.service.course.challenge.ChallengeService" target="cz.fei.upce.checkman.repository.challenge.ChallengeRepository" relationship="TO_ONE">
+      <point x="0.0" y="-13.5" />
+      <point x="304.5" y="-49.0" />
+      <point x="233.10526315789474" y="-49.0" />
+      <point x="0.0" y="13.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="1.3427184466019417" showDependencies="true" x="334.2133044107014" y="25.85755603759941" />
+  <SelectedNodes>
+    <node>cz.fei.upce.checkman.service.course.challenge.ChallengeAuthorizationService</node>
+  </SelectedNodes>
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

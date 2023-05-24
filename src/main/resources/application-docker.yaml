@@ -1,0 +1,63 @@
+jwt:
+  expiration: 2147483647
+
+spring:
+  security:
+    permit_paths: /v1/authentication/**, /v3/api-docs/**, /swagger-ui.html, /webjars/swagger-ui/**, /webjars/**, /graphiql
+    cors:
+      enabled: true
+  liquibase:
+    change-log: classpath:db/changelog/environment/changelog-docker.yaml
+    url: jdbc:postgresql://localhost:5432/checkman
+    user: checkman
+    password: checkman
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/checkman
+    username: checkman
+    password: checkman
+    pool:
+      enabled: true
+  graphql:
+    graphiql:
+      enabled: true
+
+login:
+  provider:
+    oauth2:
+      microsoft:
+        client_id: f57c8ea6-a11a-4a26-9ca3-924b7cedab17
+        client_secret: xkp8Q~5K2zbwFYSPk0V6unz1p10kC~C9q6Vc2ca.
+        redirect_uri: http://localhost:${server.port}/v1/authentication/microsoft/finish
+
+logging:
+  level:
+    io.r2dbc.postgresql.QUERY: debug
+    io.r2dbc.postgresql.PARAM: debug
+    liquibase: info
+    org:
+      springframework:
+        r2dbc: debug
+    reactor:
+      netty:
+        http:
+          client:
+            HttpClient: debug
+
+server:
+  ssl:
+    key-store: classpath:cert/checkman_docker.p12
+    key-store-password: checkman
+    key-store-type: pkcs12
+    key-alias: checkman_docker
+    key-password: checkman
+    enabled: false
+  port: 9001
+
+check-man:
+  challenge:
+    file-attachment:
+      path: /tmp/check-man
+  security:
+    origins: http://localhost:3000, http://localhost:3001
+    headers: '*'
+    methods: '*'

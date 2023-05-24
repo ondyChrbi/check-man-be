@@ -1,0 +1,284 @@
+databaseChangeLog:
+  - changeSet:
+      id: changelog-app_user-1
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 100
+              - column:
+                  name: stag_id
+                  value: stXXXXX
+              - column:
+                  name: mail
+                  value: ondrej.chrbolka@student.upce.cz
+              - column:
+                  name: display_name
+                  value: Chrbolka Ondrej
+              - column:
+                  name: registration_date
+                  value: 2022-07-30 16:47:10.101896 +00:00
+              - column:
+                  name: last_access_date
+                  value: 2022-07-30 16:47:10.101896 +00:00
+              - column:
+                  name: disabled
+                  value: false
+            tableName: app_user
+
+  - changeSet:
+      id: changelog-app_user-2
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 100
+              - column:
+                  name: app_user_id
+                  value: 100
+              - column:
+                  name: global_role_id
+                  value: 0
+            tableName: app_user_global_role
+
+  - changeSet:
+      id: changelog-app_user-3
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 101
+              - column:
+                  name: app_user_id
+                  value: 100
+              - column:
+                  name: global_role_id
+                  value: 1
+            tableName: app_user_global_role
+
+  - changeSet:
+      id: changelog-app_user-4
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1014
+              - column:
+                  name: app_user_id
+                  value: 100
+              - column:
+                  name: global_role_id
+                  value: 1
+            tableName: app_user_global_role
+
+  - changeSet:
+      id: changelog-app_user-5
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 102
+              - column:
+                  name: app_user_id
+                  value: 100
+              - column:
+                  name: global_role_id
+                  value: 2
+            tableName: app_user_global_role
+
+  - changeSet:
+      id: changelog-app_user-6
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 103
+              - column:
+                  name: app_user_id
+                  value: 100
+              - column:
+                  name: global_role_id
+                  value: 3
+            tableName: app_user_global_role
+
+  - changeSet:
+      id: changelog-app_user-7
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 104
+              - column:
+                  name: app_user_id
+                  value: 100
+              - column:
+                  name: global_role_id
+                  value: 4
+            tableName: app_user_global_role
+
+  - changeSet:
+      id: changelog-app_user-8
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 105
+              - column:
+                  name: app_user_id
+                  value: 100
+              - column:
+                  name: global_role_id
+                  value: 5
+            tableName: app_user_global_role
+
+  - changeSet:
+      id: changelog-app_user-9
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 106
+              - column:
+                  name: app_user_id
+                  value: 100
+              - column:
+                  name: global_role_id
+                  value: 6
+            tableName: app_user_global_role
+
+  - changeSet:
+      id: changelog-app_user-10
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 107
+              - column:
+                  name: app_user_id
+                  value: 100
+              - column:
+                  name: global_role_id
+                  value: 7
+            tableName: app_user_global_role
+
+  - changeSet:
+      id: changelog-app_user-11
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 108
+              - column:
+                  name: app_user_id
+                  value: 100
+              - column:
+                  name: global_role_id
+                  value: 8
+            tableName: app_user_global_role
+
+  - changeSet:
+      id: changelog-app_user-12
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 109
+              - column:
+                  name: app_user_id
+                  value: 100
+              - column:
+                  name: global_role_id
+                  value: 9
+            tableName: app_user_global_role
+
+  - changeSet:
+      id: changelog-app_user-13
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1010
+              - column:
+                  name: app_user_id
+                  value: 100
+              - column:
+                  name: global_role_id
+                  value: 10
+            tableName: app_user_global_role
+
+  - changeSet:
+      id: changelog-app_user-14
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1011
+              - column:
+                  name: app_user_id
+                  value: 100
+              - column:
+                  name: global_role_id
+                  value: 11
+            tableName: app_user_global_role
+
+  - changeSet:
+      id: changelog-app_user-15
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1012
+              - column:
+                  name: app_user_id
+                  value: 100
+              - column:
+                  name: global_role_id
+                  value: 12
+            tableName: app_user_global_role
+
+  - changeSet:
+      id: changelog-app_user-16
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1013
+              - column:
+                  name: app_user_id
+                  value: 100
+              - column:
+                  name: global_role_id
+                  value: 13
+            tableName: app_user_global_role

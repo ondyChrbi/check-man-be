@@ -1,0 +1,334 @@
+scalar DateTime
+scalar JSON
+
+type Query {
+    courses(pageSize: Int, page: Int): [Course!]!
+    course(id: ID!): Course
+
+    semester(id: ID!): Semester
+    semesters(courseId: ID!, oderBy: SemesterOrderByField, sortOrder: SortOrder, pageSize: Int, page: Int): [Semester!]!
+
+    challenges(semesterId: ID!, pageSize: Int, page: Int): [Challenge!]!
+    challenge(id: ID!): Challenge
+
+    me: AppUser!
+    myCourses(pageSize: Int, page: Int): [Course!]!
+    mySolutions(challengeId: ID!, pageSize: Int, page: Int): [Solution!]!
+    availableCourses(pageSize: Int, page: Int): [Course!]!
+
+    appUser(id: ID!): AppUser!
+
+    searchPermittedAppUsersChallenge(challengeId: ID!, search: String, pageSize: Int, page: Int): [AppUser!]!
+    appUsersToPermitChallenge(challengeId: ID!, pageSize: Int, page: Int): [AppUser!]!
+    searchAppUsersToPermitChallenge(challengeId: ID!, search: String, pageSize: Int, page: Int): [AppUser!]!
+    permittedAppUsersChallenge(challengeId: ID!, pageSize: Int, page: Int): [AppUser!]!
+
+    requirements(challengeId: ID!, pageSize: Int, page: Int): [Requirement!]!
+    requirement(id: ID!): Requirement!
+
+    feedback(id: ID!): Feedback!
+    feedbacks(reviewId: ID!, pageSize: Int, page: Int): [Feedback!]!
+
+    review(id: ID!): Review
+
+    solution(id: ID!): Solution!
+    solutions(challengeId: ID!, pageSize: Int, page: Int): [Solution!]!
+    solutionsToReview(challengeId: ID!, page: Int, pageSize: Int): [Solution!]!
+    allSolutionsToReview(courseId: ID!, page: Int, pageSize: Int): [CoursesReviewList]
+
+    statistic(semesterId: ID!, direction: Order, limit: Int, description: String, type: String): [FeedbackStatistics!]!
+    testResult(id: ID!): TestResult
+
+    courseRoles(id: ID!): [String!]!
+    allCourseRoles: [CourseSemesterRole!]!
+
+    countToReview(challengeId: ID!): Int!
+    requirementReview(requirementId: ID!, reviewId: ID!): ReviewedRequirement
+
+    semesterAccessRequests(semesterId: ID!): [CourseSemesterAccessRequest!]!
+    semesterAccessRequestsAppUser(semesterId: ID!, appUserId: ID): CourseSemesterAccessRequest
+}
+
+type Mutation {
+    createCourse(input: CourseInput!): Course!
+    editCourse(id: ID!, input: CourseInput!): Course!
+    deleteCourse(id: ID!): Boolean!
+    publishChallenge(challengeId: ID!): Boolean
+
+    createSemester(courseId: ID!, input: SemesterInput!): Semester!
+    editSemester(id: ID!, input: SemesterInput!): Semester!
+    deleteSemester(id: ID!): Boolean!
+    createSemesterAccessRequest(semesterId: ID!): CourseSemesterAccessRequest!
+    editSemesterRequirements(semesterId: ID!, input: CourseSemesterRequirementsInput!): Semester!
+
+    createChallenge(semesterId: ID!, input: ChallengeInput!): Challenge!
+    editChallenge(challengeId: ID!, input: ChallengeInput!): Challenge!
+    deleteChallenge(challengeId: ID!): Challenge!
+    permitUserChallenge(appUserId: ID!, challengeId: ID!, accessTo: DateTime!): PermittedAppUserChallenge!
+    removePermitUserChallenge(appUserId: ID!, challengeId: ID!): Boolean!
+
+    createRequirement(challengeId: ID!, input: RequirementInput!): Requirement!
+    editRequirement(id: ID!, input: RequirementInput!): Requirement!
+    deleteRequirement(id: ID!): Requirement!
+
+    createFeedback(feedback: FeedbackInput!): Feedback!
+    removeFeedbackFromReview(reviewId: ID!, feedbackId: ID!): Boolean
+    addFeedbackToReview(reviewId: ID!, feedbackId: ID!): Boolean
+    createFeedbackToReview(reviewId: ID!, feedback: FeedbackInput!): Feedback!
+    deleteFeedback(id: ID!): Boolean!
+
+    createReview(solutionId: ID! reviewInput: ReviewInput!): Review!
+    publishReview(id: ID!, status: String!): Boolean!
+    editReview(id: ID!, input: ReviewInput!): Review!
+
+    addCourseRole(appUserId: ID!, semesterId: ID!, roleId: ID!): Boolean
+    removeCourseRole(appUserId: ID!, semesterId: ID!, roleId: ID!): Boolean
+    editReviewPoints(reviewId: ID!, requirementId: ID!, reviewPointsInput: ReviewPointsInput!): Boolean
+    approveCourseSemesterRequest(id: ID!, roles: [String!]): Boolean!
+}
+
+type ChallengeSummary {
+    courseId: ID!
+    challengeId: ID!
+    statusId: ID!
+    statusName: String!
+    appUserId: ID!
+    count: Int!
+}
+
+type AppUser{
+    id: ID!
+    stagId: String!
+    mail: String!
+    displayName: String!
+    registrationDate: String!
+    lastAccessDate: String!
+    disabled: Boolean!
+    globalRoles: [GlobalRole!]!
+    courseRoles: [CourseSemesterRoles!]!
+    roles(semesterId: ID!): [CourseSemesterRole!]!
+    accessRequests: [CourseSemesterAccessRequest!]!
+    challengeSummary(challengeId: ID!, limit: Int, offset: Int): [ChallengeSummary!]!
+}
+
+type GlobalRole {
+    id: ID!
+    name: String!
+}
+
+type CourseSemesterAccessRequest {
+    semesterId: ID!,
+    appUser: AppUser!,
+    creationDate: String!,
+    expirationDate: String!,
+    id: String!
+}
+
+type Semester {
+    id: ID!
+    note: String
+    dateStart: String!
+    dateEnd: String!
+    fulfillmentConditions: CourseSemesterRequirements
+    statistic: [FeedbackStatistics!]
+    relatedUsers(offset: Int, size: Int): [AppUser!]!
+    page: Int
+    pageSize: Int
+}
+
+type CourseSemesterRequirements {
+    minOptional: Int!,
+    minMandatory: Int!,
+    minCredit: Int!,
+    minExam: Int!,
+}
+
+type Challenge {
+    id: ID!
+    name: String!
+    description: String!
+    deadlineDate: String
+    startDate: String
+    author: AppUser
+    published: Boolean,
+    challengeKind: String!
+    requirements: [Requirement!]!
+    testConfigurations: [TestConfiguration!]!
+    relatedUsers(offset: Int, size: Int): [AppUser!]!
+}
+
+type CourseSemesterRoles {
+    semester: Semester!
+    roles: [CourseSemesterRole!]!
+}
+
+type CourseSemesterRole {
+    id: ID!
+    name: String!
+}
+
+type Requirement {
+    id: ID!,
+    name: String!,
+    description: String,
+    active: Boolean!,
+    minPoint: Int,
+    maxPoint: Int
+}
+
+type ReviewedRequirement {
+    id: ID!,
+    points: Int
+    description: String,
+    requirement: Requirement,
+}
+
+type Course {
+    id: ID
+    stagId: String!
+    name: String!
+    dateCreation: String!
+    icon: String
+    template: String
+    semesters(semesterSortBy: SemesterOrderByField): [Semester!]!
+}
+
+type ChallengeSolutions {
+    challenge: Challenge,
+    solutions: [Solution!]
+}
+
+type CoursesReviewList{
+    course: Semester,
+    reviews: [ChallengeSolutions!]!
+}
+
+type Solution {
+    id: ID!
+    uploadDate: DateTime!
+    status: String!
+    review: Review,
+    author: AppUser,
+    testResult: TestResult,
+}
+
+type Feedback {
+    id: ID!,
+    description: String!
+    type: String!
+}
+
+type Review{
+    id: ID!
+    description: String!
+    requirements: [Requirement!]!
+    reviewRequirements: [ReviewedRequirement!]!
+    feedbacks: [Feedback!]!
+}
+
+type TestResult {
+    id: ID
+    log: String
+    creationDate: DateTime
+    updateDate: DateTime
+    status: TestStatus,
+    feedbacks: [Feedback!]
+}
+
+type FeedbackStatistics {
+    semesterId: ID
+    challengeId: ID
+    description: String
+    feedbackTypeId: ID
+    feedbackName: String
+    count: Int
+}
+
+type TestConfiguration {
+    id: ID
+    templatePath: String
+    dockerFilePath: String
+    testModuleClass: String
+    active: Boolean
+    creationDate: String
+    updateDate: String
+}
+
+type PermittedAppUserChallenge {
+    id: ID,
+    accessTo: DateTime!,
+    appUser: AppUser
+    challenge: Challenge
+}
+
+enum TestStatus {
+    WAITING_TO_TEST,
+    RUNNING,
+    FINISHED,
+    ERROR
+}
+
+enum Order {
+    ASC,
+    DESC,
+}
+
+input CourseInput {
+    stagId: String!
+    name: String!
+    icon: String
+    template: String
+    semesters: [SemesterInput]
+}
+
+input ChallengeInput {
+    name: String!
+    description: String
+    deadlineDate: DateTime
+    startDate: DateTime
+    challengeKind: String!
+}
+
+input ReviewInput {
+    description: String!
+}
+
+input SemesterInput {
+    note: String
+    dateStart: DateTime
+    dateEnd: DateTime
+}
+
+input RequirementInput {
+    name: String!,
+    description: String,
+    minPoint: Int,
+    maxPoint: Int
+}
+
+input FeedbackInput {
+    description: String!
+    type: String!
+}
+
+input ReviewPointsInput {
+    points: Int!
+}
+
+input CourseSemesterRequirementsInput {
+    minOptional: Int!,
+    minMandatory: Int!,
+    minCredit: Int!,
+    minExam: Int!,
+}
+
+enum SemesterOrderByField {
+    id,
+    dateStart,
+    dateEnd
+}
+
+enum SortOrder {
+    ASC,
+    DESC
+}

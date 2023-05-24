@@ -1,0 +1,625 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-1
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: name
+                  value: ROLE_GLOBAL_ROLE_MANAGE
+            tableName: global_role
+
+  - changeSet:
+      id: insert-2
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: ROLE_GLOBAL_ROLE_VIEW
+            tableName: global_role
+
+  - changeSet:
+      id: insert-3
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: ROLE_COURSE_MANAGE
+            tableName: global_role
+
+  - changeSet:
+      id: insert-4
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: name
+                  value: ROLE_COURSE_SEMESTER_MANAGE
+            tableName: global_role
+
+  - changeSet:
+      id: insert-5
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 4
+              - column:
+                  name: name
+                  value: ROLE_COURSE_VIEW
+            tableName: global_role
+
+  - changeSet:
+      id: insert-6
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 5
+              - column:
+                  name: name
+                  value: ROLE_COURSE_SEMESTER_VIEW
+            tableName: global_role
+
+  - changeSet:
+      id: insert-7
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: name
+                  value: OPTIONAL
+              - column:
+                  name: private
+                  value: false
+            tableName: challenge_kind
+
+  - changeSet:
+      id: insert-8
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: MANDATORY
+              - column:
+                  name: private
+                  value: false
+            tableName: challenge_kind
+
+  - changeSet:
+      id: insert-9
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: CREDIT
+              - column:
+                  name: private
+                  value: true
+            tableName: challenge_kind
+
+  - changeSet:
+      id: insert-10
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: name
+                  value: EXAM
+              - column:
+                  name: private
+                  value: true
+            tableName: challenge_kind
+
+  - changeSet:
+      id: insert-11
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 6
+              - column:
+                  name: name
+                  value: ROLE_COURSE_CHALLENGE_VIEW
+            tableName: global_role
+
+  - changeSet:
+      id: insert-12
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 7
+              - column:
+                  name: name
+                  value: ROLE_COURSE_CHALLENGE_MANAGE
+            tableName: global_role
+
+  - changeSet:
+      id: insert-13
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 8
+              - column:
+                  name: name
+                  value: ROLE_VIEW_APP_USER
+            tableName: global_role
+
+  - changeSet:
+      id: insert-14
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 9
+              - column:
+                  name: name
+                  value: ROLE_MANAGE_APP_USER
+            tableName: global_role
+
+  - changeSet:
+      id: insert-15
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 10
+              - column:
+                  name: name
+                  value: ROLE_BLOCK_APP_USER
+            tableName: global_role
+
+  - changeSet:
+      id: insert-16
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 11
+              - column:
+                  name: name
+                  value: ROLE_UNBLOCK_APP_USER
+            tableName: global_role
+
+  - changeSet:
+      id: insert-17
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: name
+                  value: ACCESS
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-18
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: CREATE_CHALLENGE
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-19
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 12
+              - column:
+                  name: name
+                  value: ROLE_COURSE_ACCESS
+            tableName: global_role
+
+  - changeSet:
+      id: insert-20
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 13
+              - column:
+                  name: name
+                  value: ROLE_CHALLENGE_ACCESS
+            tableName: global_role
+
+  - changeSet:
+      id: insert-21
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: EDIT_CHALLENGE
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-22
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: name
+                  value: SUBMIT_CHALLENGE_SOLUTION
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-23
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 4
+              - column:
+                  name: name
+                  value: DELETE_CHALLENGE
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-24
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: name
+                  value: APPROVED
+              - column:
+                  name: approved
+                  value: true
+            tableName: status
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: RETURN_TO_EDIT
+              - column:
+                  name: approved
+                  value: false
+            tableName: status
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: DENIED
+              - column:
+                  name: approved
+                  value: false
+            tableName: status
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: name
+                  value: WAITING_TO_REVIEW
+              - column:
+                  name: approved
+                  value: false
+            tableName: status
+
+  - changeSet:
+      id: insert-25
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 5
+              - column:
+                  name: name
+                  value: REVIEW_CHALLENGE
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-26
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 6
+              - column:
+                  name: name
+                  value: VIEW_SOLUTIONS
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-27
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: name
+                  value: EXTREMELY_POSITIVE
+            tableName: feedback_type
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: POSITIVE
+            tableName: feedback_type
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: NEUTRAL
+            tableName: feedback_type
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: name
+                  value: WAITING_TO_REVIEW
+              - column:
+                  name: name
+                  value: NEGATIVE
+            tableName: feedback_type
+
+  - changeSet:
+      id: insert-28
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 7
+              - column:
+                  name: name
+                  value: MANAGE_USERS
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-29
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 8
+              - column:
+                  name: name
+                  value: VIEW_USERS
+            tableName: course_semester_role
+
+
+  - changeSet:
+      id: insert-30
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 0
+              - column:
+                  name: name
+                  value: WAITING_TO_TEST
+              - column:
+                  name: approved
+                  value: true
+            tableName: test_status
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: RUNNING
+              - column:
+                  name: approved
+                  value: false
+            tableName: test_status
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 2
+              - column:
+                  name: name
+                  value: FINISHED
+              - column:
+                  name: approved
+                  value: false
+            tableName: test_status
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 3
+              - column:
+                  name: name
+                  value: ERROR
+              - column:
+                  name: approved
+                  value: false
+            tableName: test_status
+
+  - changeSet:
+      id: insert-31
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 9
+              - column:
+                  name: name
+                  value: EDIT_COURSE
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-32
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 10
+              - column:
+                  name: name
+                  value: VIEW_TEST_RESULT
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-33
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 11
+              - column:
+                  name: name
+                  value: VIEW_STATISTICS
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-34
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 12
+              - column:
+                  name: name
+                  value: VIEW_REVIEW
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-35
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 13
+              - column:
+                  name: name
+                  value: PERMIT_CHALLENGE_CREDIT
+            tableName: course_semester_role
+
+  - changeSet:
+      id: insert-36
+      author: ondrej.chrbolka
+      changes:
+        - insert:
+            columns:
+              - column:
+                  name: id
+                  value: 14
+              - column:
+                  name: name
+                  value: PERMIT_CHALLENGE_EXAM
+            tableName: course_semester_role
